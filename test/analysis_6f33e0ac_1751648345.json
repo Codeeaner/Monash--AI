@@ -1,0 +1,72 @@
+{
+  "analysis_id": "analysis_6f33e0ac_1751648345",
+  "timestamp": "2025-07-05T00:58:52.868276",
+  "processing_time": 12.600489,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_1_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 2,
+    "total_count": 2,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a poor quality of tea leaves, with no healthy leaves detected.",
+      "defect_types": [
+        "Unhealthy"
+      ],
+      "severity_level": "high",
+      "quality_grade": "below_standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Remove unhealthy leaves from the batch",
+        "Adjust processing parameters to reduce stress on healthy leaves",
+        "Increase monitoring of leaf health during harvesting"
+      ],
+      "sorting_strategy": "Sort leaves by health status before processing, discarding all unhealthy leaves.",
+      "processing_method": "Use gentle processing methods to preserve the quality of remaining healthy leaves.",
+      "quality_preservation": [
+        "Handle leaves with care during sorting and processing",
+        "Monitor temperature and humidity levels in storage facilities"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "Healthy leaves can still be used for tea production.",
+      "alternative_uses": [
+        "Use unhealthy leaves for composting or as a natural fertilizer",
+        "Experiment with blending unhealthy leaves into other products"
+      ],
+      "composting_guidelines": "Compost unhealthy leaves separately from healthy ones to prevent contamination.",
+      "prevention_measures": [
+        "Implement regular leaf health assessments",
+        "Adjust harvesting techniques based on seasonal changes"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "The loss percentage is high due to the poor quality of leaves.",
+      "cost_saving_opportunities": [
+        "Invest in better leaf health assessment tools",
+        "Train staff on proper handling and processing techniques"
+      ],
+      "value_recovery_methods": [
+        "Experiment with different blending ratios to find a suitable mixture",
+        "Market the remaining healthy leaves as premium product"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Remove unhealthy leaves from batches immediately",
+        "Invest in leaf health assessment tools and training",
+        "Adjust processing parameters to reduce stress on healthy leaves"
+      ],
+      "timeline": "Implement changes within the next 3 months, reassess after one year.",
+      "monitoring_points": [
+        "Monitor leaf health during harvesting and processing",
+        "Review economic impact of implemented changes annually"
+      ]
+    }
+  },
+  "status": "completed"
+}

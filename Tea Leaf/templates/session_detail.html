@@ -1,0 +1,695 @@
+{% extends "base.html" %} 
+
+{% block title %}Session Details - Tea Leaf Detection{% endblock %} 
+
+{% block content %} 
+<head> 
+	<meta charset="UTF-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	 
+	<script src="https://cdn.tailwindcss.com"></script> 
+	 
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+	 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+	 
+	<style> 
+		/* Apply the Inter font family */ 
+		body { 
+			font-family: 'Inter', sans-serif; 
+			background-color: #f7fafc; /* A light gray background */ 
+		} 
+		/* Custom styles for a more polished look */ 
+		.card { 
+			background-color: white; 
+			border-radius: 0.75rem; /* 12px */ 
+			box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); 
+			transition: all 0.3s ease-in-out; 
+		} 
+		.card:hover { 
+			box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1); 
+		} 
+		.btn-primary { 
+			background-color: #16a34a; /* Green-600 */ 
+			color: white; 
+			font-weight: 600; 
+			border-radius: 0.5rem; 
+			padding: 0.625rem 1.25rem; 
+			transition: background-color 0.2s; 
+		} 
+		.btn-primary:hover { 
+			background-color: #15803d; /* Green-700 */ 
+		} 
+		.progress-bar-container { 
+			background-color: #e5e7eb; /* Gray-200 */ 
+			border-radius: 9999px; 
+			overflow: hidden; 
+			height: 0.75rem; 
+		} 
+		.progress-bar-fill { 
+			height: 100%; 
+			border-radius: 9999px; 
+			transition: width 0.5s ease-in-out; 
+		} 
+		.ai-analysis-container h6 { 
+			font-size: 0.875rem; 
+			color: #15803d; /* Green-700 */ 
+			font-weight: 600; 
+			text-transform: uppercase; 
+			letter-spacing: 0.05em; 
+			margin-top: 1rem; 
+			padding-bottom: 0.25rem; 
+			border-bottom: 1px solid #d1d5db; /* Gray-300 */ 
+		} 
+		/* Style for the table */ 
+		.custom-table thead { 
+			background-color: #f9fafb; /* Gray-50 */ 
+		} 
+		.custom-table th { 
+			padding: 0.75rem 1rem; 
+			font-size: 0.75rem; 
+			text-transform: uppercase; 
+			letter-spacing: 0.05em; 
+			color: #4b5563; /* Gray-600 */ 
+		} 
+		.custom-table tbody tr { 
+			border-bottom: 1px solid #e5e7eb; /* Gray-200 */ 
+		} 
+		.custom-table tbody tr:last-child { 
+			border-bottom: none; 
+		} 
+		.custom-table td { 
+			padding: 1rem; 
+			font-size: 0.875rem; 
+			color: #374151; /* Gray-700 */ 
+			vertical-align: middle; 
+		}         
+	</style> 
+</head> 
+
+<div class="container mx-auto p-4 md:p-8"> 
+    <!-- Add hidden session ID element -->
+    <div id="session-id" data-session-id="{{ session.id }}" style="display: none;"></div>
+    
+    <div class="sticky top-0 z-10 bg-white/90 backdrop-blur-md py-6 mb-8 border-b border-gray-200/50 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2 tracking-tight flex items-center">
+                    <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg mr-3">
+                        <i class="fas fa-info-circle text-white text-xs"></i>
+                    </div>
+                    Session Details
+                </h1>
+                <p class="text-gray-600 mt-1 break-words">Session: {{ session.name }}</p>
+            </div>
+            
+            <div class="flex-shrink-0">
+                <button class="group relative bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-black text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm" onclick="window.location.href='/history-page'">
+                    <i class="fas fa-history text-xs transition-transform group-hover:scale-110"></i>
+                    <span>Back to History</span>
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 	<div class="flex flex-col gap-8"> 
+ 		<div class="grid grid-cols-1 lg:grid-cols-5 gap-8"> 
+ 			<div class="card p-6 lg:col-span-2"> 
+ 				<h2 class="text-xl font-bold mb-4 border-b pb-3 text-gray-700">Session Overview</h2> 
+ 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6"> 
+ 					<div> 
+ 						<h3 class="font-semibold text-lg text-green-700 mb-3">Information</h3> 
+ 						<div class="space-y-3 text-sm"> 
+ 							<p><strong>Status:</strong>  
+ 								<span class="px-2 py-1 text-xs font-semibold rounded-full {% if session.status == 'completed' %}bg-green-100 text-green-800{% elif session.status == 'processing' %}bg-yellow-100 text-yellow-800{% elif session.status == 'failed' %}bg-red-100 text-red-800{% else %}bg-gray-100 text-gray-800{% endif %}"> 
+ 									{{ session.status }} 
+ 								</span> 
+ 							</p> 
+ 							<p><strong>Created:</strong> <span class="text-gray-600">{{ session.created_at }}</span></p> 
+ 							<p><strong>Images:</strong> <span class="text-gray-600">{{ session.processed_images }}/{{ session.total_images }}</span></p> 
+ 							<p><strong>Completed:</strong> <span class="text-green-600 font-semibold">{{ completed_count }}</span></p> 
+ 							<p><strong>Failed:</strong> <span class="text-red-600 font-semibold">{{ failed_count }}</span></p> 
+ 						</div> 
+ 					</div> 
+ 					<div> 
+ 						<h3 class="font-semibold text-lg text-green-700 mb-3">Detection Results</h3> 
+ 						<div class="space-y-3 text-sm"> 
+ 							<p><strong>Total Leaves:</strong> <span class="text-gray-600 font-bold">{{ total_leaves }}</span></p> 
+ 							<p><strong>Healthy:</strong> <span class="text-green-600 font-semibold">{{ total_healthy }}</span></p> 
+ 							<p><strong>Unhealthy:</strong> <span class="text-red-600 font-semibold">{{ total_unhealthy }}</span></p> 
+ 							 
+ 							{% set health_score = (average_health|default(0)|float) %} 
+ 							{% if health_score > 100 %}{% set health_score = 100 %}{% endif %} 
+ 							{% if health_score < 0 %}{% set health_score = 0 %}{% endif %} 
+ 							 
+ 							<div> 
+ 								<p class="mb-1"><strong>Health Score:</strong>  
+ 									<span class="font-bold text-lg {% if health_score >= 70 %}text-green-600{% elif health_score >= 50 %}text-yellow-500{% else %}text-red-600{% endif %}"> 
+ 										{{ health_score|round(1) }}% 
+ 									</span> 
+ 								</p> 
+ 								<div class="progress-bar-container"> 
+ 									<div class="progress-bar-fill {% if health_score >= 70 %}bg-green-500{% elif health_score >= 50 %}bg-yellow-500{% else %}bg-red-500{% endif %}"  
+ 										 style="width: {{ health_score }}%"> 
+ 									</div> 
+ 								</div> 
+ 							</div> 
+ 						</div> 
+ 					</div> 
+ 				</div> 
+ 			</div> 
+
+			<div class="card lg:col-span-3 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"> 
+				<div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-100"> 
+					<h2 class="text-2xl font-bold text-gray-800 flex items-center">
+						<div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+							<i class="fas fa-images text-white text-sm"></i>
+						</div>
+						Annotated Images
+					</h2> 
+				</div> 
+				<div class="p-6"> 
+					<div class="grid grid-cols-1 gap-6"> 
+						{% for result in session.results %} 
+						<div class="group bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"> 
+							<div class="flex flex-row"> 
+								<div class="relative bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer group/image flex-1" onclick="enlargeImage('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}')">
+									<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
+										alt="Annotated image" 
+										class="w-full h-full object-contain transition-transform duration-300 group-hover/image:scale-105" 
+										onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
+									> 
+									<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-sm"> 
+										<div class="bg-white/20 rounded-full p-3 transform scale-75 group-hover/image:scale-100 transition-transform duration-300">
+											<i class="fas fa-search-plus text-white text-xl"></i> 
+										</div>
+									</div> 
+								</div> 
+								<div class="p-3 sm:p-5 text-base bg-gradient-to-br from-white to-gray-50" style="width: 300px; min-width: 280px;"> 
+									<div class="flex justify-between items-start mb-4"> 
+										<span class="px-3 py-1.5 text-sm font-semibold rounded-full shadow-sm {% if result.status == 'completed' %}bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200{% elif result.status == 'processing' %}bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border border-yellow-200{% elif result.status == 'failed' %}bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200{% else %}bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border border-gray-200{% endif %}"> 
+											{% if result.status == 'completed' %}
+												<i class="fas fa-check-circle mr-1"></i>
+											{% elif result.status == 'processing' %}
+												<i class="fas fa-spinner fa-spin mr-1"></i>
+											{% elif result.status == 'failed' %}
+												<i class="fas fa-exclamation-circle mr-1"></i>
+											{% endif %}
+											{{ result.status }} 
+										</span> 
+										<div class="text-right">
+											<span class="font-bold text-2xl {% if result.health_percentage|default(0) >= 70 %}text-green-600{% elif result.health_percentage|default(0) >= 50 %}text-yellow-500{% else %}text-red-600{% endif %}"> 
+												{{ result.health_percentage|default(0)|round(1) }}% 
+											</span>
+											<p class="text-gray-500 text-xs font-medium">Health Score</p>
+										</div>
+									</div> 
+									<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mt-4"> 
+										<div class="text-center bg-green-50 rounded-lg p-2 sm:p-3 border border-green-100"> 
+											<span class="text-green-600 font-bold text-lg sm:text-xl block">{{ result.healthy_count }}</span> 
+											<p class="text-green-700 text-xs font-medium mt-1">Healthy</p> 
+										</div> 
+										<div class="text-center bg-red-50 rounded-lg p-2 sm:p-3 border border-red-100"> 
+											<span class="text-red-600 font-bold text-lg sm:text-xl block">{{ result.unhealthy_count }}</span> 
+											<p class="text-red-700 text-xs font-medium mt-1">Unhealthy</p> 
+										</div> 
+										<div class="text-center bg-gray-50 rounded-lg p-2 sm:p-3 border border-gray-100"> 
+											<strong class="text-gray-800 text-lg sm:text-xl block">{{ result.total_count }}</strong> 
+											<p class="text-gray-600 text-xs font-medium mt-1">Total</p> 
+										</div> 
+									</div> 
+									<div class="mt-4 pt-3 border-t border-gray-200">
+										<div class="flex items-center justify-between">
+											<div class="flex items-center text-gray-600">
+												<i class="fas fa-clock text-xs mr-2"></i>
+												<span class="text-sm">{{ result.processing_time|round(2) }}s</span>
+											</div>
+											<div class="flex items-center text-gray-500">
+												<i class="fas fa-calendar text-xs mr-2"></i>
+												<span class="text-xs">Just now</span>
+											</div>
+										</div>
+									</div>
+								</div> 
+							</div> 
+						</div> 
+						{% endfor %} 
+						{% if session.results|length == 0 %} 
+						<div class="col-span-full text-center py-12"> 
+							<div class="bg-gray-50 rounded-xl p-8 border-2 border-dashed border-gray-200">
+								<div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+									<i class="fas fa-image text-gray-400 text-2xl"></i>
+								</div>
+								<h3 class="text-lg font-medium text-gray-800 mb-2">No Images Found</h3>
+								<p class="text-gray-500">No annotated images are available for this session yet.</p>
+							</div>
+						</div> 
+						{% endif %} 
+					</div> 
+				</div> 
+			</div>
+ 		</div> 
+
+ 		<div class="card"> 
+ 			<div class="p-6 border-b"> 
+ 				<h2 class="text-xl font-bold text-gray-700 flex items-center"> 
+ 					<i class="fas fa-microscope text-green-600 mr-3"></i> AI Analysis 
+ 				</h2> 
+ 			</div> 
+ 			<div class="p-6"> 
+ 				<div id="ai-analysis-content" style="display: none;"> 
+ 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8"> 
+ 						<div class="md:col-span-1"> 
+ 							 <h3 class="font-semibold text-lg text-green-700 mb-2"><i class="fas fa-chart-line mr-2"></i>Analysis Summary</h3> 
+ 							<p class="text-gray-600 text-sm" id="analysis-summary"></p> 
+ 						</div> 
+ 						<div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8"> 
+ 							<div> 
+ 								<h3 class="font-semibold text-lg text-green-700 mb-2"><i class="fas fa-info-circle mr-2"></i>Details</h3> 
+ 								<div class="border rounded-lg p-4 bg-gray-50 max-h-96 overflow-y-auto ai-analysis-container"> 
+ 									<div id="analysis-details"></div> 
+ 								</div> 
+ 							</div> 
+ 							 <div> 
+ 								<h3 class="font-semibold text-lg text-green-700 mb-2"><i class="fas fa-lightbulb mr-2"></i>Recommendations</h3> 
+ 								<ul class="space-y-2 text-sm max-h-96 overflow-y-auto" id="analysis-recommendations"> 
+ 									</ul> 
+ 							</div> 
+ 						</div> 
+ 					</div> 
+ 				</div> 
+ 				<div id="ai-analysis-placeholder" class="text-center py-8"> 
+ 					<div class="mb-4"> 
+ 						<i class="fas fa-leaf fa-4x text-green-200"></i> 
+ 					</div> 
+ 					<p class="font-semibold text-gray-700 mb-2">Analysis Not Started</p> 
+ 					<p class="text-gray-500 text-sm mb-6">Generate detailed insights and recommendations for this session.</p> 
+ 					<button class="btn-primary"  
+ 							onclick="analyzeSession(this.getAttribute('data-session-id'))"  
+ 							data-session-id="{{ session.id }}"> 
+ 						<i class="fas fa-rocket mr-2"></i> Start Analysis 
+ 					</button> 
+ 				</div> 
+ 			</div> 
+ 		</div> 
+ 	</div> 
+ </div> 
+ {% endblock %} 
+
+ {% block extra_js %} 
+ <script> 
+ // NOTE: The JavaScript logic is mostly unchanged, but the 'displayAnalysisData' function 
+ // has been updated to use the new Tailwind CSS classes for styling the dynamic content. 
+
+ // Function to format date for display 
+ function formatDate(dateString) { 
+ 	if (!dateString) return 'N/A'; 
+ 	try { 
+ 		const date = new Date(dateString); 
+ 		return date.toLocaleString(); 
+ 	} catch (e) { 
+ 		console.error('Date formatting error:', e); 
+ 		return 'Invalid Date'; 
+ 	} 
+ } 
+
+ // Function to get status badge class (no longer needed for JS, handled by Jinja) 
+ function getStatusClass(status) { 
+ 	if (!status) return 'bg-gray-100 text-gray-800'; 
+ 	const classes = { 
+ 		'completed': 'bg-green-100 text-green-800', 
+ 		'processing': 'bg-yellow-100 text-yellow-800', 
+ 		'failed': 'bg-red-100 text-red-800', 
+ 		'pending': 'bg-gray-100 text-gray-800' 
+ 	}; 
+ 	return classes[status.toLowerCase()] || 'bg-gray-100 text-gray-800'; 
+ } 
+
+ // Function to start analysis for a session 
+ async function analyzeSession(sessionId) { 
+ 	const button = document.querySelector(`[data-session-id="${sessionId}"]`); 
+ 	if (!button) return; 
+ 	 
+ 	const originalText = button.innerHTML; 
+ 	 
+ 	try { 
+ 		button.disabled = true; 
+ 		button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...'; 
+ 		 
+ 		// You can integrate a more modern notification library here if you have one 
+ 		if (typeof showAlert !== 'undefined') { 
+ 			showAlert('Starting analysis...', 'info'); 
+ 		} 
+ 		 
+ 		const response = await fetch(`/api/analytics/analyze/batch/${sessionId}`, {  
+ 			method: 'POST', 
+ 			headers: { 'Content-Type': 'application/json' } 
+ 		}); 
+
+		const data = await response.json();
+ 		if (response.ok) { 
+ 			if (typeof showAlert !== 'undefined') { 
+ 				showAlert('Analysis started successfully! Refreshing page...', 'success'); 
+ 			} else { 
+ 				console.log('Analysis started successfully, but no alert function defined.'); 
+ 			} 
+ 			// Increased delay to allow more time for analysis to complete 
+ 			setTimeout(() => { window.location.reload(); }, 20000); 
+ 		} else { 
+ 			const error = await response.json().catch(() => ({ detail: 'Unknown error' })); 
+ 			if (typeof showAlert !== 'undefined') { 
+ 				showAlert(`Failed to start analysis: ${error.detail || 'Unknown error'}`, 'danger'); 
+ 			} 
+ 			button.disabled = false; 
+ 			button.innerHTML = originalText; 
+ 		} 
+ 	} catch (e) { 
+ 		console.error('Analysis error:', e); 
+ 		if (typeof showAlert !== 'undefined') { 
+ 			showAlert(`Error starting analysis: ${e.message}`, 'danger'); 
+ 		} 
+ 		button.disabled = false; 
+ 		button.innerHTML = originalText; 
+ 	} 
+ } 
+
+ // Function to load analysis data for the session
+ async function loadAnalysisData(sessionId) {
+ 	try {
+ 		const response = await fetch(`/api/analytics/session/${sessionId}`);
+ 		if (response.ok) {
+ 			const data = await response.json();
+ 			let analysisDataDisplayed = false;
+
+ 			// First, try to fetch batch analysis using the batch_analysis_id if available
+ 			if (data.batch_analysis && data.batch_analysis.batch_analysis_id) {
+ 				const batchResponse = await fetch(`/api/analytics/batch/${data.batch_analysis.batch_analysis_id}`);
+ 				if (batchResponse.ok) {
+ 					const batchData = await batchResponse.json();
+ 					displayAnalysisData(batchData);
+ 					analysisDataDisplayed = true;
+ 				} else if (batchResponse.status === 404) {
+ 					console.warn('Batch analysis not found (404). Showing Start Analysis button.');
+ 					showStartAnalysisButton();
+ 					return;
+ 				} else {
+ 					console.error('Failed to fetch batch analysis details using batch_analysis_id:', batchResponse.status, batchResponse.statusText);
+ 				}
+ 			}
+
+ 			// If batch analysis not found by ID, try using session ID as a fallback for batch data
+ 			if (!analysisDataDisplayed) {
+ 				console.warn(`Attempting to fetch batch analysis using session ID ${sessionId} as fallback.`);
+ 				const fallbackBatchResponse = await fetch(`/api/analytics/batch/${sessionId}`);
+ 				if (fallbackBatchResponse.ok) {
+ 					const fallbackBatchData = await fallbackBatchResponse.json();
+ 					displayAnalysisData(fallbackBatchData);
+ 					analysisDataDisplayed = true;
+ 				} else if (fallbackBatchResponse.status === 404) {
+ 					console.warn('Batch analysis not found (404) using session ID fallback. Showing Start Analysis button.');
+ 					showStartAnalysisButton();
+ 					return;
+ 				} else {
+ 					console.error('Failed to fetch batch analysis details using session ID fallback:', fallbackBatchResponse.status, fallbackBatchResponse.statusText);
+ 				}
+ 			}
+
+ 			// If no batch analysis data was displayed, try individual analyses
+ 			if (!analysisDataDisplayed && data.individual_analyses && data.individual_analyses.length > 0) {
+ 				const analysisId = data.individual_analyses[0].analysis_id;
+ 				const analysisResponse = await fetch(`/api/analytics/results/${analysisId}`);
+ 				if (analysisResponse.ok) {
+ 					const analysisData = await analysisResponse.json();
+ 					displayAnalysisData(analysisData);
+ 					analysisDataDisplayed = true;
+ 				} else {
+ 					console.error('Failed to fetch individual analysis details:', analysisResponse.status, analysisResponse.statusText);
+ 				}
+ 			}
+
+ 			// If no data was displayed after all attempts, show Start Analysis button
+ 			if (!analysisDataDisplayed) {
+ 				console.log('No analysis data available for this session via API. Showing Start Analysis button.');
+ 				showStartAnalysisButton();
+ 			}
+ 		} else {
+ 			console.error('Failed to fetch session analytics:', response.status, response.statusText);
+ 			showStartAnalysisButton();
+ 		}
+ 	} catch (e) {
+ 		console.error('Error loading analysis data:', e);
+ 		showStartAnalysisButton();
+ 	}
+ }
+
+ // Function to show the Start Analysis button
+ function showStartAnalysisButton() {
+ 	const placeholder = document.getElementById('ai-analysis-placeholder');
+ 	const content = document.getElementById('ai-analysis-content');
+ 	if (placeholder && content) {
+ 		placeholder.style.display = 'block';
+ 		content.style.display = 'none';
+ 	}
+ }
+
+ // Function to display error messages based on context
+ function displayErrorMessage(context) {
+ 	const placeholder = document.getElementById('ai-analysis-placeholder');
+ 	const content = document.getElementById('ai-analysis-content');
+ 	if (placeholder && content) {
+ 		placeholder.style.display = 'none';
+ 		content.style.display = 'block';
+ 		if (context === 'batch') {
+ 			document.getElementById('analysis-summary').textContent = 'Batch Analysis Not Found';
+ 			document.getElementById('analysis-details').innerHTML = '<p class="text-gray-500 italic">The batch analysis data could not be found. It may not have been saved or completed yet.</p>';
+ 			document.getElementById('analysis-recommendations').innerHTML = '<p class="text-gray-500 italic">No recommendations available due to missing analysis data.</p>';
+ 		} else if (context === 'individual') {
+ 			document.getElementById('analysis-summary').textContent = 'Individual Analysis Not Found';
+ 			document.getElementById('analysis-details').innerHTML = '<p class="text-gray-500 italic">The individual analysis data could not be found. It may not have been saved or completed yet.</p>';
+ 			document.getElementById('analysis-recommendations').innerHTML = '<p class="text-gray-500 italic">No recommendations available due to missing analysis data.</p>';
+ 		} else if (context === 'session') {
+ 			document.getElementById('analysis-summary').textContent = 'Error Loading Analysis Data';
+ 			document.getElementById('analysis-details').innerHTML = '<p class="text-gray-500 italic">There was an error loading the analysis data for this session.</p>';
+ 			document.getElementById('analysis-recommendations').innerHTML = '<p class="text-gray-500 italic">No recommendations available due to error in loading data.</p>';
+ 		} else {
+ 			document.getElementById('analysis-summary').textContent = 'Error Loading Analysis Data';
+ 			document.getElementById('analysis-details').innerHTML = '<p class="text-gray-500 italic">There was an unexpected error loading the analysis data for this session.</p>';
+ 			document.getElementById('analysis-recommendations').innerHTML = '<p class="text-gray-500 italic">No recommendations available due to error in loading data.</p>';
+ 		}
+ 	}
+ }
+
+ // **MODIFIED FUNCTION** // Function to display analysis data on the page using Tailwind CSS classes 
+ function displayAnalysisData(analysisData) { 
+ 	const placeholder = document.getElementById('ai-analysis-placeholder'); 
+ 	const content = document.getElementById('ai-analysis-content'); 
+ 	const summaryEl = document.getElementById('analysis-summary'); 
+ 	const detailsEl = document.getElementById('analysis-details'); 
+ 	const recommendationsEl = document.getElementById('analysis-recommendations'); 
+ 	 
+ 	if (!content || !summaryEl || !detailsEl || !recommendationsEl) { 
+ 		console.error('UI elements for analysis display not found'); 
+ 		return; 
+ 	} 
+ 	 
+ 	// Log the received data for debugging
+ 	console.log('Analysis Data Received by displayAnalysisData:', analysisData);
+ 	 
+    // Always hide the placeholder and show the content if data is received
+    placeholder.style.display = 'none';
+    content.style.display = 'block';
+
+ 	// Function to render JSON data as styled HTML with Tailwind classes 
+ 	function renderJsonToHtml(obj, parent, level = 0) { 
+ 		if (!obj || typeof obj !== 'object') { 
+ 			const textEl = document.createElement('p'); 
+ 			textEl.textContent = obj !== null && obj !== undefined ? obj.toString() : 'N/A'; 
+ 			textEl.className = 'text-gray-600'; 
+ 			parent.appendChild(textEl); 
+ 			return; 
+ 		} 
+ 		 
+ 		if (Array.isArray(obj)) { 
+ 			if (obj.length === 0) { 
+ 				const emptyEl = document.createElement('p'); 
+ 				emptyEl.textContent = '(Empty List)'; 
+ 				emptyEl.className = 'text-gray-500 italic'; 
+ 				parent.appendChild(emptyEl); 
+ 				return; 
+ 			} 
+ 			const ul = document.createElement('ul'); 
+ 			ul.className = 'list-disc list-inside space-y-1 pl-2'; 
+ 			obj.forEach(item => { 
+ 				const li = document.createElement('li'); 
+ 				li.className = 'text-gray-600'; 
+ 				if (typeof item === 'object' && item !== null) { 
+ 					renderJsonToHtml(item, li, level + 1); 
+ 				} else { 
+ 					li.textContent = item !== null && item !== undefined ? item.toString() : 'N/A'; 
+ 				} 
+ 				ul.appendChild(li); 
+ 			}); 
+ 			parent.appendChild(ul); 
+ 		} else { 
+ 			for (const [key, value] of Object.entries(obj)) { 
+ 				const keyEl = document.createElement(level === 0 ? 'h6' : 'p'); 
+ 				keyEl.className = level === 0 ? '' : 'font-semibold text-gray-700 mt-2'; 
+ 				keyEl.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()); 
+ 				parent.appendChild(keyEl); 
+ 				 
+ 				const container = document.createElement('div'); 
+ 				container.className = level > 0 ? 'pl-4' : ''; 
+ 				 
+ 				if (typeof value === 'object' && value !== null) { 
+ 					renderJsonToHtml(value, container, level + 1); 
+ 				} else { 
+ 					const valueEl = document.createElement('p'); 
+ 					valueEl.className = 'text-gray-600 mb-2'; 
+ 					valueEl.textContent = value !== null && value !== undefined ? value.toString() : 'N/A'; 
+ 					container.appendChild(valueEl); 
+ 				} 
+ 				parent.appendChild(container); 
+ 			} 
+ 		} 
+ 	} 
+ 	 
+    function extractRecommendations(data) { 
+        const recs = new Set(); // Use a Set to avoid duplicates 
+        // Check for aggregate recommendations from batch analysis
+        if (data.aggregate_recommendations && typeof data.aggregate_recommendations === 'object') { 
+            const agg = data.aggregate_recommendations; 
+            if (agg.overall_assessment && agg.overall_assessment.recommended_action) recs.add(agg.overall_assessment.recommended_action); 
+            if (agg.batch_processing_strategy && agg.batch_processing_strategy.processing_sequence && Array.isArray(agg.batch_processing_strategy.processing_sequence)) {
+                agg.batch_processing_strategy.processing_sequence.forEach(seq => recs.add(seq));
+            }
+            if (agg.waste_minimization && agg.waste_minimization.waste_reduction_strategies && Array.isArray(agg.waste_minimization.waste_reduction_strategies)) {
+                agg.waste_minimization.waste_reduction_strategies.forEach(strat => recs.add(strat));
+            }
+            if (agg.monitoring_recommendations && agg.monitoring_recommendations.key_metrics && Array.isArray(agg.monitoring_recommendations.key_metrics)) {
+                agg.monitoring_recommendations.key_metrics.forEach(metric => recs.add(`Monitor: ${metric}`));
+            }
+        } 
+        // Check for individual analysis recommendations from AI response
+        if (data.ai_analysis && typeof data.ai_analysis === 'object') { 
+            const ai = data.ai_analysis; 
+            if (ai.analysis && ai.analysis.overall_assessment) recs.add(ai.analysis.overall_assessment); 
+            if (ai.processing_recommendations && ai.processing_recommendations.immediate_actions && Array.isArray(ai.processing_recommendations.immediate_actions)) {
+                ai.processing_recommendations.immediate_actions.forEach(action => recs.add(action));
+            }
+            if (ai.waste_prevention && ai.waste_prevention.prevention_measures && Array.isArray(ai.waste_prevention.prevention_measures)) {
+                ai.waste_prevention.prevention_measures.forEach(measure => recs.add(measure));
+            }
+            if (ai.recommendations && ai.recommendations.priority_actions && Array.isArray(ai.recommendations.priority_actions)) {
+                ai.recommendations.priority_actions.forEach(action => recs.add(action));
+            }
+        } 
+        return Array.from(recs); 
+    }
+
+    if (analysisData) { 
+        const id = analysisData.batch_analysis_id || analysisData.analysis_id || 'N/A'; 
+        const type = analysisData.batch_analysis_id ? 'Batch Analysis' : (analysisData.analysis_id ? 'Analysis' : 'Generic Analysis'); 
+         
+        summaryEl.textContent = `${type} (ID: ${id}) - Status: ${analysisData.status || 'Unknown'}`; 
+         
+        detailsEl.innerHTML = ''; 
+        // Prioritize displaying AI analysis details if available
+        if (analysisData.ai_analysis && typeof analysisData.ai_analysis === 'object') {
+            console.log('Rendering AI analysis data');
+            renderJsonToHtml(analysisData.ai_analysis, detailsEl);
+        } else if (analysisData.aggregate_recommendations && typeof analysisData.aggregate_recommendations === 'object') {
+            console.log('Rendering aggregate recommendations');
+            renderJsonToHtml(analysisData.aggregate_recommendations, detailsEl);
+        } else {
+            console.log('Rendering full analysis data as fallback');
+            renderJsonToHtml(analysisData, detailsEl);
+        }
+         
+        recommendationsEl.innerHTML = ''; 
+        const allRecs = extractRecommendations(analysisData); 
+        if (allRecs.length > 0) { 
+            console.log('Extracted recommendations:', allRecs);
+            allRecs.forEach(rec => { 
+                const recItem = document.createElement('li'); 
+                recItem.className = 'flex items-start p-2 rounded-md hover:bg-green-50'; 
+                recItem.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i><span class="text-gray-700">${rec}</span>`; 
+                recommendationsEl.appendChild(recItem); 
+            }); 
+        } else { 
+            console.log('No recommendations extracted from data');
+            recommendationsEl.innerHTML = `<p class="text-gray-500 italic">No recommendations available.</p>`; 
+        }
+    } else {
+        console.log('Analysis data is invalid or missing:', analysisData);
+        recommendationsEl.innerHTML = `<p class="text-gray-500 italic">No analysis data available.</p>`;
+        detailsEl.innerHTML = `<p class="text-gray-500 italic">No detailed analysis data to display.</p>`;
+        summaryEl.textContent = 'Analysis Data Unavailable';
+    }
+ } 
+
+ // Function to enlarge image in a modal
+ function enlargeImage(src, title) {
+ 	// Create modal container
+ 	var modal = document.createElement('div');
+ 	modal.style.position = 'fixed';
+ 	modal.style.top = '0';
+ 	modal.style.left = '0';
+ 	modal.style.width = '100%';
+ 	modal.style.height = '100%';
+ 	modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+ 	modal.style.zIndex = '1000';
+ 	modal.style.display = 'flex';
+ 	modal.style.alignItems = 'center';
+ 	modal.style.justifyContent = 'center';
+ 	
+ 	// Create image element
+ 	var img = document.createElement('img');
+ 	img.src = src;
+ 	img.alt = 'Enlarged Image';
+ 	img.style.maxWidth = '90%';
+ 	img.style.maxHeight = '90%';
+ 	
+ 	// Create close button
+ 	var closeBtn = document.createElement('span');
+ 	closeBtn.innerHTML = '&times;';
+ 	closeBtn.style.position = 'absolute';
+ 	closeBtn.style.top = '20px';
+ 	closeBtn.style.right = '30px';
+ 	closeBtn.style.color = 'white';
+ 	closeBtn.style.fontSize = '40px';
+ 	closeBtn.style.cursor = 'pointer';
+ 	closeBtn.onclick = function() {
+ 		document.body.removeChild(modal);
+ 	};
+ 	
+ 	// Append elements to modal
+ 	modal.appendChild(img);
+ 	modal.appendChild(closeBtn);
+ 	
+ 	// Add modal to body
+ 	document.body.appendChild(modal);
+ 	
+ 	// Close modal when clicking outside image
+ 	modal.onclick = function(event) {
+ 		if (event.target === modal) {
+ 			document.body.removeChild(modal);
+ 		}
+ 	};
+ } 
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const sessionElement = document.getElementById('session-id');
+    if (sessionElement && sessionElement.dataset.sessionId) {
+        const sessionId = sessionElement.dataset.sessionId;
+        console.log('Page loaded, attempting to load analysis data for session:', sessionId);
+        loadAnalysisData(sessionId);
+    } else {
+        console.error('Session ID element not found or missing session ID');
+    }
+});
+ </script> 
+ {% endblock %}

@@ -1,0 +1,164 @@
+
+:root {
+    --primary-color: #2c5e3f;
+    --secondary-color: #4a7c59;
+    --background-color: #f4f7f6;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --heading-color: #1a3a2a;
+    --border-color: #e0e7e3;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+
+    /* Card-specific colors */
+    --analysis-color: #3b71ca; /* Blue */
+    --processing-color: #e4a11b; /* Amber */
+    --waste-color: #198754; /* Green */
+    --economic-color: #dc3545; /* Red */
+    --recommendations-color: #6f42c1; /* Purple */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+header h1 .fa-leaf {
+    margin-right: 10px;
+    color: #a3d9b1;
+}
+
+main {
+    padding-top: 30px;
+}
+
+#json-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 5px solid var(--border-color);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.card-title {
+    font-size: 1.6em;
+    color: var(--heading-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.card-title .fa {
+    margin-right: 12px;
+}
+
+/* Card-specific styles */
+.card-analysis { border-top-color: var(--analysis-color); }
+.card-analysis .card-title { color: var(--analysis-color); }
+.card-analysis .card-title .fa { color: var(--analysis-color); }
+
+.card-processing { border-top-color: var(--processing-color); }
+.card-processing .card-title { color: var(--processing-color); }
+.card-processing .card-title .fa { color: var(--processing-color); }
+
+.card-waste { border-top-color: var(--waste-color); }
+.card-waste .card-title { color: var(--waste-color); }
+.card-waste .card-title .fa { color: var(--waste-color); }
+
+.card-economic { border-top-color: var(--economic-color); }
+.card-economic .card-title { color: var(--economic-color); }
+.card-economic .card-title .fa { color: var(--economic-color); }
+
+.card-recommendations { border-top-color: var(--recommendations-color); }
+.card-recommendations .card-title { color: var(--recommendations-color); }
+.card-recommendations .card-title .fa { color: var(--recommendations-color); }
+
+
+.card-content p {
+    margin: 0 0 12px;
+}
+
+.card-content strong {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.list-item {
+    background-color: #f9fbf9;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--secondary-color);
+    transition: background-color 0.2s ease;
+}
+
+.list-item:hover {
+    background-color: #eef3ee;
+}
+
+.copy-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    display: block;
+    width: 100%;
+}
+
+.copy-btn:hover {
+    background-color: var(--primary-color);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9em;
+}

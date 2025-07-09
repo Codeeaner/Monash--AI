@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+
+{% block title %}Tea Leaf Detection - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Welcome Section -->
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="leaf-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h1 class="card-title mb-3">AI-Powered Tea Leaf Health Detection</h1>
+                <p class="card-text lead">
+                    Upload your tea leaf images and get instant AI-powered health analysis. 
+                    Our advanced YOLO model detects and classifies healthy and unhealthy leaves with high accuracy.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="col-12 mb-4">
+        <div class="row" id="stats-container">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-images fa-2x text-primary mb-2"></i>
+                        <h5 class="card-title">Total Images</h5>
+                        <h3 class="text-primary" id="total-images">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                        <h5 class="card-title">Healthy Leaves</h5>
+                        <h3 class="text-success" id="healthy-leaves">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                        <h5 class="card-title">Unhealthy Leaves</h5>
+                        <h3 class="text-danger" id="unhealthy-leaves">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-percentage fa-2x text-info mb-2"></i>
+                        <h5 class="card-title">Health Score</h5>
+                        <h3 class="text-info" id="health-percentage">-</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-upload"></i> Upload Tea Leaf Images</h3>
+            </div>
+            <div class="card-body">
+                <!-- Upload Form -->
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="session-name" class="form-label">Session Name</label>
+                        <input type="text" class="form-control" id="session-name" name="session_name" 
+                               placeholder="Enter a name for this detection session" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confidence-threshold" class="form-label">
+                            Confidence Threshold: <span id="confidence-value">0.25</span>
+                        </label>
+                        <input type="range" class="form-range" id="confidence-threshold" 
+                               name="confidence_threshold" min="0.1" max="0.9" step="0.05" value="0.25">
+                        <div class="form-text">Higher values = more confident detections, fewer false positives</div>
+                    </div>
+
+                    <!-- Upload Zone -->
+                    <div class="upload-zone" id="upload-zone">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h4>Drag & Drop Images Here</h4>
+                        <p class="text-muted">or click to browse files</p>
+                        <input type="file" id="file-input" name="files" multiple accept="image/*" style="display: none;">
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                                <i class="fas fa-folder-open"></i> Browse Files
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="switchToCamera()">
+                                <i class="fas fa-camera"></i> Use Camera
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Camera Section -->
+                    <div id="camera-section" style="display: none;">
+                        <h6>Camera Capture</h6>
+                        <video id="camera-feed" autoplay playsinline style="width: 100%; max-height: 300px; background: black;"></video>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-success" onclick="captureImage()">
+                                <i class="fas fa-camera"></i> Take Picture
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="switchToUpload()">
+                                <i class="fas fa-arrow-left"></i> Back to Upload
+                            </button>
+                        </div>
+                        <canvas id="camera-canvas" style="display: none;"></canvas>
+                    </div>
+
+                    <!-- File List -->
+                    <div id="file-list" class="mt-3" style="display: none;">
+                        <h6>Selected Files:</h6>
+                        <ul class="list-group" id="selected-files"></ul>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-play"></i> Start Detection
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="clearFiles()">
+                                <i class="fas fa-times"></i> Clear Files
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Progress Section -->
+                <div id="progress-section" class="mt-4" style="display: none;">
+                    <h6>Processing Progress</h6>
+                    <div class="progress mb-2">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div id="progress-info" class="text-muted"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="window.location.href='/history-page'">
+                        <i class="fas fa-history"></i> View Detection History
+                    </button>
+                    <button class="btn btn-outline-info" onclick="window.location.href='/docs'">
+                        <i class="fas fa-book"></i> API Documentation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6><i class="fas fa-clock"></i> Recent Sessions</h6>
+            </div>
+            <div class="card-body">
+                <div id="recent-sessions">
+                    <p class="text-muted">Loading recent sessions...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div class="modal fade" id="results-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detection Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="results-content">
+                <!-- Results will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="download-pdf-btn">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+                <button type="button" class="btn btn-success" id="download-csv-btn">
+                    <i class="fas fa-file-csv"></i> Download CSV
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentSessionId = null;
+let selectedFiles = [];
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadStatistics();
+    loadRecentSessions();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Confidence threshold slider
+    const confidenceSlider = document.getElementById('confidence-threshold');
+    confidenceSlider.addEventListener('input', function() {
+        document.getElementById('confidence-value').textContent = this.value;
+    });
+
+    // File input change
+    document.getElementById('file-input').addEventListener('change', handleFileSelect);
+
+    // Upload form submit
+    document.getElementById('upload-form').addEventListener('submit', handleUpload);
+
+    // Drag and drop
+    const uploadZone = document.getElementById('upload-zone');
+    
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        
+        const files = Array.from(e.dataTransfer.files);
+        const imageFiles = files.filter(file => file.type.startsWith('image/'));
+        
+        if (imageFiles.length > 0) {
+            selectedFiles = imageFiles;
+            displaySelectedFiles();
+        } else {
+            showAlert('Please select valid image files', 'warning');
+        }
+    });
+
+    // Click upload zone to browse, but not if clicking on buttons
+    uploadZone.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+            document.getElementById('file-input').click();
+        }
+    });
+}
+
+function handleFileSelect(event) {
+    const files = Array.from(event.target.files);
+    selectedFiles = files;
+    displaySelectedFiles();
+}
+
+function displaySelectedFiles() {
+    const fileList = document.getElementById('file-list');
+    const selectedFilesList = document.getElementById('selected-files');
+    
+    selectedFilesList.innerHTML = '';
+    
+    selectedFiles.forEach((file, index) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        listItem.innerHTML = `
+            <div>
+                <i class="fas fa-image text-primary me-2"></i>
+                ${file.name}
+                <small class="text-muted">(${formatFileSize(file.size)})</small>
+            </div>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        selectedFilesList.appendChild(listItem);
+    });
+    
+    fileList.style.display = selectedFiles.length > 0 ? 'block' : 'none';
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    displaySelectedFiles();
+}
+
+function clearFiles() {
+    selectedFiles = [];
+    document.getElementById('file-input').value = '';
+    displaySelectedFiles();
+}
+
+async function handleUpload(event) {
+    event.preventDefault();
+    
+    if (selectedFiles.length === 0) {
+        showAlert('Please select at least one image file', 'warning');
+        return;
+    }
+
+    const sessionName = document.getElementById('session-name').value;
+    const confidenceThreshold = document.getElementById('confidence-threshold').value;
+
+    if (!sessionName.trim()) {
+        showAlert('Please enter a session name', 'warning');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('session_name', sessionName);
+    formData.append('confidence_threshold', confidenceThreshold);
+    
+    // For single file, use 'file', for multiple files, use 'files'
+    if (selectedFiles.length === 1) {
+        formData.append('file', selectedFiles[0]);
+    } else {
+        selectedFiles.forEach(file => {
+            formData.append('files', file);
+        });
+    }
+
+    try {
+        showProgress(true);
+        
+        const endpoint = selectedFiles.length === 1 ? '/api/upload/single' : '/api/upload/batch';
+        
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            currentSessionId = result.session_id;
+            showAlert(result.message, 'success');
+            
+            // Start monitoring progress
+            monitorProgress(result.session_id);
+            
+            // Clear form
+            clearFiles();
+            document.getElementById('upload-form').reset();
+            
+        } else {
+            throw new Error(result.detail || result.message || 'Upload failed');
+        }
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        let errorMessage = 'Upload failed';
+        if (error.message && error.message !== '[object Object]') {
+            errorMessage += ': ' + error.message;
+        }
+        showAlert(errorMessage, 'danger');
+        showProgress(false);
+    }
+}
+
+function showProgress(show) {
+    const progressSection = document.getElementById('progress-section');
+    progressSection.style.display = show ? 'block' : 'none';
+    
+    if (show) {
+        updateProgress(0, 'Starting upload...');
+    }
+}
+
+function updateProgress(percentage, message) {
+    const progressBar = document.getElementById('progress-bar');
+    const progressInfo = document.getElementById('progress-info');
+    
+    progressBar.style.width = percentage + '%';
+    progressBar.textContent = Math.round(percentage) + '%';
+    progressInfo.textContent = message;
+}
+
+async function monitorProgress(sessionId) {
+    let completed = false;
+    
+    while (!completed) {
+        try {
+            const response = await fetch(`/api/upload/progress/${sessionId}`);
+            const progress = await response.json();
+            
+            if (response.ok) {
+                updateProgress(progress.percentage, 
+                    `Processing: ${progress.processed_images}/${progress.total_images} images`);
+                
+                if (progress.status === 'completed') {
+                    completed = true;
+                    showAlert('Processing completed successfully!', 'success');
+                    loadResults(sessionId);
+                    loadStatistics(); // Refresh stats
+                    loadRecentSessions(); // Refresh recent sessions
+                } else if (progress.status === 'failed') {
+                    completed = true;
+                    showAlert('Processing failed', 'danger');
+                }
+            }
+            
+            // Wait 2 seconds before next check
+            if (!completed) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            
+        } catch (error) {
+            console.error('Progress monitoring error:', error);
+            completed = true;
+            showAlert('Error monitoring progress', 'danger');
+        }
+    }
+    
+    showProgress(false);
+}
+
+async function loadResults(sessionId) {
+    try {
+        const response = await fetch(`/api/results/${sessionId}`);
+        const session = await response.json();
+        
+        if (response.ok) {
+            displayResults(session);
+        } else {
+            throw new Error('Failed to load results');
+        }
+        
+    } catch (error) {
+        console.error('Error loading results:', error);
+        showAlert('Error loading results', 'danger');
+    }
+}
+
+function displayResults(session) {
+    const resultsContent = document.getElementById('results-content');
+    
+    // Calculate totals
+    const completedResults = session.results.filter(r => r.status === 'completed');
+    const totalHealthy = completedResults.reduce((sum, r) => sum + r.healthy_count, 0);
+    const totalUnhealthy = completedResults.reduce((sum, r) => sum + r.unhealthy_count, 0);
+    const totalLeaves = totalHealthy + totalUnhealthy;
+    const averageHealth = totalLeaves > 0 ? (totalHealthy / totalLeaves * 100) : 0;
+    
+    resultsContent.innerHTML = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6>Session: ${session.name}</h6>
+                <p><strong>Status:</strong> <span class="badge bg-success">${session.status}</span></p>
+                <p><strong>Images Processed:</strong> ${session.processed_images}/${session.total_images}</p>
+            </div>
+            <div class="col-md-6">
+                <h6>Detection Summary</h6>
+                <p><strong>Total Leaves:</strong> ${totalLeaves}</p>
+                <p><strong>Healthy:</strong> <span class="healthy-badge badge">${totalHealthy}</span></p>
+                <p><strong>Unhealthy:</strong> <span class="unhealthy-badge badge">${totalUnhealthy}</span></p>
+                <p><strong>Health Score:</strong> ${averageHealth.toFixed(1)}%</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            ${completedResults.map(result => {
+                console.log("Image name from backend:", result.image_name);
+                // Construct image paths with multiple fallbacks, accounting for session ID in filename and additional variations
+                const baseName = result.image_name.split('.').slice(0, -1).join('.');
+                const extension = result.image_name.split('.').pop();
+                const possiblePaths = [
+                    `/results/${baseName}_annotated.${extension}`,
+                    `/results/${baseName}_${session.id}_annotated.${extension}`,
+                    `/results/${baseName}_annotated_${session.id}.${extension}`,
+                    `/results/${result.image_name}`,
+                    `/results/${baseName}_${session.id}.${extension}`,
+                    `/uploads/session_${session.id}/${baseName}_${session.id}.${extension}`,
+                    `/uploads/session_${session.id}/${result.image_name}`,
+                    `/results/${baseName}.${extension}_annotated`,
+                    `/results/${baseName}_${session.id}.${extension}_annotated`
+                ];
+                console.log("Attempting image paths for", result.image_name, ":", possiblePaths);
+                // Use the first path as default, with onerror fallbacks
+                return `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">${result.image_name}</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted">Healthy:</small>
+                                        <div class="fw-bold text-success">${result.healthy_count}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Unhealthy:</small>
+                                        <div class="fw-bold text-danger">${result.unhealthy_count}</div>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Health Score:</small>
+                                    <div class="fw-bold">${result.health_percentage.toFixed(1)}%</div>
+                                    <div class="progress mt-1" style="height: 5px;">
+                                        <div class="progress-bar" style="width: ${result.health_percentage}%"></div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <img src="${possiblePaths[0]}" alt="Annotated ${result.image_name}" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;" 
+                                         onerror="this.src='${possiblePaths[1]}'; this.onerror=function(){this.src='${possiblePaths[2]}'; this.onerror=function(){this.src='${possiblePaths[3]}'; this.onerror=function(){this.src='${possiblePaths[4]}'; this.onerror=function(){this.src='${possiblePaths[5]}'; this.onerror=function(){this.src='${possiblePaths[6]}'; this.onerror=function(){this.src='${possiblePaths[7]}'; this.onerror=function(){this.src='${possiblePaths[8]}'; this.onerror=function(){this.src=''; this.alt='Image not found'; this.style.border='1px solid #ccc'; this.style.padding='10px'; this.innerText='Image could not be loaded';};};};};};};};};">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+    
+    // Update download buttons
+    document.getElementById('download-pdf-btn').onclick = () => downloadReport('pdf', session.id);
+    document.getElementById('download-csv-btn').onclick = () => downloadReport('csv', session.id);
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('results-modal')).show();
+}
+
+function downloadReport(type, sessionId) {
+    window.open(`/api/reports/download/${type}/${sessionId}`, '_blank');
+}
+
+async function loadStatistics() {
+    try {
+        const response = await fetch('/api/stats');
+        const stats = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('total-images').textContent = stats.total_images_processed.toLocaleString();
+            document.getElementById('healthy-leaves').textContent = stats.total_healthy_leaves.toLocaleString();
+            document.getElementById('unhealthy-leaves').textContent = stats.total_unhealthy_leaves.toLocaleString();
+            document.getElementById('health-percentage').textContent = stats.average_health_percentage.toFixed(1) + '%';
+        }
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+    }
+}
+
+async function loadRecentSessions() {
+    try {
+        const response = await fetch('/api/sessions?limit=5');
+        const sessions = await response.json();
+        
+        const recentSessionsDiv = document.getElementById('recent-sessions');
+        
+        if (response.ok && sessions.length > 0) {
+            recentSessionsDiv.innerHTML = sessions.map(session => `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded" style="cursor: pointer;" onclick="window.location.href='/session/${session.id}'">
+                    <div>
+                        <small class="fw-bold">${session.name}</small><br>
+                        <small class="text-muted">${formatDate(session.created_at)}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-${session.status === 'completed' ? 'success' : session.status === 'failed' ? 'danger' : 'warning'}">
+                            ${session.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            recentSessionsDiv.innerHTML = '<p class="text-muted">No recent sessions</p>';
+        }
+    } catch (error) {
+        console.error('Error loading recent sessions:', error);
+        document.getElementById('recent-sessions').innerHTML = '<p class="text-muted">Error loading sessions</p>';
+    }
+}
+
+// Camera functionality
+let cameraStream = null;
+
+function switchToCamera() {
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('camera-section').style.display = 'block';
+    startCamera();
+}
+
+function switchToUpload() {
+    document.getElementById('camera-section').style.display = 'none';
+    document.getElementById('upload-zone').style.display = 'block';
+    stopCamera();
+}
+
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment' } 
+        });
+        cameraStream = stream;
+        document.getElementById('camera-feed').srcObject = stream;
+    } catch (error) {
+        console.error('Error accessing camera:', error);
+        showAlert('Unable to access camera. Please ensure you have granted permission.', 'danger');
+        switchToUpload();
+    }
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+        document.getElementById('camera-feed').srcObject = null;
+    }
+}
+
+function captureImage() {
+    const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('camera-canvas');
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    const blob = dataURLtoBlob(dataUrl);
+    const file = new File([blob], `captured_image_${Date.now()}.jpg`, { type: 'image/jpeg' });
+    
+    selectedFiles = [file];
+    displaySelectedFiles();
+    switchToUpload();
+}
+
+function dataURLtoBlob(dataurl) {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+}
+</script>
+{% endblock %}
