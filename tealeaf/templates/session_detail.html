@@ -2,19 +2,22 @@
 
 {% block title %}Session Details - Tea Leaf Detection{% endblock %} 
 
-{% block content %} 
-<head> 
-	<meta charset="UTF-8"> 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-</head> 
+{% block head %}
+    {{ super() }}
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <!-- Add Tailwind CSS CDN for UI design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
 
+{% block content %} 
 <div class="container p-4 p-md-8"> 
     <!-- Add hidden session ID element -->
     <div id="session-id" data-session-id="{{ session.id }}" style="display: none;"></div>
     
-    <div class="session-header-sticky">
+	<div class="session-header-sticky">
         <div class="container px-4">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-4">
+            <div class="d-flex justify-content-between align-items-start">
             <div>
                 <h1 class="text-3xl-custom font-bold-custom text-gray-900 mb-2 tracking-tight d-flex align-items-center">
                     <div class="icon-bg-gradient">
@@ -36,12 +39,13 @@
     </div>
 
  	<div class="d-flex flex-column gap-8"> 
+ 		<!-- Session Overview - Full Width -->
  		<div class="row g-4"> 
- 			<div class="col-12 col-lg-6"> 
+ 			<div class="col-12"> 
  				<div class="card-custom"> 
  					<h2 class="text-xl-custom font-bold-custom mb-4 pb-3 border-bottom text-gray-700-custom">Session Overview</h2> 
  					<div class="row g-4"> 
- 						<div class="col-12 col-md-6"> 
+ 						<div class="col-12 col-md-3"> 
  							<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3">Information</h3> 
  							<div class="d-flex flex-column gap-3 text-sm-custom"> 
  								<p><strong>Status:</strong>  
@@ -55,64 +59,149 @@
  								<p><strong>Failed:</strong> <span class="text-red-600-custom font-semibold-custom">{{ failed_count }}</span></p> 
  							</div> 
  						</div> 
- 						<div class="col-12 col-md-6"> 
+ 						<div class="col-12 col-md-3"> 
  							<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3">Detection Results</h3> 
  							<div class="d-flex flex-column gap-3 text-sm-custom"> 
  								<p><strong>Total Leaves:</strong> <span class="text-gray-600-custom font-bold-custom">{{ total_leaves }}</span></p> 
  								<p><strong>Healthy:</strong> <span class="text-green-600-custom font-semibold-custom">{{ total_healthy }}</span></p> 
  								<p><strong>Unhealthy:</strong> <span class="text-red-600-custom font-semibold-custom">{{ total_unhealthy }}</span></p> 
- 								 
- 								{% set health_score = (average_health|default(0)|float) %} 
- 								{% if health_score > 100 %}{% set health_score = 100 %}{% endif %} 
- 								{% if health_score < 0 %}{% set health_score = 0 %}{% endif %} 
- 								 
- 								<div> 
- 									<p class="mb-1"><strong>Health Score:</strong>  
- 										<span class="font-bold-custom text-lg-custom {% if health_score >= 70 %}health-score-green{% elif health_score >= 50 %}health-score-yellow{% else %}health-score-red{% endif %}"> 
- 											{{ health_score|round(1) }}% 
-										</span> 
- 									</p> 
- 									<div class="progress-bar-container"> 
- 										<div class="progress-bar-fill {% if health_score >= 70 %}bg-green-500{% elif health_score >= 50 %}bg-yellow-500{% else %}bg-red-500{% endif %}"  
- 											 style="width: {{ health_score }}%"> 
- 										</div> 
+ 							</div> 
+ 						</div> 
+ 						<div class="col-12 col-md-6">
+ 							<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3">Health Score</h3>
+ 							{% set health_score = (average_health|default(0)|float) %} 
+ 							{% if health_score > 100 %}{% set health_score = 100 %}{% endif %} 
+ 							{% if health_score < 0 %}{% set health_score = 0 %}{% endif %} 
+ 							 
+ 							<div> 
+ 								<p class="mb-1"><strong>Overall Health:</strong>  
+ 									<span class="font-bold-custom text-lg-custom {% if health_score >= 70 %}health-score-green{% elif health_score >= 50 %}health-score-yellow{% else %}health-score-red{% endif %}"> 
+ 										{{ health_score|round(1) }}% 
+									</span> 
+ 								</p> 
+ 								<div class="progress-bar-container"> 
+ 									<div class="progress-bar-fill {% if health_score >= 70 %}bg-green-500{% elif health_score >= 50 %}bg-yellow-500{% else %}bg-red-500{% endif %}"  
+ 										 style="width: {{ health_score }}%"> 
  									</div> 
  								</div> 
  							</div> 
- 						</div> 
+ 						</div>
  					</div> 
  				</div> 
  			</div>
+ 		</div>
 
-			<div class="col-12 col-lg-6"> 
-				<div class="card-custom overflow-hidden"> 
+		<!-- Annotated Images - Tile/Grid Layout -->
+		<div class="row g-4">
+			<div class="col-12"> 
+				<div class="card-custom"> 
 					<div class="card-header-gradient"> 
-						<h2 class="text-2xl-custom font-bold-custom text-gray-800-custom d-flex align-items-center">
-							<div class="icon-bg-gradient-blue">
-								<i class="fas fa-images text-white text-sm-custom"></i>
+						<div class="d-flex justify-content-between align-items-center">
+							<h2 class="text-2xl-custom font-bold-custom text-gray-800-custom d-flex align-items-center mb-0">
+								<div class="icon-bg-gradient-blue">
+									<i class="fas fa-images text-white text-sm-custom"></i>
+								</div>
+								Annotated Images ({{ session.results|length }})
+							</h2>
+							<div class="view-toggle-buttons">
+								<button id="grid-view-btn" class="btn-view-toggle active" onclick="switchView('grid')">
+									<i class="fas fa-th"></i> Grid
+								</button>
+								<button id="list-view-btn" class="btn-view-toggle" onclick="switchView('list')">
+									<i class="fas fa-list"></i> List
+								</button>
 							</div>
-							Annotated Images
-						</h2> 
+						</div>
 					</div> 
 					<div class="p-4"> 
-						<div class="d-flex flex-column gap-4"> 
+						<!-- Grid View: 3 per row -->
+						<div id="grid-view" class="images-grid-container" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 1.5rem;">
 							{% for result in session.results %} 
-							<div class="image-card-group"> 
-								<div class="d-flex flex-row"> 
-									<div class="image-container-gradient" onclick="enlargeImage('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}')">
-										<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
-											alt="Annotated image" 
-											class="img-fluid" 
-											onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
-										> 
-										<div class="image-overlay"> 
-											<div class="image-overlay-icon-bg">
-												<i class="fas fa-search-plus text-white text-xl-custom"></i> 
+							<div class="image-tile-card"> 
+								<div class="image-tile-container" onclick="enlargeImageWithDetails('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
+										alt="Annotated image" 
+										class="image-tile-img" 
+										onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
+									> 
+									<div class="image-tile-overlay"> 
+										<div class="image-overlay-icon-bg">
+											<i class="fas fa-search-plus text-white text-xl-custom"></i> 
+										</div>
+									</div>
+									<!-- Hover Details Panel -->
+									<div class="image-tile-hover-details">
+										<div class="hover-details-content">
+											<div class="hover-status-badge status-badge {% if result.status == 'completed' %}completed{% elif result.status == 'processing' %}processing{% elif result.status == 'failed' %}failed{% else %}default{% endif %}">
+												{% if result.status == 'completed' %}
+													<i class="fas fa-check-circle me-1"></i>
+												{% elif result.status == 'processing' %}
+													<i class="fas fa-spinner fa-spin me-1"></i>
+												{% elif result.status == 'failed' %}
+													<i class="fas fa-exclamation-circle me-1"></i>
+												{% endif %}
+												{{ result.status }}
 											</div>
-										</div> 
+											<div class="hover-health-score">
+												<span class="health-score-hover {% if result.health_percentage|default(0) >= 70 %}health-score-green{% elif result.health_percentage|default(0) >= 50 %}health-score-yellow{% else %}health-score-red{% endif %}">
+													{{ result.health_percentage|default(0)|round(1) }}%
+												</span>
+												<span class="hover-health-label">Health Score</span>
+											</div>
+											<div class="hover-stats-mini">
+												<div class="mini-stat green">
+													<span>{{ result.healthy_count }}</span>
+													<small>Healthy</small>
+												</div>
+												<div class="mini-stat red">
+													<span>{{ result.unhealthy_count }}</span>
+													<small>Unhealthy</small>
+												</div>
+												<div class="mini-stat gray">
+													<span>{{ result.total_count }}</span>
+													<small>Total</small>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> 
+								<div class="image-tile-info"> 
+									<div class="tile-image-name">
+										<span class="image-name-text">{{ result.image_name }}</span>
+									</div>
+									<div class="tile-quick-stats">
+										<div class="quick-stat-item">
+											<i class="fas fa-leaf text-green-500"></i>
+											<span>{{ result.healthy_count }}/{{ result.total_count }}</span>
+										</div>
+										<div class="quick-stat-item">
+											<i class="fas fa-clock text-gray-400"></i>
+											<span>{{ result.processing_time|round(2) }}s</span>
+										</div>
+									</div>
+								</div> 
+							</div> 
+							{% endfor %}
+						</div>
+
+						<!-- List View -->
+						<div id="list-view" class="images-list-container" style="display: none;">
+							{% for result in session.results %} 
+							<div class="image-list-item"> 
+								<div class="image-list-thumbnail" onclick="enlargeImageWithDetails('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
+										alt="Annotated image" 
+										class="list-thumbnail-img" 
+										onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
+									> 
+									<div class="list-thumbnail-overlay"> 
+										<i class="fas fa-search-plus text-white"></i> 
 									</div> 
-									<div class="image-details-panel"> 
-										<div class="d-flex justify-content-between align-items-start mb-4"> 
+								</div> 
+								<div class="image-list-details"> 
+									<div class="list-header">
+										<div class="list-title-section">
+											<h5 class="list-image-title">{{ result.image_name }}</h5>
 											<span class="status-badge {% if result.status == 'completed' %}completed{% elif result.status == 'processing' %}processing{% elif result.status == 'failed' %}failed{% else %}default{% endif %}"> 
 												{% if result.status == 'completed' %}
 													<i class="fas fa-check-circle me-1"></i>
@@ -122,66 +211,74 @@
 													<i class="fas fa-exclamation-circle me-1"></i>
 												{% endif %}
 												{{ result.status }} 
-											</span> 
-											<div class="text-end">
-												<span class="health-score-large {% if result.health_percentage|default(0) >= 70 %}health-score-green{% elif result.health_percentage|default(0) >= 50 %}health-score-yellow{% else %}health-score-red{% endif %}"> 
-													{{ result.health_percentage|default(0)|round(1) }}% 
-												</span>
-												<p class="text-gray-500-custom text-xs-custom font-medium-custom">Health Score</p>
+											</span>
+										</div>
+										<div class="list-health-section">
+											<span class="health-score-large {% if result.health_percentage|default(0) >= 70 %}health-score-green{% elif result.health_percentage|default(0) >= 50 %}health-score-yellow{% else %}health-score-red{% endif %}"> 
+												{{ result.health_percentage|default(0)|round(1) }}% 
+											</span>
+											<p class="health-label">Health Score</p>
+										</div>
+									</div>
+									
+									<div class="list-stats-grid"> 
+										<div class="list-stat-box green"> 
+											<div class="stat-icon">
+												<i class="fas fa-leaf"></i>
+											</div>
+											<div class="stat-content">
+												<span class="stat-value">{{ result.healthy_count }}</span> 
+												<span class="stat-label">Healthy</span> 
 											</div>
 										</div> 
-										<div class="row g-2"> 
-											<div class="col-4"> 
-												<div class="stat-box green"> 
-													<span class="text-green-600-custom stat-value">{{ result.healthy_count }}</span> 
-													<p class="text-green-700-custom stat-label">Healthy</p> 
-												</div> 
-											</div> 
-											<div class="col-4"> 
-												<div class="stat-box red"> 
-													<span class="text-red-600-custom stat-value">{{ result.unhealthy_count }}</span> 
-													<p class="text-red-700-custom stat-label">Unhealthy</p> 
-												</div> 
-											</div> 
-											<div class="col-4"> 
-												<div class="stat-box gray"> 
-													<strong class="text-gray-800-custom stat-value">{{ result.total_count }}</strong> 
-													<p class="text-gray-600-custom stat-label">Total</p> 
-												</div> 
-											</div> 
+										<div class="list-stat-box red"> 
+											<div class="stat-icon">
+												<i class="fas fa-exclamation-triangle"></i>
+											</div>
+											<div class="stat-content">
+												<span class="stat-value">{{ result.unhealthy_count }}</span> 
+												<span class="stat-label">Unhealthy</span> 
+											</div>
 										</div> 
-										<div class="mt-1 border-top border-gray-200">
-											<div class="d-flex align-items-center justify-content-between">
-												<div class="d-flex align-items-center text-gray-600-custom">
-													<i class="fas fa-clock text-xs-custom me-2"></i>
-													<span class="text-sm-custom">{{ result.processing_time|round(2) }}s</span>
-												</div>
-												<div class="d-flex align-items-center text-gray-500-custom">
-													<i class="fas fa-calendar text-xs-custom me-2"></i>
-													<span class="text-xs-custom">Just now</span>
-												</div>
+										<div class="list-stat-box gray"> 
+											<div class="stat-icon">
+												<i class="fas fa-layer-group"></i>
+											</div>
+											<div class="stat-content">
+												<span class="stat-value">{{ result.total_count }}</span> 
+												<span class="stat-label">Total</span> 
+											</div>
+										</div> 
+										<div class="list-stat-box blue">
+											<div class="stat-icon">
+												<i class="fas fa-stopwatch"></i>
+											</div>
+											<div class="stat-content">
+												<span class="stat-value">{{ result.processing_time|round(2) }}s</span>
+												<span class="stat-label">Processing</span>
 											</div>
 										</div>
 									</div> 
 								</div> 
 							</div> 
-							{% endfor %} 
-							{% if session.results|length == 0 %} 
-							<div class="col-12 text-center py-5"> 
-								<div class="card-custom p-4 border-dashed border-2 border-gray-200">
-									<div class="ai-analysis-placeholder-icon-bg">
-										<i class="fas fa-image ai-analysis-placeholder-icon"></i>
-									</div>
-									<h3 class="text-lg-custom font-medium-custom text-gray-800-custom mb-2">No Images Found</h3>
-									<p class="text-gray-500-custom">No annotated images are available for this session yet.</p>
+							{% endfor %}
+						</div>
+
+						{% if session.results|length == 0 %} 
+						<div class="text-center py-5"> 
+							<div class="card-custom p-4 border-dashed border-2 border-gray-200">
+								<div class="ai-analysis-placeholder-icon-bg">
+									<i class="fas fa-image ai-analysis-placeholder-icon"></i>
 								</div>
-							</div> 
-							{% endif %} 
+								<h3 class="text-lg-custom font-medium-custom text-gray-800-custom mb-2">No Images Found</h3>
+								<p class="text-gray-500-custom">No annotated images are available for this session yet.</p>
+							</div>
 						</div> 
+						{% endif %} 
 					</div> 
 				</div> 
 			</div>
- 		</div> 
+		</div>
 
  		<div class="card-custom"> 
  			<div class="p-4 border-bottom"> 
@@ -191,40 +288,114 @@
  			</div> 
  			<div class="p-4"> 
  				<div id="ai-analysis-content" style="display: none;"> 
- 					<div class="row g-4"> 
- 						<div class="col-12 col-md-4"> 
- 							 <h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-2"><i class="fas fa-chart-line me-2"></i>Analysis Summary</h3> 
- 							<p class="text-gray-600-custom text-sm-custom" id="analysis-summary"></p> 
- 						</div> 
- 						<div class="col-12 col-md-8"> 
-                            <div class="row g-4">
-                                <div class="col-12 col-lg-6"> 
-                                    <h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-2"><i class="fas fa-info-circle me-2"></i>Details</h3> 
-                                    <div class="ai-analysis-container"> 
-                                        <div id="analysis-details"></div> 
-                                    </div> 
-                                </div> 
-                                <div class="col-12 col-lg-6"> 
-                                    <h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-2"><i class="fas fa-lightbulb me-2"></i>Recommendations</h3> 
-                                    <ul class="ai-analysis-recommendations-list" id="analysis-recommendations"> 
-                                    </ul> 
-                                </div> 
-                            </div>
- 						</div> 
- 					</div> 
- 				</div> 
- 				<div id="ai-analysis-placeholder" class="text-center py-5"> 
- 					<div class="mb-4"> 
- 						<i class="fas fa-leaf fa-4x text-green-200"></i> 
- 					</div> 
- 					<p class="font-semibold-custom text-gray-700-custom mb-2">Analysis Not Started</p> 
- 					<p class="text-gray-500-custom text-sm-custom mb-4">Generate detailed insights and recommendations for this session.</p> 
- 					<button class="btn btn-primary"  
- 							onclick="analyzeSession(this.getAttribute('data-session-id'))"  
- 							data-session-id="{{ session.id }}"> 
- 						<i class="fas fa-rocket me-2"></i> Start Analysis 
- 					</button> 
- 				</div> 
+ 					<!-- Analysis Summary Section -->
+					<div class="row g-4 mb-5">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-chart-line me-2"></i>Analysis Summary
+								</h3>
+								<p class="text-gray-600-custom" id="analysis-summary"></p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Overall Assessment Section -->
+					<div class="row g-4 mb-5" id="overall-assessment-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-clipboard-check me-2"></i>Overall Assessment
+								</h3>
+								<div id="overall-assessment-content"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Processing Recommendations Section -->
+					<div class="row g-4 mb-5" id="processing-recommendations-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-cogs me-2"></i>Processing Recommendations
+								</h3>
+								<div id="processing-recommendations-content"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Waste Prevention Section -->
+					<div class="row g-4 mb-5" id="waste-prevention-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-recycle me-2"></i>Waste Prevention
+								</h3>
+								<div id="waste-prevention-content"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Economic Impact Section -->
+					<div class="row g-4 mb-5" id="economic-impact-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-dollar-sign me-2"></i>Economic Impact
+								</h3>
+								<div id="economic-impact-content"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Priority Recommendations Section -->
+					<div class="row g-4 mb-5" id="priority-recommendations-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-star me-2"></i>Priority Recommendations
+								</h3>
+								<ul class="ai-analysis-recommendations-list" id="priority-recommendations-list"></ul>
+							</div>
+						</div>
+					</div>
+
+					<!-- Batch Processing Strategy Section (for batch analysis) -->
+					<div class="row g-4 mb-5" id="batch-strategy-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-layer-group me-2"></i>Batch Processing Strategy
+								</h3>
+								<div id="batch-strategy-content"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Monitoring Recommendations Section (for batch analysis) -->
+					<div class="row g-4 mb-5" id="monitoring-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-green-700-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-eye me-2"></i>Monitoring Recommendations
+								</h3>
+								<div id="monitoring-content"></div>
+							</div>
+						</div>
+					</div>
+				</div> 
+				<div id="ai-analysis-placeholder" class="text-center py-5"> 
+					<div class="mb-4"> 
+						<i class="fas fa-leaf fa-4x text-green-200"></i> 
+					</div> 
+					<p class="font-semibold-custom text-gray-700-custom mb-2">Analysis Not Started</p> 
+					<p class="text-gray-500-custom text-sm-custom mb-4">Generate detailed insights and recommendations for this session.</p> 
+					<button class="btn btn-primary"  
+							onclick="analyzeSession(this.getAttribute('data-session-id'))"  
+							data-session-id="{{ session.id }}"> 
+						<i class="fas fa-rocket me-2"></i> Start Analysis 
+					</button> 
+				</div> 
  			</div> 
  		</div> 
  	</div> 
@@ -417,203 +588,353 @@
  	}
  }
 
- // **MODIFIED FUNCTION** // Function to display analysis data on the page using Tailwind CSS classes 
- function displayAnalysisData(analysisData) { 
- 	const placeholder = document.getElementById('ai-analysis-placeholder'); 
- 	const content = document.getElementById('ai-analysis-content'); 
- 	const summaryEl = document.getElementById('analysis-summary'); 
- 	const detailsEl = document.getElementById('analysis-details'); 
- 	const recommendationsEl = document.getElementById('analysis-recommendations'); 
- 	 
- 	if (!content || !summaryEl || !detailsEl || !recommendationsEl) { 
- 		console.error('UI elements for analysis display not found'); 
- 		return; 
- 	} 
- 	 
- 	// Log the received data for debugging
- 	console.log('Analysis Data Received by displayAnalysisData:', analysisData);
- 	 
-    // Always hide the placeholder and show the content if data is received
-    placeholder.style.display = 'none';
-    content.style.display = 'block';
+function displayAnalysisData(analysisData) { 
+	const placeholder = document.getElementById('ai-analysis-placeholder'); 
+	const content = document.getElementById('ai-analysis-content'); 
+	const summaryEl = document.getElementById('analysis-summary'); 
+	
+	if (!content || !summaryEl) { 
+		console.error('UI elements for analysis display not found'); 
+		return; 
+	} 
+	
+	// Log the received data for debugging
+	console.log('Analysis Data Received by displayAnalysisData:', analysisData);
+	
+	// Always hide the placeholder and show the content if data is received
+	placeholder.style.display = 'none';
+	content.style.display = 'block';
 
- 	// Function to render JSON data as styled HTML with Tailwind classes 
- 	function renderJsonToHtml(obj, parent, level = 0) { 
- 		if (!obj || typeof obj !== 'object') { 
- 			const textEl = document.createElement('p'); 
- 			textEl.textContent = obj !== null && obj !== undefined ? obj.toString() : 'N/A'; 
- 			textEl.className = 'text-gray-600'; 
- 			parent.appendChild(textEl); 
- 			return; 
- 		} 
- 		 
- 		if (Array.isArray(obj)) { 
- 			if (obj.length === 0) { 
- 				const emptyEl = document.createElement('p'); 
- 				emptyEl.textContent = '(Empty List)'; 
- 				emptyEl.className = 'text-gray-500 italic'; 
- 				parent.appendChild(emptyEl); 
- 				return; 
- 			} 
- 			const ul = document.createElement('ul'); 
- 			ul.className = 'list-disc list-inside space-y-1 pl-2'; 
- 			obj.forEach(item => { 
- 				const li = document.createElement('li'); 
- 				li.className = 'text-gray-600'; 
- 				if (typeof item === 'object' && item !== null) { 
- 					renderJsonToHtml(item, li, level + 1); 
- 				} else { 
- 					li.textContent = item !== null && item !== undefined ? item.toString() : 'N/A'; 
- 				} 
- 				ul.appendChild(li); 
- 			}); 
- 			parent.appendChild(ul); 
- 		} else { 
- 			for (const [key, value] of Object.entries(obj)) { 
- 				const keyEl = document.createElement(level === 0 ? 'h6' : 'p'); 
- 				keyEl.className = level === 0 ? '' : 'font-semibold text-gray-700 mt-2'; 
- 				keyEl.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()); 
- 				parent.appendChild(keyEl); 
- 				 
- 				const container = document.createElement('div'); 
- 				container.className = level > 0 ? 'pl-4' : ''; 
- 				 
- 				if (typeof value === 'object' && value !== null) { 
- 					renderJsonToHtml(value, container, level + 1); 
- 				} else { 
- 					const valueEl = document.createElement('p'); 
- 					valueEl.className = 'text-gray-600 mb-2'; 
- 					valueEl.textContent = value !== null && value !== undefined ? value.toString() : 'N/A'; 
- 					container.appendChild(valueEl); 
- 				} 
- 				parent.appendChild(container); 
- 			} 
- 		} 
- 	} 
- 	 
-    function extractRecommendations(data) { 
-        const recs = new Set(); // Use a Set to avoid duplicates 
-        // Check for aggregate recommendations from batch analysis
-        if (data.aggregate_recommendations && typeof data.aggregate_recommendations === 'object') { 
-            const agg = data.aggregate_recommendations; 
-            if (agg.overall_assessment && agg.overall_assessment.recommended_action) recs.add(agg.overall_assessment.recommended_action); 
-            if (agg.batch_processing_strategy && agg.batch_processing_strategy.processing_sequence && Array.isArray(agg.batch_processing_strategy.processing_sequence)) {
-                agg.batch_processing_strategy.processing_sequence.forEach(seq => recs.add(seq));
-            }
-            if (agg.waste_minimization && agg.waste_minimization.waste_reduction_strategies && Array.isArray(agg.waste_minimization.waste_reduction_strategies)) {
-                agg.waste_minimization.waste_reduction_strategies.forEach(strat => recs.add(strat));
-            }
-            if (agg.monitoring_recommendations && agg.monitoring_recommendations.key_metrics && Array.isArray(agg.monitoring_recommendations.key_metrics)) {
-                agg.monitoring_recommendations.key_metrics.forEach(metric => recs.add(`Monitor: ${metric}`));
-            }
-        } 
-        // Check for individual analysis recommendations from AI response
-        if (data.ai_analysis && typeof data.ai_analysis === 'object') { 
-            const ai = data.ai_analysis; 
-            if (ai.analysis && ai.analysis.overall_assessment) recs.add(ai.analysis.overall_assessment); 
-            if (ai.processing_recommendations && ai.processing_recommendations.immediate_actions && Array.isArray(ai.processing_recommendations.immediate_actions)) {
-                ai.processing_recommendations.immediate_actions.forEach(action => recs.add(action));
-            }
-            if (ai.waste_prevention && ai.waste_prevention.prevention_measures && Array.isArray(ai.waste_prevention.prevention_measures)) {
-                ai.waste_prevention.prevention_measures.forEach(measure => recs.add(measure));
-            }
-            if (ai.recommendations && ai.recommendations.priority_actions && Array.isArray(ai.recommendations.priority_actions)) {
-                ai.recommendations.priority_actions.forEach(action => recs.add(action));
-            }
-        } 
-        return Array.from(recs); 
-    }
+	// Function to render JSON data as styled HTML 
+	function renderSectionContent(obj, containerId) {
+		const container = document.getElementById(containerId);
+		if (!container) return;
+		
+		container.innerHTML = '';
+		
+		if (!obj || typeof obj !== 'object') {
+			const textEl = document.createElement('p');
+			textEl.textContent = obj !== null && obj !== undefined ? obj.toString() : 'N/A';
+			textEl.className = 'text-gray-600-custom';
+			container.appendChild(textEl);
+			return;
+		}
+		
+		if (Array.isArray(obj)) {
+			if (obj.length === 0) {
+				const emptyEl = document.createElement('p');
+				emptyEl.textContent = '(No data available)';
+				emptyEl.className = 'text-gray-500-custom italic';
+				container.appendChild(emptyEl);
+				return;
+			}
+			const ul = document.createElement('ul');
+			ul.className = 'list-disc list-inside';
+			obj.forEach(item => {
+				const li = document.createElement('li');
+				li.className = 'text-gray-600-custom mb-2';
+				li.textContent = item !== null && item !== undefined ? item.toString() : 'N/A';
+				ul.appendChild(li);
+			});
+			container.appendChild(ul);
+		} else {
+			for (const [key, value] of Object.entries(obj)) {
+				const keyEl = document.createElement('h6');
+				keyEl.className = 'font-semibold-custom text-gray-700-custom mt-3 mb-2';
+				keyEl.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+				container.appendChild(keyEl);
+				
+				if (typeof value === 'object' && value !== null) {
+					if (Array.isArray(value)) {
+						const ul = document.createElement('ul');
+						ul.className = 'list-disc list-inside pl-4';
+						value.forEach(item => {
+							const li = document.createElement('li');
+							li.className = 'text-gray-600-custom mb-1';
+							li.textContent = item !== null && item !== undefined ? item.toString() : 'N/A';
+							ul.appendChild(li);
+						});
+						container.appendChild(ul);
+					} else {
+						const subContainer = document.createElement('div');
+						subContainer.className = 'pl-4 mb-3';
+						for (const [subKey, subValue] of Object.entries(value)) {
+							const subKeyEl = document.createElement('p');
+							subKeyEl.className = 'font-medium-custom text-gray-700-custom mb-1';
+							subKeyEl.textContent = subKey.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()) + ':';
+							subContainer.appendChild(subKeyEl);
+							
+							const subValueEl = document.createElement('p');
+							subValueEl.className = 'text-gray-600-custom mb-2 pl-4';
+							subValueEl.textContent = subValue !== null && subValue !== undefined ? subValue.toString() : 'N/A';
+							subContainer.appendChild(subValueEl);
+						}
+						container.appendChild(subContainer);
+					}
+				} else {
+					const valueEl = document.createElement('p');
+					valueEl.className = 'text-gray-600-custom mb-3 pl-4';
+					valueEl.textContent = value !== null && value !== undefined ? value.toString() : 'N/A';
+					container.appendChild(valueEl);
+				}
+			}
+		}
+	}
 
-    if (analysisData) { 
-        const id = analysisData.batch_analysis_id || analysisData.analysis_id || 'N/A'; 
-        const type = analysisData.batch_analysis_id ? 'Batch Analysis' : (analysisData.analysis_id ? 'Analysis' : 'Generic Analysis'); 
-         
-        summaryEl.textContent = `${type} (ID: ${id}) - Status: ${analysisData.status || 'Unknown'}`; 
-         
-        detailsEl.innerHTML = ''; 
-        // Prioritize displaying AI analysis details if available
-        if (analysisData.ai_analysis && typeof analysisData.ai_analysis === 'object') {
-            console.log('Rendering AI analysis data');
-            renderJsonToHtml(analysisData.ai_analysis, detailsEl);
-        } else if (analysisData.aggregate_recommendations && typeof analysisData.aggregate_recommendations === 'object') {
-            console.log('Rendering aggregate recommendations');
-            renderJsonToHtml(analysisData.aggregate_recommendations, detailsEl);
-        } else {
-            console.log('Rendering full analysis data as fallback');
-            renderJsonToHtml(analysisData, detailsEl);
-        }
-         
-        recommendationsEl.innerHTML = ''; 
-        const allRecs = extractRecommendations(analysisData); 
-        if (allRecs.length > 0) { 
-            console.log('Extracted recommendations:', allRecs);
-            allRecs.forEach(rec => { 
-                const recItem = document.createElement('li'); 
-                recItem.className = 'flex items-start p-2 rounded-md hover:bg-green-50'; 
-                recItem.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i><span class="text-gray-700">${rec}</span>`; 
-                recommendationsEl.appendChild(recItem); 
-            }); 
-        } else { 
-            console.log('No recommendations extracted from data');
-            recommendationsEl.innerHTML = `<p class="text-gray-500 italic">No recommendations available.</p>`; 
-        }
-    } else {
-        console.log('Analysis data is invalid or missing:', analysisData);
-        recommendationsEl.innerHTML = `<p class="text-gray-500 italic">No analysis data available.</p>`;
-        detailsEl.innerHTML = `<p class="text-gray-500 italic">No detailed analysis data to display.</p>`;
-        summaryEl.textContent = 'Analysis Data Unavailable';
-    }
- } 
+	// Function to show/hide sections based on available data
+	function showSection(sectionId, hasData) {
+		const section = document.getElementById(sectionId);
+		if (section) {
+			section.style.display = hasData ? 'block' : 'none';
+		}
+	}
 
- // Function to enlarge image in a modal
- function enlargeImage(src, title) {
- 	// Create modal container
- 	var modal = document.createElement('div');
- 	modal.style.position = 'fixed';
- 	modal.style.top = '0';
- 	modal.style.left = '0';
- 	modal.style.width = '100%';
- 	modal.style.height = '100%';
- 	modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
- 	modal.style.zIndex = '1000';
- 	modal.style.display = 'flex';
- 	modal.style.alignItems = 'center';
- 	modal.style.justifyContent = 'center';
- 	
- 	// Create image element
- 	var img = document.createElement('img');
- 	img.src = src;
- 	img.alt = 'Enlarged Image';
- 	img.style.maxWidth = '90%';
- 	img.style.maxHeight = '90%';
- 	
- 	// Create close button
- 	var closeBtn = document.createElement('span');
- 	closeBtn.innerHTML = '&times;';
- 	closeBtn.style.position = 'absolute';
- 	closeBtn.style.top = '20px';
- 	closeBtn.style.right = '30px';
- 	closeBtn.style.color = 'white';
- 	closeBtn.style.fontSize = '40px';
- 	closeBtn.style.cursor = 'pointer';
- 	closeBtn.onclick = function() {
- 		document.body.removeChild(modal);
- 	};
- 	
- 	// Append elements to modal
- 	modal.appendChild(img);
- 	modal.appendChild(closeBtn);
- 	
- 	// Add modal to body
- 	document.body.appendChild(modal);
- 	
- 	// Close modal when clicking outside image
- 	modal.onclick = function(event) {
- 		if (event.target === modal) {
- 			document.body.removeChild(modal);
- 		}
- 	};
- } 
+	// Function to populate priority recommendations
+	function populateRecommendations(recommendations, listId) {
+		const list = document.getElementById(listId);
+		if (!list) return;
+		
+		list.innerHTML = '';
+		if (!recommendations || recommendations.length === 0) {
+			list.innerHTML = '<p class="text-gray-500-custom italic">No recommendations available.</p>';
+			return;
+		}
+
+		recommendations.forEach(rec => {
+			const recItem = document.createElement('li');
+			recItem.className = 'flex items-start p-2 rounded-md hover:bg-green-50';
+			recItem.innerHTML = `<i class="fas fa-check-circle text-green-500 me-3 mt-1"></i><span class="text-gray-700">${rec}</span>`;
+			list.appendChild(recItem);
+		});
+	}
+
+	if (analysisData) {
+		const id = analysisData.batch_analysis_id || analysisData.analysis_id || 'N/A';
+		const type = analysisData.batch_analysis_id ? 'Batch Analysis' : (analysisData.analysis_id ? 'Analysis' : 'Generic Analysis');
+		
+		summaryEl.textContent = `${type} (ID: ${id}) - Status: ${analysisData.status || 'Unknown'}`;
+
+		// Handle AI Analysis data (individual analysis)
+		if (analysisData.ai_analysis && typeof analysisData.ai_analysis === 'object') {
+			const ai = analysisData.ai_analysis;
+			
+			// Overall Assessment
+			if (ai.analysis) {
+				showSection('overall-assessment-section', true);
+				renderSectionContent(ai.analysis, 'overall-assessment-content');
+			}
+			
+			// Processing Recommendations
+			if (ai.processing_recommendations) {
+				showSection('processing-recommendations-section', true);
+				renderSectionContent(ai.processing_recommendations, 'processing-recommendations-content');
+			}
+			
+			// Waste Prevention
+			if (ai.waste_prevention) {
+				showSection('waste-prevention-section', true);
+				renderSectionContent(ai.waste_prevention, 'waste-prevention-content');
+			}
+			
+			// Economic Impact
+			if (ai.economic_impact) {
+				showSection('economic-impact-section', true);
+				renderSectionContent(ai.economic_impact, 'economic-impact-content');
+			}
+			
+			// Priority Recommendations
+			if (ai.recommendations && ai.recommendations.priority_actions) {
+				showSection('priority-recommendations-section', true);
+				populateRecommendations(ai.recommendations.priority_actions, 'priority-recommendations-list');
+			}
+		}
+
+		// Handle Aggregate Recommendations (batch analysis)
+		if (analysisData.aggregate_recommendations && typeof analysisData.aggregate_recommendations === 'object') {
+			const agg = analysisData.aggregate_recommendations;
+			
+			// Overall Assessment
+			if (agg.overall_assessment) {
+				showSection('overall-assessment-section', true);
+				renderSectionContent(agg.overall_assessment, 'overall-assessment-content');
+			}
+			
+			// Batch Processing Strategy
+			if (agg.batch_processing_strategy) {
+				showSection('batch-strategy-section', true);
+				renderSectionContent(agg.batch_processing_strategy, 'batch-strategy-content');
+			}
+			
+			// Waste Minimization
+			if (agg.waste_minimization) {
+				showSection('waste-prevention-section', true);
+				renderSectionContent(agg.waste_minimization, 'waste-prevention-content');
+			}
+			
+			// Monitoring Recommendations
+			if (agg.monitoring_recommendations) {
+				showSection('monitoring-section', true);
+				renderSectionContent(agg.monitoring_recommendations, 'monitoring-content');
+			}
+		}
+	} else {
+		console.log('Analysis data is invalid or missing:', analysisData);
+		summaryEl.textContent = 'Analysis Data Unavailable';
+	}
+}
+
+// Enhanced function to enlarge image with detection details
+function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthScore, status) {
+	// Create modal container
+	var modal = document.createElement('div');
+	modal.className = 'image-modal-container';
+	
+	// Create modal content
+	var modalContent = document.createElement('div');
+	modalContent.className = 'image-modal-content';
+	
+	// Create close button
+	var closeBtn = document.createElement('button');
+	closeBtn.className = 'image-modal-close';
+	closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+	closeBtn.onclick = function() {
+		document.body.removeChild(modal);
+	};
+	
+	// Create image section
+	var imageSection = document.createElement('div');
+	imageSection.className = 'modal-image-section';
+	
+	var img = document.createElement('img');
+	img.src = src;
+	img.alt = 'Enlarged Image';
+	img.className = 'modal-image';
+	
+	imageSection.appendChild(img);
+	
+	// Create details section
+	var detailsSection = document.createElement('div');
+	detailsSection.className = 'modal-details-section';
+	
+	// Status and health score classes
+	var statusClass = '';
+	var healthScoreClass = '';
+	
+	if (status === 'completed') statusClass = 'completed';
+	else if (status === 'processing') statusClass = 'processing';
+	else if (status === 'failed') statusClass = 'failed';
+	else statusClass = 'default';
+	
+	if (healthScore >= 70) healthScoreClass = 'health-score-green';
+	else if (healthScore >= 50) healthScoreClass = 'health-score-yellow';
+	else healthScoreClass = 'health-score-red';
+	
+	detailsSection.innerHTML = `
+		<div class="modal-details-header">
+			<h3 class="modal-image-title">${title}</h3>
+			<span class="status-badge ${statusClass}">
+				${status === 'completed' ? '<i class="fas fa-check-circle me-1"></i>' : 
+				  status === 'processing' ? '<i class="fas fa-spinner fa-spin me-1"></i>' : 
+				  status === 'failed' ? '<i class="fas fa-exclamation-circle me-1"></i>' : ''}
+				${status}
+			</span>
+		</div>
+		
+		<div class="modal-health-section">
+			<div class="modal-health-score">
+				<span class="health-score-huge ${healthScoreClass}">${healthScore}%</span>
+				<span class="health-score-label">Overall Health Score</span>
+			</div>
+		</div>
+		
+		<div class="modal-stats-section">
+			<h4 class="modal-stats-title">Detection Results</h4>
+			<div class="modal-stats-grid">
+				<div class="modal-stat-card green">
+					<div class="modal-stat-icon">
+						<i class="fas fa-leaf"></i>
+					</div>
+					<div class="modal-stat-content">
+						<span class="modal-stat-number">${healthy}</span>
+						<span class="modal-stat-label">Healthy Leaves</span>
+						<span class="modal-stat-percentage">${total > 0 ? Math.round((healthy/total)*100) : 0}%</span>
+					</div>
+				</div>
+				
+				<div class="modal-stat-card red">
+					<div class="modal-stat-icon">
+						<i class="fas fa-exclamation-triangle"></i>
+					</div>
+					<div class="modal-stat-content">
+						<span class="modal-stat-number">${unhealthy}</span>
+						<span class="modal-stat-label">Unhealthy Leaves</span>
+						<span class="modal-stat-percentage">${total > 0 ? Math.round((unhealthy/total)*100) : 0}%</span>
+					</div>
+				</div>
+				
+				<div class="modal-stat-card gray">
+					<div class="modal-stat-icon">
+						<i class="fas fa-layer-group"></i>
+					</div>
+					<div class="modal-stat-content">
+						<span class="modal-stat-number">${total}</span>
+						<span class="modal-stat-label">Total Detected</span>
+						<span class="modal-stat-percentage">100%</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal-actions">
+			<button class="modal-action-btn" onclick="downloadImage('${src}', '${title}')">
+				<i class="fas fa-download me-2"></i>Download
+			</button>
+			<button class="modal-action-btn secondary" onclick="document.body.removeChild(this.closest('.image-modal-container'))">
+				<i class="fas fa-times me-2"></i>Close
+			</button>
+		</div>
+	`;
+	
+	// Assemble modal
+	modalContent.appendChild(closeBtn);
+	modalContent.appendChild(imageSection);
+	modalContent.appendChild(detailsSection);
+	modal.appendChild(modalContent);
+	
+	// Add modal to body
+	document.body.appendChild(modal);
+	
+	// Close modal when clicking outside
+	modal.onclick = function(event) {
+		if (event.target === modal) {
+			document.body.removeChild(modal);
+		}
+	};
+	
+	// Add escape key listener
+	var escapeHandler = function(event) {
+		if (event.key === 'Escape') {
+			document.body.removeChild(modal);
+			document.removeEventListener('keydown', escapeHandler);
+		}
+	};
+	document.addEventListener('keydown', escapeHandler);
+}
+
+// Function to download image
+function downloadImage(src, filename) {
+	var link = document.createElement('a');
+	link.href = src;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+}
+
+// Legacy function for compatibility
+function enlargeImage(src, title) {
+	enlargeImageWithDetails(src, title, 0, 0, 0, 0, 'unknown');
+}
 
  document.addEventListener('DOMContentLoaded', function() {
     const sessionElement = document.getElementById('session-id');
@@ -625,5 +946,33 @@
         console.error('Session ID element not found or missing session ID');
     }
 });
+ 
+// Add switchView function for grid/list toggle
+function switchView(viewType) {
+	const gridView = document.getElementById('grid-view');
+	const listView = document.getElementById('list-view');
+	const gridBtn = document.getElementById('grid-view-btn');
+	const listBtn = document.getElementById('list-view-btn');
+	
+	if (viewType === 'grid') {
+		gridView.style.display = 'grid'; // Use grid for grid view
+		listView.style.display = 'none';
+		gridBtn.classList.add('active');
+		listBtn.classList.remove('active');
+		localStorage.setItem('imageViewType', 'grid');
+	} else {
+		gridView.style.display = 'none';
+		listView.style.display = 'flex'; // Use flex for list view
+		gridBtn.classList.remove('active');
+		listBtn.classList.add('active');
+		localStorage.setItem('imageViewType', 'list');
+	}
+}
+
+// Ensure view is set on page load
+document.addEventListener('DOMContentLoaded', function() {
+	const savedViewType = localStorage.getItem('imageViewType') || 'grid';
+	switchView(savedViewType);
+});
  </script> 
- {% endblock %}
+{% endblock %}

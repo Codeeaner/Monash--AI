@@ -2,20 +2,31 @@
 
 {% block title %}Detection History - Tea Leaf Detection{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <!-- Add Tailwind CSS CDN for UI design -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@4.1.0/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block extra_css %}
 <style>
     /* Custom styles for better responsiveness and UI */
     .session-card {
-        transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        transition: box-shadow 0.2s, transform 0.2s;
         border: 1px solid #e9ecef;
-        position: relative; /* Set position for z-index to work */
-        z-index: 1; /* Default z-index */
+        position: relative;
+        z-index: 1;
+        border-radius: 1rem;
+        background: #fff;
+        overflow: visible;
     }
 
     .session-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        z-index: 2; /* Bring forward on hover */
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        z-index: 2;
     }
 
     /* When a dropdown inside a card is open, bring the whole card to the front */
@@ -26,6 +37,9 @@
     .stat-card {
         height: 100%;
         border-left: 3px solid #0d6efd;
+        border-radius: 0.75rem;
+        background: #f8fafc;
+        padding: 1rem;
     }
 
     .stat-card h6 {
@@ -34,16 +48,21 @@
 
     .progress-bar {
         background-color: #0d6efd;
+        border-radius: 0.5rem;
     }
 
     .healthy-badge {
         background-color: #198754;
         color: white;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.75rem;
     }
 
     .unhealthy-badge {
         background-color: #dc3545;
         color: white;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.75rem;
     }
 
     /* Ensure dropdown menu appears above other elements */
@@ -56,6 +75,29 @@
         .filter-buttons .btn {
             width: 100%;
         }
+        .session-card .row > div {
+            text-align: left !important;
+        }
+        .btn-group {
+            width: 100%;
+        }
+    }
+
+    /* Fix for session count badge */
+    #session-count {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+    }
+
+    .btn-clear-red {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        transition: background 0.2s;
+    }
+    .btn-clear-red:hover, .btn-clear-red:focus {
+        background-color: #b91c1c;
+        color: #fff;
     }
 </style>
 {% endblock %}
@@ -65,13 +107,16 @@
     <div class="row">
         <!-- Page Header -->
         <div class="col-12 mb-4">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
-                <div>
-                    <h2 class="h3"><i class="fas fa-history me-2"></i>Detection History</h2>
-                    <p class="text-muted mb-3 mb-sm-0">View and manage your tea leaf detection sessions.</p>
+            <div class="d-flex flex-row justify-content-between align-items-center gap-3 rounded-xl shadow-lg px-4 py-5 mb-4" style="background-color: #fff; border-radius: 1.5rem;">
+                <div class="d-flex flex-column">
+                    <h2 class="h3 mb-1 d-flex align-items-center gap-2">
+                        <i class="fas fa-history me-2 text-primary"></i>
+                        <span class="fw-bold text-primary">Detection History</span>
+                    </h2>
+                    <p class="text-muted mb-0">View and manage your tea leaf detection sessions.</p>
                 </div>
                 <div>
-                    <a href="/" class="btn btn-primary d-block d-sm-inline-block">
+                    <a href="/" class="btn btn-primary d-block d-sm-inline-block rounded-xl">
                         <i class="fas fa-plus me-1"></i> New Detection
                     </a>
                 </div>
@@ -106,9 +151,9 @@
                             <label for="search-input" class="form-label">Search Sessions</label>
                             <input type="text" class="form-control" id="search-input" placeholder="Search by session name...">
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-2 filter-buttons">
                            <div class="d-grid">
-                             <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                             <button class="btn btn-clear-red" onclick="clearFilters()">
                                 <i class="fas fa-times me-1"></i> Clear
                             </button>
                            </div>
@@ -121,11 +166,9 @@
         <!-- Sessions List -->
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Detection Sessions</h5>
-                    <div>
-                        <span id="session-count" class="badge bg-primary rounded-pill">0 sessions</span>
-                    </div>
+                    <span id="session-count" class="badge bg-primary rounded-pill">0 sessions</span>
                 </div>
                 <div class="card-body">
                     <!-- Loading indicator -->
@@ -315,11 +358,11 @@ function createSessionCard(session) {
     const statusClass = getStatusClass(session.status);
     const statusIcon = getStatusIcon(session.status);
     const healthScore = session.average_health_percentage || 0;
-    const healthColor = healthScore >= 70 ? 'success' : healthScore >= 50 ? 'warning' : 'danger';
+    const healthColor = healthScore >= 70 ? 'healthy-badge' : healthScore >= 50 ? 'bg-warning text-dark rounded' : 'unhealthy-badge';
 
     const progressBarHtml = session.status === 'processing' ? `
         <div class="mt-3">
-            <div class="progress" style="height: 8px;">
+            <div class="progress" style="height: 8px; border-radius: 0.5rem;">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ${(session.processed_images / session.total_images * 100)}%" aria-valuenow="${(session.processed_images / session.total_images * 100)}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <small class="text-muted d-block mt-1">Processing: ${session.processed_images} of ${session.total_images} images</small>
@@ -327,17 +370,16 @@ function createSessionCard(session) {
     ` : '';
 
     return `
-        <div class="card mb-3 session-card">
+        <div class="session-card mb-3">
             <div class="card-body p-3">
                 <div class="row align-items-center gy-3">
                     <!-- Session Name and Date -->
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-4 mb-2 mb-md-0">
                         <h6 class="card-title mb-1 fw-bold text-primary">${session.name}</h6>
                         <small class="text-muted">
                             <i class="fas fa-calendar-alt me-1"></i> ${formatDate(session.created_at)}
                         </small>
                     </div>
-
                     <!-- Stats -->
                     <div class="col-4 col-md-2 text-center">
                         <small class="text-muted d-block">Status</small>
@@ -349,11 +391,10 @@ function createSessionCard(session) {
                     </div>
                     <div class="col-4 col-md-2 text-center">
                         <small class="text-muted d-block">Health Score</small>
-                        <strong class="d-block text-${healthColor}">${healthScore.toFixed(1)}%</strong>
+                        <span class="${healthColor} px-2 py-1">${healthScore.toFixed(1)}%</span>
                     </div>
-
                     <!-- Actions -->
-                    <div class="col-12 col-md-2 text-center text-md-end">
+                    <div class="col-12 col-md-2 text-center text-md-end mt-2 mt-md-0">
                         <div class="btn-group">
                             <a href="/session/${session.id}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-eye me-1"></i> View
