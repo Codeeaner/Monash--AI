@@ -606,7 +606,8 @@ def analyze_detection_background(result_id: int, db: Session):
         # Run analysis
         analysis_result = analytics_service.analyze_detection_result(
             detection_data, 
-            detection_result.annotated_image_path
+            detection_result.annotated_image_path,
+            session_id=detection_result.session_id
         )
         
         # Save to database
@@ -672,7 +673,37 @@ def analyze_batch_background(session_id: int, db: Session):
         
         # Run batch analysis
         logger.info(f"Starting batch analysis for session {session_id}")
-        batch_analysis = analytics_service.analyze_batch_results(batch_data)
+        batch_analysis = analytics_service.analyze_batch_results(batch_data, session_id)
+        
+        # Handle single analysis case
+        if batch_analysis.get("status") == "single_analysis_only":
+            logger.info(f"Only one result in session {session_id}, skipping batch analysis save.")
+            # Optionally, save the individual analysis to DB if needed
+            for analysis in batch_analysis.get("individual_analyses", []):
+                # Check if already exists
+                existing = db.query(AnalysisResult).filter(
+                    AnalysisResult.analysis_id == analysis["analysis_id"]
+                ).first()
+                if not existing:
+                    db_analysis = AnalysisResult(
+                        analysis_id=analysis["analysis_id"],
+                        detection_result_id=None,
+                        session_id=session_id,
+                        model_used=analysis["model_used"],
+                        processing_time=analysis["processing_time"],
+                        status=analysis["status"],
+                        image_path=analysis.get("image_path"),
+                        annotated_image_path=analysis.get("image_path"),
+                        healthy_count=analysis["detection_summary"]["healthy_count"],
+                        unhealthy_count=analysis["detection_summary"]["unhealthy_count"],
+                        total_count=analysis["detection_summary"]["total_count"],
+                        health_percentage=analysis["detection_summary"]["health_percentage"],
+                        ai_analysis=analysis["ai_analysis"]
+                    )
+                    db.add(db_analysis)
+                    db.commit()
+            return
+
         logger.info(f"Batch analysis completed with ID {batch_analysis.get('batch_analysis_id', 'unknown')}")
         
         # Save to database

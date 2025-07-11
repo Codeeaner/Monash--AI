@@ -264,7 +264,7 @@ function setupEventListeners() {
 
 function handleFileSelect(event) {
     const files = Array.from(event.target.files);
-    selectedFiles = files;
+    selectedFiles.push(...files);
     displaySelectedFiles();
 }
 
@@ -322,25 +322,23 @@ async function handleUpload(event) {
         return;
     }
 
+    if (selectedFiles.length === 1) {
+        handleSingleUpload(sessionName, confidenceThreshold);
+    } else {
+        handleBatchUpload(sessionName, confidenceThreshold);
+    }
+}
+
+async function handleSingleUpload(sessionName, confidenceThreshold) {
     const formData = new FormData();
     formData.append('session_name', sessionName);
     formData.append('confidence_threshold', confidenceThreshold);
-    
-    // For single file, use 'file', for multiple files, use 'files'
-    if (selectedFiles.length === 1) {
-        formData.append('file', selectedFiles[0]);
-    } else {
-        selectedFiles.forEach(file => {
-            formData.append('files', file);
-        });
-    }
+    formData.append('file', selectedFiles[0]);
 
     try {
         showProgress(true);
         
-        const endpoint = selectedFiles.length === 1 ? '/api/upload/single' : '/api/upload/batch';
-        
-        const response = await fetch(endpoint, {
+        const response = await fetch('/api/upload/single', {
             method: 'POST',
             body: formData
         });
@@ -350,14 +348,49 @@ async function handleUpload(event) {
         if (response.ok) {
             currentSessionId = result.session_id;
             showAlert(result.message, 'success');
-            
-            // Start monitoring progress
             monitorProgress(result.session_id);
-            
-            // Clear form
             clearFiles();
             document.getElementById('upload-form').reset();
-            
+        } else {
+            throw new Error(result.detail || result.message || 'Upload failed');
+        }
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        let errorMessage = 'Upload failed';
+        if (error.message && error.message !== '[object Object]') {
+            errorMessage += ': ' + error.message;
+        }
+        showAlert(errorMessage, 'danger');
+        showProgress(false);
+    }
+}
+
+async function handleBatchUpload(sessionName, confidenceThreshold) {
+    const formData = new FormData();
+    formData.append('session_name', sessionName);
+    formData.append('confidence_threshold', confidenceThreshold);
+    
+    selectedFiles.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        showProgress(true);
+        
+        const response = await fetch('/api/upload/batch', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            currentSessionId = result.session_id;
+            showAlert(result.message, 'success');
+            monitorProgress(result.session_id);
+            clearFiles();
+            document.getElementById('upload-form').reset();
         } else {
             throw new Error(result.detail || result.message || 'Upload failed');
         }
@@ -634,7 +667,7 @@ function captureImage() {
     const blob = dataURLtoBlob(dataUrl);
     const file = new File([blob], `captured_image_${Date.now()}.jpg`, { type: 'image/jpeg' });
     
-    selectedFiles = [file];
+    selectedFiles.push(file);
     displaySelectedFiles();
     switchToUpload();
 }

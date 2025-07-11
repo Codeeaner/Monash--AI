@@ -74,7 +74,7 @@ class BatchAnalysisResult(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    session = relationship("DetectionSession", backref="batch_analytics")
+    session = relationship("DetectionSession", back_populates="batch_analytics")
 
 
 class WastePreventionRecommendation(Base):

@@ -22,10 +22,11 @@ function showAlert(message, type = 'info') {
         text: message,
         duration: 3000,
         close: true,
-        gravity: "top", // `top` or `bottom`
+        gravity: "bottom", // `top` or `bottom`
         position: "right", // `left`, `center` or `right`
         backgroundColor: backgroundColor,
         stopOnFocus: true, // Prevents dismissing of toast on hover
+        className: "toastify", // Add this line to apply custom styles
     }).showToast();
 }
 

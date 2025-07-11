@@ -85,7 +85,7 @@ class AnalyticsService:
         health_percentage = detection_data.get("health_percentage", 0.0)
         
         prompt = f"""
-You are an expert tea leaf quality analyst and agricultural consultant. I'm showing you an image of tea leaves with detection results overlaid.
+You are an expert tea leaf quality analyst and agricultural consultant. I'm showing you an image of tea leaves with detection results overlaid. If the image show no tea leaf, just reply "No tea leaf detected".
 
 DETECTION RESULTS:
 - Total leaves detected: {total_count}
@@ -97,10 +97,9 @@ Please analyze this image and provide detailed recommendations in the following 
 
 {{
     "analysis": {{
-        "overall_assessment": "Brief overall assessment of the tea leaf quality",
-        "defect_types": ["List of specific defect types observed"],
-        "severity_level": "low/medium/high",
-        "quality_grade": "premium/standard/below_standard/reject"
+        "overall_assessment": "Brief overall assessment of the tea leaf quality based on the image provided",
+        "severity_level": "Low/Medium/High",
+        "quality_grade": "Premium/Standard/Below standard/Reject"
     }},
     "processing_recommendations": {{
         "immediate_actions": ["List of immediate actions to take"],
@@ -131,13 +130,15 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
         return prompt
     
     def analyze_detection_result(self, detection_data: Dict[str, Any], 
-                               annotated_image_path: str) -> Dict[str, Any]:
+                               annotated_image_path: str, 
+                               session_id: Optional[int] = None) -> Dict[str, Any]:
         """
         Analyze detection results using Llava-Phi3 and provide recommendations.
 
         Args:
             detection_data: Detection results from the detection service
             annotated_image_path: Path to the annotated image
+            session_id: The ID of the session this analysis belongs to
             
         Returns:
             Analysis results with recommendations
@@ -197,6 +198,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             
             result = {
                 "analysis_id": self._generate_analysis_id(),
+                "session_id": session_id,
                 "timestamp": start_time.isoformat(),
                 "processing_time": processing_time,
                 "model_used": self.model_name,
@@ -222,7 +224,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             logger.error(f"Error during analysis: {e}")
             
             # Return fallback analysis
-            return self._create_fallback_analysis(detection_data, annotated_image_path, str(e))
+            return self._create_fallback_analysis(detection_data, annotated_image_path, str(e), session_id)
     
     def _parse_llama_response(self, response: str) -> Dict[str, Any]:
         """
@@ -295,7 +297,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
         }
     
     def _create_fallback_analysis(self, detection_data: Dict[str, Any], 
-                                image_path: str, error: str) -> Dict[str, Any]:
+                                image_path: str, error: str, session_id: Optional[int] = None) -> Dict[str, Any]:
         """
         Create fallback analysis when AI analysis fails.
         
@@ -303,6 +305,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             detection_data: Detection results
             image_path: Path to image
             error: Error message
+            session_id: The ID of the session this analysis belongs to
             
         Returns:
             Fallback analysis result
@@ -325,6 +328,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
         
         return {
             "analysis_id": self._generate_analysis_id(),
+            "session_id": session_id,
             "timestamp": datetime.now().isoformat(),
             "processing_time": 0.0,
             "model_used": "fallback_analysis",
@@ -399,7 +403,9 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
     def _generate_analysis_id(self) -> str:
         """Generate unique analysis ID."""
         import uuid
-        return f"analysis_{uuid.uuid4().hex[:8]}_{int(datetime.now().timestamp())}"
+        timestamp = int(datetime.now().timestamp())
+        unique_id = uuid.uuid4().hex[:8]
+        return f"analysis_{unique_id}_{timestamp}"
     
     def _save_analysis_result(self, analysis_result: Dict[str, Any]):
         """
@@ -409,7 +415,13 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             analysis_result: Analysis result to save
         """
         try:
-            analysis_id = analysis_result.get("analysis_id", "unknown")
+            analysis_id = analysis_result.get("analysis_id")
+            
+            # Don't save if analysis_id is missing or contains "unknown"
+            if not analysis_id or "unknown" in analysis_id:
+                logger.warning(f"Skipping save for invalid analysis_id: {analysis_id}")
+                return
+            
             filename = f"{analysis_id}.json"
             filepath = os.path.join(self.analytics_dir, filename)
             
@@ -421,12 +433,13 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
         except Exception as e:
             logger.error(f"Failed to save analysis result: {e}")
     
-    def analyze_batch_results(self, batch_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_batch_results(self, batch_results: List[Dict[str, Any]], session_id: int) -> Dict[str, Any]:
         """
         Analyze a batch of detection results and provide aggregate recommendations.
         
         Args:
             batch_results: List of individual detection results
+            session_id: The ID of the session this batch belongs to
             
         Returns:
             Aggregate analysis with batch-level recommendations
@@ -442,21 +455,43 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             
             overall_health_percentage = (total_healthy / total_leaves * 100) if total_leaves > 0 else 0
             
+            # If only one result, do NOT run batch analysis, just run individual analysis and return it
+            if total_images == 1:
+                single_result = batch_results[0]
+                analysis = self.analyze_detection_result(
+                    single_result,
+                    single_result["annotated_image_path"],
+                    session_id=session_id
+                )
+                # Only return the individual analysis, no batch_analysis_id
+                return {
+                    "individual_analyses": [analysis],
+                    "status": "single_analysis_only"
+                }
+
             # Analyze individual results that have AI analysis
             analyzed_results = []
             for result in batch_results:
                 if result.get("annotated_image_path") and os.path.exists(result["annotated_image_path"]):
                     try:
-                        analysis = self.analyze_detection_result(result, result["annotated_image_path"])
+                        analysis = self.analyze_detection_result(
+                            result, 
+                            result["annotated_image_path"], 
+                            session_id=session_id
+                        )
                         analyzed_results.append(analysis)
                     except Exception as e:
                         logger.warning(f"Failed to analyze image {result.get('image_name', 'unknown')}: {e}")
-            
+
             # Create batch summary
             processing_time = (datetime.now() - start_time).total_seconds()
             
+            # Generate proper batch analysis ID
+            batch_analysis_id = self._generate_analysis_id()
+            
             batch_analysis = {
-                "batch_analysis_id": self._generate_analysis_id(),
+                "batch_analysis_id": batch_analysis_id,
+                "session_id": session_id,
                 "timestamp": start_time.isoformat(),
                 "processing_time": processing_time,
                 "batch_summary": {
@@ -474,15 +509,18 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                 "status": "completed"
             }
             
-            # Save batch analysis
+            # Save batch analysis with proper ID
             self._save_analysis_result(batch_analysis)
             
             return batch_analysis
             
         except Exception as e:
             logger.error(f"Error during batch analysis: {e}")
+            # Generate proper ID even for failed analysis
+            failed_analysis_id = self._generate_analysis_id()
             return {
-                "batch_analysis_id": self._generate_analysis_id(),
+                "batch_analysis_id": failed_analysis_id,
+                "session_id": session_id,
                 "timestamp": start_time.isoformat(),
                 "status": "failed",
                 "error": str(e)

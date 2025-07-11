@@ -358,6 +358,9 @@ function createSessionCard(session) {
                             <a href="/session/${session.id}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-eye me-1"></i> View
                             </a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteSession(${session.id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
