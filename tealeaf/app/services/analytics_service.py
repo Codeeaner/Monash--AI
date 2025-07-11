@@ -183,19 +183,13 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             # Parse response
             response_data = response.json()
             llama_response = response_data.get("response", "")
-            
             if not llama_response:
                 raise Exception("Empty response from Llava-Phi3")
-            
             logger.info(f"Received response from Llava-Phi3, length: {len(llama_response)} characters")
-            
-            # Extract JSON from response
             analysis_result = self._parse_llama_response(llama_response)
             logger.info(f"Parsed analysis result from response for image: {annotated_image_path}")
-            
             # Add metadata
             processing_time = (datetime.now() - start_time).total_seconds()
-            
             result = {
                 "analysis_id": self._generate_analysis_id(),
                 "session_id": session_id,
@@ -212,14 +206,11 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                 "ai_analysis": analysis_result,
                 "status": "completed"
             }
-            
-            # Save analysis result
+            # Save analysis result (formatted JSON)
             self._save_analysis_result(result)
             logger.info(f"Analysis result saved for image: {annotated_image_path}")
-            
             logger.info(f"Analysis completed in {processing_time:.2f} seconds")
             return result
-            
         except Exception as e:
             logger.error(f"Error during analysis: {e}")
             
@@ -237,19 +228,69 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             Parsed analysis data
         """
         try:
-            # Try to extract JSON from response
-            # Look for JSON block in the response
-            start_idx = response.find('{')
-            end_idx = response.rfind('}') + 1
+            # First, try to parse the entire response as JSON
+            return json.loads(response)
+        except json.JSONDecodeError:
+            pass
+        
+        try:
+            # Look for JSON block markers (```json...``` or ```...```)
+            json_blocks = []
             
-            if start_idx != -1 and end_idx > start_idx:
-                json_str = response[start_idx:end_idx]
-                return json.loads(json_str)
-            else:
-                # If no JSON found, create structured response from text
-                return self._parse_text_response(response)
+            # Find all code blocks
+            import re
+            code_block_pattern = r'```(?:json)?\s*(.*?)```'
+            matches = re.findall(code_block_pattern, response, re.DOTALL)
+            
+            for match in matches:
+                try:
+                    parsed = json.loads(match.strip())
+                    json_blocks.append(parsed)
+                except json.JSONDecodeError:
+                    continue
+            
+            # If we found valid JSON blocks, return the first complete one
+            if json_blocks:
+                return json_blocks[0]
+            
+            # Fallback: look for JSON-like structure without code blocks
+            # Find the first { and try to parse from there
+            start_idx = response.find('{')
+            if start_idx != -1:
+                # Try to find matching closing brace by counting braces
+                brace_count = 0
+                end_idx = start_idx
                 
-        except json.JSONDecodeError as e:
+                for i in range(start_idx, len(response)):
+                    char = response[i]
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            end_idx = i + 1
+                            break
+                
+                if brace_count == 0:  # Found complete JSON
+                    json_str = response[start_idx:end_idx]
+                    try:
+                        return json.loads(json_str)
+                    except json.JSONDecodeError:
+                        pass
+                
+                # If that didn't work, try to the last closing brace
+                last_brace = response.rfind('}')
+                if last_brace > start_idx:
+                    json_str = response[start_idx:last_brace + 1]
+                    try:
+                        return json.loads(json_str)
+                    except json.JSONDecodeError:
+                        pass
+            
+            # If all parsing attempts failed, use text response fallback
+            return self._parse_text_response(response)
+                
+        except Exception as e:
             logger.warning(f"Failed to parse JSON response: {e}")
             return self._parse_text_response(response)
     
@@ -433,29 +474,82 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
         except Exception as e:
             logger.error(f"Failed to save analysis result: {e}")
     
-    def analyze_batch_results(self, batch_results: List[Dict[str, Any]], session_id: int) -> Dict[str, Any]:
+    def _combine_images(self, image_paths: List[str]) -> str:
         """
-        Analyze a batch of detection results and provide aggregate recommendations.
+        Combine multiple images into a single grid image.
         
         Args:
-            batch_results: List of individual detection results
-            session_id: The ID of the session this batch belongs to
+            image_paths: List of paths to images to combine
             
         Returns:
-            Aggregate analysis with batch-level recommendations
+            Path to the combined image file
+        """
+        try:
+            from PIL import Image
+            import math
+            
+            # Load all images
+            images = []
+            for path in image_paths:
+                if os.path.exists(path):
+                    img = Image.open(path)
+                    images.append(img)
+            
+            if not images:
+                raise ValueError("No valid images to combine")
+            
+            # Calculate grid dimensions (try to make it roughly square)
+            num_images = len(images)
+            cols = math.ceil(math.sqrt(num_images))
+            rows = math.ceil(num_images / cols)
+            
+            # Resize all images to same size (use the size of first image)
+            target_size = images[0].size
+            resized_images = []
+            for img in images:
+                resized_img = img.resize(target_size, Image.Resampling.LANCZOS)
+                resized_images.append(resized_img)
+            
+            # Create combined image
+            combined_width = target_size[0] * cols
+            combined_height = target_size[1] * rows
+            combined_image = Image.new('RGB', (combined_width, combined_height), (255, 255, 255))
+            
+            # Paste images into grid
+            for i, img in enumerate(resized_images):
+                row = i // cols
+                col = i % cols
+                x = col * target_size[0]
+                y = row * target_size[1]
+                combined_image.paste(img, (x, y))
+            
+            # Save combined image
+            timestamp = int(datetime.now().timestamp())
+            combined_filename = f"combined_batch_{timestamp}.jpg"
+            combined_path = os.path.join("results", combined_filename)
+            combined_image.save(combined_path, "JPEG", quality=90)
+            
+            logger.info(f"Combined {len(images)} images into: {combined_path}")
+            return combined_path
+            
+        except Exception as e:
+            logger.error(f"Error combining images: {e}")
+            raise
+
+    def analyze_batch_results(self, batch_results: List[Dict[str, Any]], session_id: int) -> Dict[str, Any]:
+        """
+        Analyze a batch of detection results by combining all images and using single analysis.
         """
         start_time = datetime.now()
         
         try:
-            # Calculate aggregate statistics
             total_images = len(batch_results)
             total_healthy = sum(r.get("healthy_count", 0) for r in batch_results)
             total_unhealthy = sum(r.get("unhealthy_count", 0) for r in batch_results)
             total_leaves = total_healthy + total_unhealthy
-            
             overall_health_percentage = (total_healthy / total_leaves * 100) if total_leaves > 0 else 0
-            
-            # If only one result, do NOT run batch analysis, just run individual analysis and return it
+
+            # If only one result, use individual analysis
             if total_images == 1:
                 single_result = batch_results[0]
                 analysis = self.analyze_detection_result(
@@ -463,60 +557,55 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                     single_result["annotated_image_path"],
                     session_id=session_id
                 )
-                # Only return the individual analysis, no batch_analysis_id
                 return {
                     "individual_analyses": [analysis],
                     "status": "single_analysis_only"
                 }
 
-            # Analyze individual results that have AI analysis
-            analyzed_results = []
-            for result in batch_results:
-                if result.get("annotated_image_path") and os.path.exists(result["annotated_image_path"]):
-                    try:
-                        analysis = self.analyze_detection_result(
-                            result, 
-                            result["annotated_image_path"], 
-                            session_id=session_id
-                        )
-                        analyzed_results.append(analysis)
-                    except Exception as e:
-                        logger.warning(f"Failed to analyze image {result.get('image_name', 'unknown')}: {e}")
-
-            # Create batch summary
-            processing_time = (datetime.now() - start_time).total_seconds()
+            # For multiple images: combine them into one image and analyze
+            image_paths = [r["annotated_image_path"] for r in batch_results if r.get("annotated_image_path") and os.path.exists(r["annotated_image_path"])]
             
-            # Generate proper batch analysis ID
-            batch_analysis_id = self._generate_analysis_id()
+            if not image_paths:
+                raise Exception("No valid annotated images found for batch analysis")
             
-            batch_analysis = {
-                "batch_analysis_id": batch_analysis_id,
-                "session_id": session_id,
-                "timestamp": start_time.isoformat(),
-                "processing_time": processing_time,
-                "batch_summary": {
-                    "total_images": total_images,
-                    "analyzed_images": len(analyzed_results),
-                    "total_healthy_leaves": total_healthy,
-                    "total_unhealthy_leaves": total_unhealthy,
-                    "total_leaves": total_leaves,
-                    "overall_health_percentage": overall_health_percentage
-                },
-                "aggregate_recommendations": self._generate_batch_recommendations(
-                    overall_health_percentage, total_leaves, analyzed_results
-                ),
-                "individual_analyses": analyzed_results,
-                "status": "completed"
+            # Combine all images into one
+            combined_image_path = self._combine_images(image_paths)
+            
+            # Create combined detection data
+            combined_detection_data = {
+                "healthy_count": total_healthy,
+                "unhealthy_count": total_unhealthy,
+                "total_count": total_leaves,
+                "health_percentage": overall_health_percentage
             }
             
-            # Save batch analysis with proper ID
-            self._save_analysis_result(batch_analysis)
+            # Use single analysis on the combined image
+            logger.info(f"Analyzing combined image with {total_images} sub-images")
+            analysis = self.analyze_detection_result(
+                combined_detection_data,
+                combined_image_path,
+                session_id=session_id
+            )
             
-            return batch_analysis
+            # Update analysis to indicate it's a batch analysis
+            analysis["analysis_type"] = "batch_combined"
+            analysis["batch_summary"] = {
+                "total_images": total_images,
+                "analyzed_images": total_images,
+                "total_healthy_leaves": total_healthy,
+                "total_unhealthy_leaves": total_unhealthy,
+                "total_leaves": total_leaves,
+                "overall_health_percentage": overall_health_percentage,
+                "combined_image_path": combined_image_path
+            }
             
+            return {
+                "individual_analyses": [analysis],
+                "status": "batch_combined_analysis"
+            }
+
         except Exception as e:
             logger.error(f"Error during batch analysis: {e}")
-            # Generate proper ID even for failed analysis
             failed_analysis_id = self._generate_analysis_id()
             return {
                 "batch_analysis_id": failed_analysis_id,
@@ -525,92 +614,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                 "status": "failed",
                 "error": str(e)
             }
-    
-    def _generate_batch_recommendations(self, health_percentage: float, 
-                                      total_leaves: int, 
-                                      individual_analyses: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Generate batch-level recommendations based on aggregate data.
-        
-        Args:
-            health_percentage: Overall health percentage
-            total_leaves: Total number of leaves
-            individual_analyses: List of individual analysis results
-            
-        Returns:
-            Batch-level recommendations
-        """
-        # Determine overall quality level
-        if health_percentage >= 85:
-            quality_level = "excellent"
-            priority = "standard_processing"
-        elif health_percentage >= 70:
-            quality_level = "good"
-            priority = "quality_monitoring"
-        elif health_percentage >= 50:
-            quality_level = "moderate"
-            priority = "enhanced_sorting"
-        else:
-            quality_level = "poor"
-            priority = "damage_control"
-        
-        return {
-            "overall_assessment": {
-                "quality_level": quality_level,
-                "health_percentage": health_percentage,
-                "priority_level": priority,
-                "recommended_action": self._get_priority_action(priority)
-            },
-            "batch_processing_strategy": {
-                "sorting_approach": "Automated pre-sorting followed by manual quality control",
-                "processing_sequence": [
-                    "Sort by quality grade",
-                    "Process premium leaves first",
-                    "Handle defective leaves separately"
-                ],
-                "quality_controls": [
-                    "Implement quality checkpoints",
-                    "Monitor processing parameters",
-                    "Document quality metrics"
-                ]
-            },
-            "waste_minimization": {
-                "estimated_recoverable_value": f"{health_percentage:.1f}% of total value",
-                "waste_reduction_strategies": [
-                    "Immediate processing of healthy leaves",
-                    "Alternative uses for lower grade leaves",
-                    "Composting program for unusable material"
-                ],
-                "cost_optimization": [
-                    "Prioritize high-value leaves",
-                    "Batch similar quality grades",
-                    "Minimize handling time"
-                ]
-            },
-            "monitoring_recommendations": {
-                "key_metrics": [
-                    "Health percentage trends",
-                    "Processing efficiency",
-                    "Waste reduction rates"
-                ],
-                "alert_thresholds": {
-                    "health_percentage_below": 60,
-                    "processing_time_above": 300,
-                    "waste_percentage_above": 30
-                }
-            }
-        }
-    
-    def _get_priority_action(self, priority: str) -> str:
-        """Get priority action description based on priority level."""
-        actions = {
-            "standard_processing": "Continue with standard processing procedures",
-            "quality_monitoring": "Implement enhanced quality monitoring",
-            "enhanced_sorting": "Deploy enhanced sorting and quality controls",
-            "damage_control": "Immediate intervention required to minimize losses"
-        }
-        return actions.get(priority, "Review and assess situation")
-    
+
     def get_analysis_history(self, limit: int = 20) -> List[Dict[str, Any]]:
         """
         Get history of analysis results.

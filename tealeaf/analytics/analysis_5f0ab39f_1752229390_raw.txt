@@ -1,0 +1,59 @@
+```json
+{
+    "analysis": {
+        "overall_assessment": "The image shows a moderate level of leaf quality, with some healthy leaves interspersed among unhealthy ones.",
+        "severity_level": "Medium",
+        "quality_grade": "Standard"
+    },
+    "processing_recommendations": {
+        "immediate_actions": [
+            "Separate healthy leaves from unhealthy ones",
+            "Inspect each leaf for further signs of damage or disease",
+            "Discard any severely damaged or diseased leaves"
+        ],
+        "sorting_strategy": "Sort the leaves by size, shape, and color to identify healthy and unhealthy ones more accurately.",
+        "processing_method": "Use a gentle washing method for healthy leaves and a stronger one for damaged ones. Consider using natural methods like steaming or air drying to preserve quality.",
+        "quality_preservation": [
+            "Handle the leaves gently during sorting",
+            "Store them in a cool, dry place away from direct sunlight",
+            "Monitor their condition regularly"
+        ]
+    },
+    "waste_prevention": {
+        "salvageable_portions": "Healthy leaves can be used for tea processing, while unhealthy ones might have alternative uses like composting or as animal feed.",
+        "alternative_uses": [
+            "Compost damaged leaves",
+            "Use them as mulch in garden beds"
+        ],
+        "composting_guidelines": "Chop up the unhealthy leaves and mix with other organic matter. Keep the compost pile moist and turn it regularly to aid decomposition.",
+        "prevention_measures": [
+            "Regularly inspect and maintain the health of the tea plants",
+            "Implement proper irrigation and fertilization practices"
+        ]
+    },
+    "economic_impact": {
+        "estimated_loss_percentage": "The loss percentage will depend on the proportion of unhealthy leaves, but it could range from 10% to 30%.",
+        "cost_saving_opportunities": [
+            "Invest in better irrigation and fertilization systems",
+            "Implement pest control measures",
+retain a healthy environment for the tea plants"
+        ],
+        "value_recovery_methods": [
+            "Sell the salvageable portions of leaves at a discounted price",
+            "Use them in products like mulch or animal feed to recover some value"
+        ]
+    },
+    "recommendations": {
+        "priority_actions": [
+            "Separate healthy and unhealthy leaves immediately",
+            "Inspect each leaf thoroughly before processing",
+            "Implement preventive measures for future plant health"
+        ],
+        "timeline": "Begin immediate actions, inspect leaves within 24 hours, implement preventive measures within the next week.",
+        "monitoring_points": [
+            "Regularly monitor leaf health during processing",
+            "Track economic impact and adjust strategies as needed"
+        ]
+    }
+}
+```

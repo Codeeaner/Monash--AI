@@ -1,0 +1,75 @@
+{
+  "analysis_id": "analysis_90b929c1_1752230294",
+  "session_id": 2,
+  "timestamp": "2025-07-11T18:38:02.060806",
+  "processing_time": 12.083811,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\combined_batch_1752230282.jpg",
+  "detection_summary": {
+    "healthy_count": 2,
+    "unhealthy_count": 2,
+    "total_count": 4,
+    "health_percentage": 50.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a mix of healthy and unhealthy tea leaves, with an even distribution between the two types.",
+      "severity_level": "Medium",
+      "quality_grade": "Standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Separate healthy leaves from unhealthy ones",
+        "Evaluate the extent of damage to each leaf type",
+        "Adjust processing parameters if necessary"
+      ],
+      "sorting_strategy": "Sort by visual inspection, separating leaves based on visible characteristics such as color and shape.",
+      "processing_method": "Continue with standard processing for healthy leaves, while discarding unhealthy ones. If possible, adjust parameters to minimize further damage.",
+      "quality_preservation": [
+        "Handle leaves gently during sorting",
+        "Store remaining quality tea leaves in a cool, dry place",
+        "Monitor leaf condition regularly"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "Healthy leaves can still be used for processing. Unhealthy leaves may not be salvageable.",
+      "alternative_uses": [
+        "Use unhealthy leaves as compost material",
+        "Experiment with different processing methods to salvage some value"
+      ],
+      "composting_guidelines": "Compost unhealthy leaves separately from healthy ones, and monitor the decomposition process.",
+      "prevention_measures": [
+        "Implement regular leaf inspections",
+        "Adjust processing parameters based on leaf condition",
+        "Train staff in proper handling techniques"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "Approximately 10-20% loss of potential revenue due to unhealthy leaves",
+      "cost_saving_opportunities": [
+        "Invest in better leaf inspection equipment",
+        "Train staff on proper handling techniques",
+        "Experiment with different processing methods"
+      ],
+      "value_recovery_methods": [
+        "Use unhealthy leaves for composting or experimentation",
+        "Adjust processing parameters to salvage some value from damaged leaves"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Separate healthy and unhealthy leaves immediately",
+        "Implement regular leaf inspections",
+        "Adjust processing parameters based on leaf condition"
+      ],
+      "timeline": "Immediate actions to be taken within the next 24 hours, followed by regular monitoring over the next few weeks.",
+      "monitoring_points": [
+        "Leaf condition during sorting",
+        "Decomposition progress of composted material",
+        "Quality of processed tea leaves"
+      ]
+    }
+  },
+  "raw_response": "```json\n{\n    \"analysis\": {\n        \"overall_assessment\": \"The image shows a mix of healthy and unhealthy tea leaves, with an even distribution between the two types.\",\n        \"severity_level\": \"Medium\",\n        \"quality_grade\": \"Standard\"\n    },\n    \"processing_recommendations\": {\n        \"immediate_actions\": [\n            \"Separate healthy leaves from unhealthy ones\",\n            \"Evaluate the extent of damage to each leaf type\",\n            \"Adjust processing parameters if necessary\"\n        ],\n        \"sorting_strategy\": \"Sort by visual inspection, separating leaves based on visible characteristics such as color and shape.\",\n        \"processing_method\": \"Continue with standard processing for healthy leaves, while discarding unhealthy ones. If possible, adjust parameters to minimize further damage.\",\n        \"quality_preservation\": [\n            \"Handle leaves gently during sorting\",\n            \"Store remaining quality tea leaves in a cool, dry place\",\n            \"Monitor leaf condition regularly\"\n        ]\n    },\n    \"waste_prevention\": {\n        \"salvageable_portions\": \"Healthy leaves can still be used for processing. Unhealthy leaves may not be salvageable.\",\n        \"alternative_uses\": [\n            \"Use unhealthy leaves as compost material\",\n            \"Experiment with different processing methods to salvage some value\"\n        ],\n        \"composting_guidelines\": \"Compost unhealthy leaves separately from healthy ones, and monitor the decomposition process.\",\n        \"prevention_measures\": [\n            \"Implement regular leaf inspections\",\n            \"Adjust processing parameters based on leaf condition\",\n            \"Train staff in proper handling techniques\"\n        ]\n    },\n    \"economic_impact\": {\n        \"estimated_loss_percentage\": \"Approximately 10-20% loss of potential revenue due to unhealthy leaves\",\n        \"cost_saving_opportunities\": [\n            \"Invest in better leaf inspection equipment\",\n            \"Train staff on proper handling techniques\",\n            \"Experiment with different processing methods\"\n        ],\n        \"value_recovery_methods\": [\n            \"Use unhealthy leaves for composting or experimentation\",\n            \"Adjust processing parameters to salvage some value from damaged leaves\"\n        ]\n    },\n    \"recommendations\": {\n        \"priority_actions\": [\n            \"Separate healthy and unhealthy leaves immediately\",\n            \"Implement regular leaf inspections\",\n            \"Adjust processing parameters based on leaf condition\"\n        ],\n        \"timeline\": \"Immediate actions to be taken within the next 24 hours, followed by regular monitoring over the next few weeks.\",\n        \"monitoring_points\": [\n            \"Leaf condition during sorting\",\n            \"Decomposition progress of composted material\",\n            \"Quality of processed tea leaves\"\n        ]\n    }\n}\n```",
+  "status": "completed"
+}

@@ -671,14 +671,14 @@ def analyze_batch_background(session_id: int, db: Session):
                 "image_name": result.image_name
             })
         
-        # Run batch analysis
+        # Run batch analysis (now uses combined image approach)
         logger.info(f"Starting batch analysis for session {session_id}")
         batch_analysis = analytics_service.analyze_batch_results(batch_data, session_id)
         
-        # Handle single analysis case
-        if batch_analysis.get("status") == "single_analysis_only":
-            logger.info(f"Only one result in session {session_id}, skipping batch analysis save.")
-            # Optionally, save the individual analysis to DB if needed
+        # Handle analysis results
+        if batch_analysis.get("status") in ["single_analysis_only", "batch_combined_analysis"]:
+            logger.info(f"Analysis completed for session {session_id}")
+            # Save individual analysis to DB if needed
             for analysis in batch_analysis.get("individual_analyses", []):
                 # Check if already exists
                 existing = db.query(AnalysisResult).filter(
@@ -703,10 +703,15 @@ def analyze_batch_background(session_id: int, db: Session):
                     db.add(db_analysis)
                     db.commit()
             return
-
-        logger.info(f"Batch analysis completed with ID {batch_analysis.get('batch_analysis_id', 'unknown')}")
         
-        # Save to database
+        # Handle failed analysis
+        logger.error(f"Batch analysis failed for session {session_id}")
+        
+    except Exception as e:
+        logger.error(f"Error in background batch analysis for session {session_id}: {e}", exc_info=True)
+        db.rollback()
+        logger.info(f"Rollback completed for session {session_id} due to error")
+        
         db_batch_analysis = BatchAnalysisResult(
             batch_analysis_id=batch_analysis["batch_analysis_id"],
             session_id=session_id,
