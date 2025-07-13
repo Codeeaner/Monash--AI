@@ -1,0 +1,62 @@
+{
+  "analysis_id": "analysis_03073dec_1752285950",
+  "session_id": 1,
+  "timestamp": "2025-07-12T10:05:41.733255",
+  "processing_time": 9.200823,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\captured_image_1752285924799_1_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 0,
+    "total_count": 0,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "No tea leaf detected",
+      "severity_level": "Low",
+      "quality_grade": "Reject"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Check processing equipment for malfunctions"
+      ],
+      "sorting_strategy": "Manually sort leaves to ensure no further loss",
+      "processing_method": "Adjust processing parameters and monitor closely",
+      "quality_preservation": [
+        "Store remaining quality in a cool, dry place"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "None detected",
+      "alternative_uses": [
+        "Discard leaves appropriately"
+      ],
+      "composting_guidelines": "Compost unsuitable leaves following local guidelines",
+      "prevention_measures": [
+        "Regularly inspect and maintain processing equipment"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "0% (no loss detected)",
+      "cost_saving_opportunities": [
+        "No cost-saving opportunities"
+      ],
+      "value_recovery_methods": [
+        "Discard leaves appropriately"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Inspect processing equipment",
+        "Manually sort leaves",
+        "Adjust processing parameters"
+      ],
+      "timeline": "Immediate actions to be taken within 24 hours, followed by regular monitoring",
+      "monitoring_points": [
+        "Monitor processing parameters and leaf quality"
+      ]
+    }
+  },
+  "status": "completed"
+}

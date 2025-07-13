@@ -5,8 +5,8 @@ A comprehensive web application for AI-powered tea leaf health detection using Y
 ## Features
 
 - **Single & Batch Image Processing**: Upload individual images or process multiple images in batches
-- **AI-Powered Detection**: Uses YOLOv8 model to detect and classify healthy vs unhealthy tea leaves
-- **🆕 AI Analytics with Llama 3.2 Vision**: Advanced image analysis and waste prevention recommendations
+- **AI-Powered Detection**: Uses YOLOv11 model to detect and classify healthy vs unhealthy tea leaves
+- **🆕 AI Analytics with llava-phi3:3.8b**: Advanced image analysis and waste prevention recommendations
 - **🆕 Waste Prevention System**: Intelligent recommendations to minimize tea leaf waste
 - **Real-time Progress Tracking**: Monitor processing progress with live updates
 - **Detection History**: View and manage all previous detection sessions
@@ -19,12 +19,12 @@ A comprehensive web application for AI-powered tea leaf health detection using Y
 
 - **Backend**: FastAPI, SQLAlchemy, Pydantic
 - **Frontend**: HTML5, Bootstrap 5, JavaScript
-- **Machine Learning**: YOLOv8 (Ultralytics), OpenCV
-- **AI Analytics**: Llama 3.2 Vision 11B via Ollama
+- **Machine Learning**: YOLOv11 (Ultralytics), OpenCV
+- **AI Analytics**: llava-phi3:3.8b via Ollama
 
 ## 🆕 AI Analytics & Waste Prevention
 
-The Tea Leaf Detection system now includes advanced AI-powered analytics using **Llama 3.2 Vision 11B** to provide intelligent waste prevention recommendations and quality insights.
+The Tea Leaf Detection system now includes advanced AI-powered analytics using **llava-phi3:3.8b** to provide intelligent waste prevention recommendations and quality insights.
 
 ### Analytics Features
 
@@ -68,9 +68,9 @@ The Tea Leaf Detection system now includes advanced AI-powered analytics using *
    ollama serve
    ```
 
-2. **Install Llama 3.2 Vision Model**
+2. **Install llava-phi3:3.8b Model**
    ```bash
-   ollama pull llama3.2-vision:11b
+   ollama pull llava-phi3:3.8b
    ```
 
 3. **Test Analytics**

@@ -1,0 +1,72 @@
+{
+  "analysis_id": "analysis_0b2a0ee9_1752286093",
+  "session_id": 2,
+  "timestamp": "2025-07-12T10:08:00.563579",
+  "processing_time": 12.472061,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\20221213_084406_jpg.rf.790b93a2e56a98879659401d50b69202_2_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 1,
+    "total_count": 1,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a single, unhealthy leaf with no other leaves present. This suggests that there may be an issue affecting the health of the tea plants.",
+      "severity_level": "High",
+      "quality_grade": "Below standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Inspect other leaves for similar issues",
+        "Isolate unhealthy leaves from healthy ones during processing",
+        "Adjust environmental conditions to promote leaf health"
+      ],
+      "sorting_strategy": "Sort leaves by health and color, removing any visibly unhealthy or damaged leaves before further processing.",
+      "processing_method": "Use gentle processing methods that preserve the quality of healthy leaves while discarding unhealthy ones. Consider using a sorting machine to automate this process.",
+      "quality_preservation": [
+        "Ensure proper sanitation during processing",
+        "Monitor environmental conditions such as temperature, humidity, and light exposure",
+        "Regularly inspect plants for signs of disease or pest infestation"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "The unhealthy leaf can be used as a composting material, but it should not be consumed. The healthy leaves can still be used for processing.",
+      "alternative_uses": [
+        "Compost the unhealthy leaf with other organic waste",
+        "Use remaining healthy leaves to produce tea products"
+      ],
+      "composting_guidelines": "Compost the unhealthy leaf separately from healthy leaves, and monitor compost pile conditions for proper decomposition.",
+      "prevention_measures": [
+        "Implement a regular plant inspection schedule",
+        "Adjust environmental conditions based on observations",
+        "Consider using disease-resistant tea plant varieties"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "The loss percentage cannot be accurately determined from a single leaf, but it could be significant if the issue is widespread among the plants.",
+      "cost_saving_opportunities": [
+        "Invest in preventative measures such as regular plant inspections and environmental adjustments",
+        "Implement automated sorting systems to reduce labor costs"
+      ],
+      "value_recovery_methods": [
+        "Use the remaining healthy leaves for processing, maximizing their value",
+        "Compost unhealthy leaves separately from healthy ones to avoid contamination of tea products"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Implement regular plant inspections and environmental adjustments",
+        "Invest in automated sorting systems",
+        "Monitor composting conditions for unhealthy leaves"
+      ],
+      "timeline": "Begin implementing these actions immediately, with a review scheduled after 3 months to assess progress.",
+      "monitoring_points": [
+        "Regularly inspect plants and sort leaves during processing",
+        "Monitor compost pile conditions for unhealthy leaf decomposition"
+      ]
+    }
+  },
+  "status": "completed"
+}
