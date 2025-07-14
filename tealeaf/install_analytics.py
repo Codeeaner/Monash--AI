@@ -56,15 +56,15 @@ def check_ollama_service():
         if response.status_code == 200:
             print("✅ Ollama service is running")
             
-            # Check for Llama 3.2 Vision model
+            # Check for llava-phi3:3.8b Vision model
             models = response.json().get("models", [])
-            llama_models = [m for m in models if "llama3.2-vision" in m.get("name", "")]
+            llama_models = [m for m in models if "llava-phi3:3.8b" in m.get("name", "")]
             
             if llama_models:
-                print(f"✅ Found Llama 3.2 Vision model: {llama_models[0]['name']}")
+                print(f"✅ Found llava-phi3:3.8b Vision model: {llama_models[0]['name']}")
                 return True
             else:
-                print("⚠️  Llama 3.2 Vision model not found")
+                print("⚠️  llava-phi3:3.8b Vision model not found")
                 return False
         else:
             print(f"❌ Ollama service responded with status {response.status_code}")
@@ -74,17 +74,17 @@ def check_ollama_service():
         return False
 
 def install_ollama_model():
-    """Install Llama 3.2 Vision model."""
-    print("📥 Installing Llama 3.2 Vision model...")
+    """Install llava-phi3:3.8b Vision model."""
+    print("📥 Installing llava-phi3:3.8b Vision model...")
     
     try:
         # Try to pull the model
         result = subprocess.run([
-            "ollama", "pull", "llama3.2-vision:11b"
+            "ollama", "pull", "llava-phi3:3.8b"
         ], capture_output=True, text=True, timeout=600)  # 10 minute timeout
         
         if result.returncode == 0:
-            print("✅ Llama 3.2 Vision model installed successfully")
+            print("✅ llava-phi3:3.8b Vision model installed successfully")
             return True
         else:
             print(f"❌ Failed to install model: {result.stderr}")
@@ -96,8 +96,8 @@ def install_ollama_model():
             ], capture_output=True, text=True, timeout=300)
             
             if result.returncode == 0:
-                print("✅ Llama 3.2 Vision 1B model installed as fallback")
-                print("⚠️  Note: Update analytics_service.py to use 'llama3.2-vision:1b'")
+                print("✅ llava-phi3:3.8b Vision 1B model installed as fallback")
+                print("⚠️  Note: Update analytics_service.py to use 'llava-phi3:3.8b:1b'")
                 return True
             else:
                 print(f"❌ Failed to install fallback model: {result.stderr}")
@@ -131,7 +131,7 @@ def get_ollama_install_instructions():
 1. Download Ollama from: https://ollama.com/download/windows
 2. Run the installer and follow the setup wizard
 3. Ollama will start automatically as a Windows service
-4. Open Command Prompt and run: ollama pull llama3.2-vision:11b
+4. Open Command Prompt and run: ollama pull llava-phi3:3.8b
 """
     elif system == "darwin":
         return """
@@ -141,7 +141,7 @@ def get_ollama_install_instructions():
 3. Open Terminal and run:
    curl -fsSL https://ollama.com/install.sh | sh
 4. Start Ollama: ollama serve
-5. In a new terminal: ollama pull llama3.2-vision:11b
+5. In a new terminal: ollama pull llava-phi3:3.8b
 """
     else:
         return """

@@ -1,0 +1,7 @@
+train: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\leaf detection\data\test\images
+val: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\leaf detection\data\valid\images
+test: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\leaf detection\data\test\images
+
+nc: 1
+names: ['leaf']
+

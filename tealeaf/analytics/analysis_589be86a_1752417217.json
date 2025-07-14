@@ -1,0 +1,65 @@
+{
+  "analysis_id": "analysis_589be86a_1752417217",
+  "session_id": 2,
+  "timestamp": "2025-07-13T22:33:22.641389",
+  "processing_time": 15.095272,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\camellia_sinensis (1)_2_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 1,
+    "unhealthy_count": 0,
+    "total_count": 1,
+    "health_percentage": 100.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a single healthy tea leaf with no unhealthy leaves detected.",
+      "severity_level": "Low",
+      "quality_grade": "Premium"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Sort the single healthy leaf from any other non-leaf materials.",
+        "Inspect the leaf for any signs of damage or contamination."
+      ],
+      "sorting_strategy": "Separate leaves by hand, using gentle movements to avoid damaging them.",
+      "processing_method": "Use a gentle washing method to clean the leaf without causing damage.",
+      "quality_preservation": [
+        "Handle the leaf with care during sorting and processing.",
+        "Store the leaf in a cool, dry place after processing."
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "The single healthy leaf can be used for tea production if properly processed.",
+      "alternative_uses": [
+        "Use the leaf as a decoration or garnish in food and drink presentations."
+      ],
+      "composting_guidelines": "Compost any non-leaf materials separately from the leaf to prevent contamination.",
+      "prevention_measures": [
+        "Implement regular inspections of tea leaves for quality control.",
+        "Educate workers on proper handling and processing techniques."
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "The loss is minimal as there is only one leaf detected, which does not represent a significant portion of the overall tea production.",
+      "cost_saving_opportunities": [
+        "Invest in worker training to reduce waste and improve quality control."
+      ],
+      "value_recovery_methods": [
+        "Use the single healthy leaf for high-quality tea products, potentially at a premium price point."
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Sort and inspect the single leaf.",
+        "Process the leaf using gentle methods to preserve its quality.",
+        "Implement regular inspections and worker training for future waste prevention."
+      ],
+      "timeline": "Immediate action recommended. Regular inspections and worker training should be implemented as soon as possible.",
+      "monitoring_points": [
+        "Monitor the quality of tea leaves during sorting, processing, and storage to ensure consistent product quality."
+      ]
+    }
+  },
+  "status": "completed"
+}

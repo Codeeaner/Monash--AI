@@ -1,0 +1,190 @@
+2025-07-13 22:02:59,989 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-13 22:02:59,999 - app.main - INFO - Database tables created successfully
+2025-07-13 22:02:59,999 - app.main - INFO - Created directory: uploads
+2025-07-13 22:02:59,999 - app.main - INFO - Created directory: results
+2025-07-13 22:02:59,999 - app.main - INFO - Created directory: reports
+2025-07-13 22:03:00,000 - app.main - INFO - Created directory: analytics
+2025-07-13 22:03:00,000 - app.main - INFO - Created directory: static
+2025-07-13 22:03:00,000 - app.main - INFO - Created directory: static/images
+2025-07-13 22:03:09,469 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-13 22:03:09,470 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-13 22:03:09,479 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-13 22:03:09,479 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-13 22:03:09,480 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:03:09,498 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:03:09,779 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-13 22:03:09,782 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-13 22:03:09,782 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:03:09,904 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_0b2a0ee9_1752286093
+2025-07-13 22:18:31,524 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:18:35,163 - app.services.batch_service - INFO - Created detection session 3 with 2 images
+2025-07-13 22:18:35,167 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:18:35,182 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:18:35,642 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=None
+2025-07-13 22:18:35,642 - app.services.batch_service - INFO - Processing image 1/2: uploads\session_3\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_3.jpg
+2025-07-13 22:18:35,941 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=1
+2025-07-13 22:18:35,941 - app.services.batch_service - INFO - Processing image 2/2: uploads\session_3\captured_image_1752416307930_3.jpg
+2025-07-13 22:18:36,027 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=2
+2025-07-13 22:18:36,030 - app.services.batch_service - INFO - Updated session 3: status=completed, processed=2
+2025-07-13 22:18:36,031 - app.services.batch_service - INFO - Batch processing completed for session 3
+2025-07-13 22:18:36,031 - app.api.upload - INFO - Batch processing completed for session 3
+2025-07-13 22:18:37,611 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:18:50,435 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-13 22:18:50,440 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-13 22:18:50,440 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:18:56,203 - app.services.analytics_service - INFO - Ollama server and Llava-Phi3 model are available
+2025-07-13 22:18:56,205 - app.api.analytics - INFO - Found 2 completed results for session 3
+2025-07-13 22:18:56,205 - app.api.analytics - INFO - Starting batch analysis for session 3
+2025-07-13 22:18:56,227 - app.services.analytics_service - INFO - Combined 2 images into: results\combined_batch_1752416336.jpg
+2025-07-13 22:18:56,228 - app.services.analytics_service - INFO - Analyzing combined image with 2 sub-images
+2025-07-13 22:18:56,228 - app.services.analytics_service - INFO - Encoding image for analysis: results\combined_batch_1752416336.jpg
+2025-07-13 22:18:56,236 - app.services.analytics_service - INFO - Sending analysis request to Llava-Phi3...
+2025-07-13 22:19:10,156 - app.services.analytics_service - INFO - Received response from Llava-Phi3, length: 2496 characters
+2025-07-13 22:19:10,157 - app.services.analytics_service - INFO - Parsed analysis result from response for image: results\combined_batch_1752416336.jpg
+2025-07-13 22:19:10,159 - app.services.analytics_service - INFO - Analysis result saved: analytics\analysis_edb4978a_1752416350.json
+2025-07-13 22:19:10,159 - app.services.analytics_service - INFO - Analysis result saved for image: results\combined_batch_1752416336.jpg
+2025-07-13 22:19:10,159 - app.services.analytics_service - INFO - Analysis completed in 13.93 seconds
+2025-07-13 22:19:10,160 - app.api.analytics - INFO - Analysis completed for session 3
+2025-07-13 22:19:16,750 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-13 22:19:16,755 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-13 22:19:16,755 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:19:17,264 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_edb4978a_1752416350
+2025-07-13 22:25:52,704 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-13 22:25:52,713 - app.main - INFO - Database tables created successfully
+2025-07-13 22:25:52,714 - app.main - INFO - Created directory: uploads
+2025-07-13 22:25:52,714 - app.main - INFO - Created directory: results
+2025-07-13 22:25:52,714 - app.main - INFO - Created directory: reports
+2025-07-13 22:25:52,714 - app.main - INFO - Created directory: analytics
+2025-07-13 22:25:52,716 - app.main - INFO - Created directory: static
+2025-07-13 22:25:52,716 - app.main - INFO - Created directory: static/images
+2025-07-13 22:25:55,100 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:25:58,558 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-13 22:25:58,563 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:25:58,572 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:25:58,936 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-13 22:25:58,936 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\tips-to-grow-tea-leaves-at-home_4.jpg
+2025-07-13 22:25:59,115 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-13 22:25:59,121 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-13 22:25:59,121 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-13 22:25:59,122 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-13 22:26:00,901 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:26:11,815 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/4 "HTTP/1.1 200 OK"
+2025-07-13 22:26:11,829 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/4 "HTTP/1.1 404 Not Found"
+2025-07-13 22:26:11,829 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:26:31,433 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:26:31,572 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-13 22:26:31,573 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:26:31,582 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:26:31,905 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-13 22:26:31,905 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\camellia_sinensis_5.webp
+2025-07-13 22:26:32,125 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-13 22:26:32,132 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-13 22:26:32,132 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-13 22:26:32,132 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-13 22:26:34,362 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:27:22,131 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:27:22,253 - app.services.batch_service - INFO - Created detection session 3 with 1 images
+2025-07-13 22:27:22,256 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:27:22,263 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:27:22,525 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=None
+2025-07-13 22:27:22,526 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_3\camellia_sinensis_3.png
+2025-07-13 22:27:22,613 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=1
+2025-07-13 22:27:22,616 - app.services.batch_service - INFO - Updated session 3: status=completed, processed=1
+2025-07-13 22:27:22,616 - app.services.batch_service - INFO - Batch processing completed for session 3
+2025-07-13 22:27:22,616 - app.api.upload - INFO - Single image processing completed for session 3
+2025-07-13 22:27:24,492 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:28:02,369 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:28:02,525 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-13 22:28:02,528 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:28:02,537 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:28:02,789 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-13 22:28:02,789 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\camellia_sinensis (1)_4.png
+2025-07-13 22:28:02,838 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-13 22:28:02,843 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-13 22:28:02,843 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-13 22:28:02,843 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-13 22:28:04,780 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:31:17,580 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:31:17,931 - app.services.batch_service - INFO - Created detection session 1 with 1 images
+2025-07-13 22:31:17,934 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:31:17,943 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:31:18,200 - app.services.batch_service - INFO - Updated session 1: status=processing, processed=None
+2025-07-13 22:31:18,200 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_1\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_1.jpg
+2025-07-13 22:31:18,291 - app.services.batch_service - INFO - Updated session 1: status=processing, processed=1
+2025-07-13 22:31:18,295 - app.services.batch_service - INFO - Updated session 1: status=completed, processed=1
+2025-07-13 22:31:18,295 - app.services.batch_service - INFO - Batch processing completed for session 1
+2025-07-13 22:31:18,295 - app.api.upload - INFO - Single image processing completed for session 1
+2025-07-13 22:31:20,167 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:32:47,928 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:32:48,113 - app.services.batch_service - INFO - Created detection session 2 with 1 images
+2025-07-13 22:32:48,116 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:32:48,135 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:32:48,369 - app.services.batch_service - INFO - Updated session 2: status=processing, processed=None
+2025-07-13 22:32:48,369 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_2\camellia_sinensis (1)_2.png
+2025-07-13 22:32:48,485 - app.services.batch_service - INFO - Updated session 2: status=processing, processed=1
+2025-07-13 22:32:48,489 - app.services.batch_service - INFO - Updated session 2: status=completed, processed=1
+2025-07-13 22:32:48,490 - app.services.batch_service - INFO - Batch processing completed for session 2
+2025-07-13 22:32:48,490 - app.api.upload - INFO - Single image processing completed for session 2
+2025-07-13 22:32:50,374 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-13 22:33:07,194 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-13 22:33:07,199 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-13 22:33:07,199 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:33:10,515 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-13 22:33:10,521 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-13 22:33:10,521 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:33:22,634 - app.services.analytics_service - INFO - Ollama server and Llava-Phi3 model are available
+2025-07-13 22:33:22,641 - app.api.analytics - INFO - Found 1 completed results for session 2
+2025-07-13 22:33:22,641 - app.api.analytics - INFO - Starting batch analysis for session 2
+2025-07-13 22:33:22,642 - app.services.analytics_service - INFO - Encoding image for analysis: results\camellia_sinensis (1)_2_annotated.jpg
+2025-07-13 22:33:22,649 - app.services.analytics_service - INFO - Sending analysis request to Llava-Phi3...
+2025-07-13 22:33:37,734 - app.services.analytics_service - INFO - Received response from Llava-Phi3, length: 2528 characters
+2025-07-13 22:33:37,735 - app.services.analytics_service - INFO - Parsed analysis result from response for image: results\camellia_sinensis (1)_2_annotated.jpg
+2025-07-13 22:33:37,739 - app.services.analytics_service - INFO - Analysis result saved: analytics\analysis_589be86a_1752417217.json
+2025-07-13 22:33:37,739 - app.services.analytics_service - INFO - Analysis result saved for image: results\camellia_sinensis (1)_2_annotated.jpg
+2025-07-13 22:33:37,739 - app.services.analytics_service - INFO - Analysis completed in 15.10 seconds
+2025-07-13 22:33:37,740 - app.api.analytics - INFO - Analysis completed for session 2
+2025-07-13 22:33:42,870 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-13 22:33:42,873 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-13 22:33:42,873 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-13 22:33:43,333 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_589be86a_1752417217
+2025-07-14 00:04:16,867 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-14 00:04:16,875 - app.main - INFO - Database tables created successfully
+2025-07-14 00:04:16,875 - app.main - INFO - Created directory: uploads
+2025-07-14 00:04:16,875 - app.main - INFO - Created directory: results
+2025-07-14 00:04:16,876 - app.main - INFO - Created directory: reports
+2025-07-14 00:04:16,876 - app.main - INFO - Created directory: analytics
+2025-07-14 00:04:16,876 - app.main - INFO - Created directory: static
+2025-07-14 00:04:16,876 - app.main - INFO - Created directory: static/images
+2025-07-14 00:04:24,770 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:04:26,662 - app.services.batch_service - INFO - Created detection session 3 with 1 images
+2025-07-14 00:04:26,665 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:04:26,676 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:04:26,922 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=None
+2025-07-14 00:04:26,922 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_3\leaf_crop_1_3.jpg
+2025-07-14 00:04:26,982 - app.services.batch_service - INFO - Updated session 3: status=processing, processed=1
+2025-07-14 00:04:26,985 - app.services.batch_service - INFO - Updated session 3: status=completed, processed=1
+2025-07-14 00:04:26,985 - app.services.batch_service - INFO - Batch processing completed for session 3
+2025-07-14 00:04:26,985 - app.api.upload - INFO - Single image processing completed for session 3
+2025-07-14 00:04:28,893 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:08,718 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:09,033 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-14 00:06:09,035 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:09,041 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:09,283 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-14 00:06:09,283 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\b7ba4238-1ee4-44c3-b6c8-d82fbe48f7fa_4.jpeg
+2025-07-14 00:06:09,379 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-14 00:06:09,390 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-14 00:06:09,390 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-14 00:06:09,390 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-14 00:06:11,236 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:33,947 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:34,072 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-14 00:06:34,074 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:34,080 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
+2025-07-14 00:06:34,290 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-14 00:06:34,290 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\try_5.jpeg
+2025-07-14 00:06:34,337 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-14 00:06:34,340 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-14 00:06:34,341 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-14 00:06:34,341 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-14 00:06:36,303 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt
