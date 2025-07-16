@@ -28,12 +28,18 @@
                 <p class="text-gray-600-custom mt-1" style="word-break: break-word;">Session: {{ session.name }}</p>
             </div>
             
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 d-flex align-items-center gap-2">
                 <button class="btn-back-history" onclick="window.location.href='/history-page'">
                     <i class="fas fa-history text-xs-custom"></i>
                     <span>Back to History</span>
                 </button>
-                </div>
+                <button class="btn btn-outline-primary ms-2" onclick="downloadReport('pdf', {{ session.id }})">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn btn-outline-success ms-2" onclick="downloadReport('csv', {{ session.id }})">
+                    <i class="fas fa-file-csv"></i> CSV
+                </button>
+            </div>
             </div>
         </div>
     </div>
@@ -433,50 +439,72 @@
 
  // Function to start analysis for a session 
  async function analyzeSession(sessionId) { 
- 	const button = document.querySelector(`[data-session-id="${sessionId}"]`); 
- 	if (!button) return; 
- 	 
- 	const originalText = button.innerHTML; 
- 	 
- 	try { 
- 		button.disabled = true; 
- 		button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...'; 
- 		 
- 		// You can integrate a more modern notification library here if you have one 
- 		if (typeof showAlert !== 'undefined') { 
- 			showAlert('Starting analysis...', 'info'); 
- 		} 
- 		 
- 		const response = await fetch(`/api/analytics/analyze/batch/${sessionId}`, {  
- 			method: 'POST', 
- 			headers: { 'Content-Type': 'application/json' } 
- 		}); 
+	const button = document.querySelector(`[data-session-id="${sessionId}"]`); 
+	if (!button) return; 
+	const originalText = button.innerHTML; 
+
+	// Add animation spinner to the placeholder section
+	const placeholder = document.getElementById('ai-analysis-placeholder');
+	if (placeholder) {
+		let anim = document.getElementById('ai-analysis-spinner');
+		if (!anim) {
+			const spinnerDiv = document.createElement('div');
+			spinnerDiv.id = 'ai-analysis-spinner';
+			spinnerDiv.style = 'margin: 2rem auto;';
+			spinnerDiv.innerHTML = `
+				<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+					<div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+						<span class="visually-hidden">Analyzing...</span>
+					</div>
+					<div class="text-primary fw-bold" style="font-size: 1.1rem;">AI is analyzing your session...</div>
+				</div>
+			`;
+			placeholder.appendChild(spinnerDiv);
+		}
+	}
+
+	try { 
+		button.disabled = true; 
+		button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...'; 
+		 
+		if (typeof showAlert !== 'undefined') { 
+			showAlert('Starting analysis...', 'info'); 
+		} 
+		 
+		const response = await fetch(`/api/analytics/analyze/batch/${sessionId}`, {  
+			method: 'POST', 
+			headers: { 'Content-Type': 'application/json' } 
+		}); 
 
 		const data = await response.json();
- 		if (response.ok) { 
- 			if (typeof showAlert !== 'undefined') { 
- 				showAlert('Analysis started successfully! Refreshing page...', 'success'); 
- 			} else { 
- 				console.log('Analysis started successfully, but no alert function defined.'); 
- 			} 
- 			// Increased delay to allow more time for analysis to complete 
- 			setTimeout(() => { window.location.reload(); }, 20000); 
- 		} else { 
- 			const error = await response.json().catch(() => ({ detail: 'Unknown error' })); 
- 			if (typeof showAlert !== 'undefined') { 
- 				showAlert(`Failed to start analysis: ${error.detail || 'Unknown error'}`, 'danger'); 
- 			} 
- 			button.disabled = false; 
- 			button.innerHTML = originalText; 
- 		} 
- 	} catch (e) { 
- 		console.error('Analysis error:', e); 
- 		if (typeof showAlert !== 'undefined') { 
- 			showAlert(`Error starting analysis: ${e.message}`, 'danger'); 
- 		} 
- 		button.disabled = false; 
- 		button.innerHTML = originalText; 
- 	} 
+		if (response.ok) { 
+			if (typeof showAlert !== 'undefined') { 
+				showAlert('Analysis started successfully! Refreshing page...', 'success'); 
+			} else { 
+				console.log('Analysis started successfully, but no alert function defined.'); 
+			} 
+			setTimeout(() => { window.location.reload(); }, 20000); 
+		} else { 
+			const error = await response.json().catch(() => ({ detail: 'Unknown error' })); 
+			if (typeof showAlert !== 'undefined') { 
+				showAlert(`Failed to start analysis: ${error.detail || 'Unknown error'}`, 'danger'); 
+			} 
+			button.disabled = false; 
+			button.innerHTML = originalText; 
+			// Remove spinner if error
+			const anim = document.getElementById('ai-analysis-spinner');
+			if (anim) anim.remove();
+		} 
+	} catch (e) { 
+		console.error('Analysis error:', e); 
+		if (typeof showAlert !== 'undefined') { 
+			showAlert(`Error starting analysis: ${e.message}`, 'danger'); 
+		} 
+		button.disabled = false; 
+		button.innerHTML = originalText; 
+		const anim = document.getElementById('ai-analysis-spinner');
+		if (anim) anim.remove();
+	} 
  } 
 
  // Function to load analysis data for the session
@@ -884,15 +912,6 @@ function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthSc
 				</div>
 			</div>
 		</div>
-		
-		<div class="modal-actions">
-			<button class="modal-action-btn" onclick="downloadImage('${src}', '${title}')">
-				<i class="fas fa-download me-2"></i>Download
-			</button>
-			<button class="modal-action-btn secondary" onclick="document.body.removeChild(this.closest('.image-modal-container'))">
-				<i class="fas fa-times me-2"></i>Close
-			</button>
-		</div>
 	`;
 	
 	// Assemble modal
@@ -974,5 +993,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	const savedViewType = localStorage.getItem('imageViewType') || 'grid';
 	switchView(savedViewType);
 });
+
+// Function to download report
+function downloadReport(type, sessionId) {
+    window.open(`/api/reports/download/${type}/${sessionId}`, '_blank');
+}
  </script> 
 {% endblock %}

@@ -1,0 +1,73 @@
+{
+  "analysis_id": "analysis_c2dd177c_1752668928",
+  "session_id": 2,
+  "timestamp": "2025-07-16T20:28:36.886893",
+  "processing_time": 11.592641,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\combined_batch_1752668916.jpg",
+  "detection_summary": {
+    "healthy_count": 2,
+    "unhealthy_count": 6,
+    "total_count": 8,
+    "health_percentage": 25.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a low quality of tea leaf, with only 2 out of 8 leaves being healthy.",
+      "severity_level": "Medium",
+      "quality_grade": "Below standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Separate the unhealthy leaves from the healthy ones",
+        "Discard the unhealthy leaves to prevent further contamination",
+        "Inspect other batches of tea leaves for similar issues"
+      ],
+      "sorting_strategy": "Sort and separate leaves based on their health status, using visual inspection or machine learning algorithms if available.",
+      "processing_method": "Process only the healthy leaves to maintain quality",
+      "quality_preservation": [
+        "Regularly inspect tea plants for signs of disease or pests",
+        "Implement preventive measures such as crop rotation and organic fertilizers",
+        "Ensure proper sanitation practices during harvesting"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "The healthy leaves can still be used for processing, but the unhealthy ones should not be.",
+      "alternative_uses": [
+        "Use the healthy leaves to produce tea products",
+        "Explore alternative uses for the unhealthy leaves such as mulch or compost"
+      ],
+      "composting_guidelines": "Compost only after removing any contaminants and following local regulations.",
+      "prevention_measures": [
+        "Regularly inspect tea plants",
+        "Implement preventive measures such as crop rotation and organic fertilizers",
+        "Ensure proper sanitation practices during harvesting"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "The loss percentage can be estimated based on the number of unhealthy leaves and their value per unit",
+      "cost_saving_opportunities": [
+        "Invest in better quality control measures during harvesting",
+        "Implement preventive measures to reduce the occurrence of unhealthy leaves"
+      ],
+      "value_recovery_methods": [
+        "Explore alternative uses for the unhealthy leaves such as mulch or compost",
+        "Sell the healthy leaves at a premium price to offset losses from the unhealthy ones"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Separate and discard unhealthy leaves",
+        "Inspect other batches of tea leaves for similar issues",
+        "Implement preventive measures to reduce the occurrence of unhealthy leaves"
+      ],
+      "timeline": "Immediate actions should be taken within 24 hours, while long-term preventive measures can be implemented over a period of several months.",
+      "monitoring_points": [
+        "Regularly inspect tea plants",
+        "Monitor the quality of harvested leaves",
+        "Track economic impact and adjust strategies accordingly"
+      ]
+    }
+  },
+  "status": "completed"
+}

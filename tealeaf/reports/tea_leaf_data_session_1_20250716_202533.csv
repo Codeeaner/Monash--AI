@@ -1,0 +1,2 @@
+session_id,session_name,image_name,image_path,healthy_count,unhealthy_count,total_count,health_percentage,confidence_threshold,processing_time,status,error_message,created_at,annotated_image_path
+1,single,20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_1.jpg,uploads\session_1\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_1.jpg,0,2,2,0.0,0.25,0.13019180297851562,completed,,2025-07-16 12:25:15.393460,results\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_1_annotated.jpg

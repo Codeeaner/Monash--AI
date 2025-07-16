@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 
 
-def run_inference(source="test.jpg", model_path=r"C:\Users\amber\2025\T4G\Tea Leaf\runs\detect\train\weights\best.pt", save=True, show=True):
+def run_inference(source="test.jpg", model_path=r"C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt", save=True, show=True):
     # Load the trained model
     model = YOLO(model_path)
 

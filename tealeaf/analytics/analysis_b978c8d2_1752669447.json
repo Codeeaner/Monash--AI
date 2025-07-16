@@ -1,0 +1,64 @@
+{
+  "analysis_id": "analysis_b978c8d2_1752669447",
+  "session_id": 3,
+  "timestamp": "2025-07-16T20:37:20.179183",
+  "processing_time": 7.145479,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\captured_image_1752669379894_3_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 0,
+    "total_count": 0,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "No tea leaf detected",
+      "severity_level": "High",
+      "quality_grade": "Reject"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Remove all affected leaves from processing line"
+      ],
+      "sorting_strategy": "Implement stricter quality checks during sorting process",
+      "processing_method": "Adjust processing parameters to reduce further loss of healthy leaves",
+      "quality_preservation": [
+        "Inspect remaining tea for any hidden defects"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "None",
+      "alternative_uses": [
+        "Dispose in a controlled manner"
+      ],
+      "composting_guidelines": "Follow standard composting guidelines for disposal",
+      "prevention_measures": [
+        "Investigate root cause of issue and implement corrective actions"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "50%",
+      "cost_saving_opportunities": [
+        "Invest in better quality control measures"
+      ],
+      "value_recovery_methods": [
+        "Explore options for repurposing unusable leaves"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Investigate root cause of issue",
+        "Implement corrective actions to prevent future occurrences",
+        "Review and improve quality control measures"
+      ],
+      "timeline": "Immediate action required, with follow-up reviews in 1 month and 3 months",
+      "monitoring_points": [
+        "Monitor tea leaf health during processing",
+        "Regularly review quality control effectiveness",
+        "Track economic impact of corrective actions"
+      ]
+    }
+  },
+  "status": "completed"
+}
