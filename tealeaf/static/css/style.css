@@ -1148,13 +1148,18 @@
 }
 
 .modal-stat-card.green .modal-stat-number,
-.modal-stat-card.green .modal-stat-label { color: #047857; }
+.modal-stat-card.green .modal-stat-label,
+.modal-stat-card.green .modal-stat-content .modal-stat-number,
+.modal-stat-card.green .modal-stat-content .modal-stat-label {
+    color: #16a34a !important; /* Green for healthy */
+}
 
 .modal-stat-card.red .modal-stat-number,
-.modal-stat-card.red .modal-stat-label { color: #dc2626; }
-
-.modal-stat-card.gray .modal-stat-number,
-.modal-stat-card.gray .modal-stat-label { color: #374151; }
+.modal-stat-card.red .modal-stat-label,
+.modal-stat-card.red .modal-stat-content .modal-stat-number,
+.modal-stat-card.red .modal-stat-content .modal-stat-label {
+    color: #dc2626 !important; /* Red for unhealthy */
+}
 
 .modal-actions {
     display: flex;

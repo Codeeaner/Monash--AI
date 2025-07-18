@@ -27,7 +27,7 @@ class TeaLeafDetectionService:
         """
         if model_path is None:
             # Use the existing model path from the project
-            model_path = r"C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt"
+            model_path = r"C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt"
         
         self.model_path = model_path
         self.confidence_threshold = confidence_threshold

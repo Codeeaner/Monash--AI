@@ -1,10 +1,10 @@
 task: detect
 mode: train
-model: yolo11n.pt
-data: data.yaml
-epochs: 100
+model: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train8\weights\last.pt
+data: C:\\Users\\amber\\OneDrive\\Documents\\GitHub\\Monash--AI\\tealeaf\\data.yaml
+epochs: 200000
 time: null
-patience: 10
+patience: 0
 batch: 2
 imgsz: 416
 save: true
@@ -13,7 +13,7 @@ cache: false
 device: '0'
 workers: 0
 project: null
-name: train
+name: train6
 exist_ok: false
 pretrained: true
 optimizer: auto
@@ -102,4 +102,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: runs\detect\train
+save_dir: runs\detect\train6

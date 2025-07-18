@@ -491,3 +491,497 @@
 2025-07-16 20:43:56,771 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
 2025-07-16 20:43:56,771 - app.main - WARNING - Analysis data not found or error: 404
 2025-07-16 20:43:57,231 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_b978c8d2_1752669447
+2025-07-17 17:02:03,999 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-17 17:02:04,007 - app.main - INFO - Database tables created successfully
+2025-07-17 17:02:04,007 - app.main - INFO - Created directory: uploads
+2025-07-17 17:02:04,011 - app.main - INFO - Created directory: results
+2025-07-17 17:02:04,011 - app.main - INFO - Created directory: reports
+2025-07-17 17:02:04,011 - app.main - INFO - Created directory: analytics
+2025-07-17 17:02:04,011 - app.main - INFO - Created directory: static
+2025-07-17 17:02:04,011 - app.main - INFO - Created directory: static/images
+2025-07-17 17:02:20,997 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:02:24,976 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-17 17:02:24,980 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:02:24,992 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:02:25,361 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-17 17:02:25,361 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_4.jpg
+2025-07-17 17:02:25,624 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-17 17:02:25,632 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-17 17:02:25,632 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-17 17:02:25,632 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-17 17:02:27,364 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:02:33,614 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/4 "HTTP/1.1 200 OK"
+2025-07-17 17:02:33,626 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/4 "HTTP/1.1 404 Not Found"
+2025-07-17 17:02:33,626 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-17 17:02:42,758 - app.services.analytics_service - INFO - Ollama server and Llava-Phi3 model are available
+2025-07-17 17:02:42,760 - app.api.analytics - INFO - Found 1 completed results for session 4
+2025-07-17 17:02:42,760 - app.api.analytics - INFO - Starting batch analysis for session 4
+2025-07-17 17:02:42,760 - app.services.analytics_service - INFO - Encoding image for analysis: results\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_4_annotated.jpg
+2025-07-17 17:02:42,760 - app.services.analytics_service - INFO - Sending analysis request to Llava-Phi3...
+2025-07-17 17:03:01,710 - app.services.analytics_service - INFO - Received response from Llava-Phi3, length: 2931 characters
+2025-07-17 17:03:01,710 - app.services.analytics_service - INFO - Parsed analysis result from response for image: results\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_4_annotated.jpg
+2025-07-17 17:03:01,712 - app.services.analytics_service - INFO - Analysis result saved: analytics\analysis_a60002cc_1752742981.json
+2025-07-17 17:03:01,712 - app.services.analytics_service - INFO - Analysis result saved for image: results\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_4_annotated.jpg
+2025-07-17 17:03:01,712 - app.services.analytics_service - INFO - Analysis completed in 18.95 seconds
+2025-07-17 17:03:01,713 - app.api.analytics - INFO - Analysis completed for session 4
+2025-07-17 17:03:03,344 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/4 "HTTP/1.1 200 OK"
+2025-07-17 17:03:03,352 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/4 "HTTP/1.1 404 Not Found"
+2025-07-17 17:03:03,352 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-17 17:03:03,836 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_a60002cc_1752742981
+2025-07-17 17:09:41,388 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-17 17:09:41,396 - app.main - INFO - Database tables created successfully
+2025-07-17 17:09:41,396 - app.main - INFO - Created directory: uploads
+2025-07-17 17:09:41,396 - app.main - INFO - Created directory: results
+2025-07-17 17:09:41,397 - app.main - INFO - Created directory: reports
+2025-07-17 17:09:41,397 - app.main - INFO - Created directory: analytics
+2025-07-17 17:09:41,398 - app.main - INFO - Created directory: static
+2025-07-17 17:09:41,398 - app.main - INFO - Created directory: static/images
+2025-07-17 17:09:54,473 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:09:57,857 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-17 17:09:57,860 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:09:57,872 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:09:58,158 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-17 17:09:58,158 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_5.jpg
+2025-07-17 17:09:58,347 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-17 17:09:58,351 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-17 17:09:58,351 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-17 17:09:58,351 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-17 17:10:00,129 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 17:10:05,067 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/5 "HTTP/1.1 200 OK"
+2025-07-17 17:10:05,074 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/5 "HTTP/1.1 404 Not Found"
+2025-07-17 17:10:05,076 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-17 17:10:07,458 - app.services.analytics_service - INFO - Ollama server and Llava-Phi3 model are available
+2025-07-17 17:10:07,459 - app.api.analytics - INFO - Found 1 completed results for session 5
+2025-07-17 17:10:07,460 - app.api.analytics - INFO - Starting batch analysis for session 5
+2025-07-17 17:10:07,460 - app.services.analytics_service - INFO - Encoding image for analysis: results\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_5_annotated.jpg
+2025-07-17 17:10:07,460 - app.services.analytics_service - INFO - Sending analysis request to Llava-Phi3...
+2025-07-17 17:10:23,293 - app.services.analytics_service - INFO - Received response from Llava-Phi3, length: 2817 characters
+2025-07-17 17:10:23,294 - app.services.analytics_service - INFO - Parsed analysis result from response for image: results\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_5_annotated.jpg
+2025-07-17 17:10:23,294 - app.services.analytics_service - INFO - Analysis result saved: analytics\analysis_dd325f42_1752743423.json
+2025-07-17 17:10:23,294 - app.services.analytics_service - INFO - Analysis result saved for image: results\20221213_091338_jpg.rf.0f431fdab7f6a4043277845885bf8621_5_annotated.jpg
+2025-07-17 17:10:23,294 - app.services.analytics_service - INFO - Analysis completed in 15.83 seconds
+2025-07-17 17:10:23,296 - app.api.analytics - INFO - Analysis completed for session 5
+2025-07-17 17:10:27,714 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/5 "HTTP/1.1 200 OK"
+2025-07-17 17:10:27,720 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/5 "HTTP/1.1 404 Not Found"
+2025-07-17 17:10:27,720 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-17 17:10:27,820 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_dd325f42_1752743423
+2025-07-17 23:25:42,803 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-17 23:25:42,814 - app.main - INFO - Database tables created successfully
+2025-07-17 23:25:42,814 - app.main - INFO - Created directory: uploads
+2025-07-17 23:25:42,815 - app.main - INFO - Created directory: results
+2025-07-17 23:25:42,815 - app.main - INFO - Created directory: reports
+2025-07-17 23:25:42,815 - app.main - INFO - Created directory: analytics
+2025-07-17 23:25:42,815 - app.main - INFO - Created directory: static
+2025-07-17 23:25:42,815 - app.main - INFO - Created directory: static/images
+2025-07-17 23:26:00,104 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/5 "HTTP/1.1 200 OK"
+2025-07-17 23:26:00,113 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/5 "HTTP/1.1 404 Not Found"
+2025-07-17 23:26:00,114 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-17 23:26:17,076 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:20,397 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-17 23:26:20,401 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:20,410 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:20,923 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-17 23:26:20,923 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\download_4.jpg
+2025-07-17 23:26:21,036 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-17 23:26:21,040 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-17 23:26:21,041 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-17 23:26:21,041 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-17 23:26:23,372 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:43,917 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:44,052 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-17 23:26:44,054 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:44,063 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:44,332 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-17 23:26:44,334 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\download_5.jpg
+2025-07-17 23:26:44,537 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-17 23:26:44,540 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-17 23:26:44,540 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-17 23:26:44,540 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-17 23:26:46,340 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:57,137 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:57,295 - app.services.batch_service - INFO - Created detection session 6 with 1 images
+2025-07-17 23:26:57,298 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:57,304 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:26:57,604 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=None
+2025-07-17 23:26:57,604 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_6\download_6.jpg
+2025-07-17 23:26:57,690 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=1
+2025-07-17 23:26:57,694 - app.services.batch_service - INFO - Updated session 6: status=completed, processed=1
+2025-07-17 23:26:57,694 - app.services.batch_service - INFO - Batch processing completed for session 6
+2025-07-17 23:26:57,694 - app.api.upload - INFO - Single image processing completed for session 6
+2025-07-17 23:27:00,362 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:43:43,915 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:43:44,105 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-17 23:43:44,107 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:43:44,118 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:43:44,618 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-17 23:43:44,619 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\Untitled_design_5.png
+2025-07-17 23:43:44,772 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-17 23:43:44,776 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-17 23:43:44,776 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-17 23:43:44,777 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-17 23:43:46,581 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:46:53,961 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:46:54,133 - app.services.batch_service - INFO - Created detection session 6 with 1 images
+2025-07-17 23:46:54,136 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:46:54,146 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:46:54,472 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=None
+2025-07-17 23:46:54,472 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_6\Untitled_design_6.png
+2025-07-17 23:46:54,608 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=1
+2025-07-17 23:46:54,611 - app.services.batch_service - INFO - Updated session 6: status=completed, processed=1
+2025-07-17 23:46:54,611 - app.services.batch_service - INFO - Batch processing completed for session 6
+2025-07-17 23:46:54,612 - app.api.upload - INFO - Single image processing completed for session 6
+2025-07-17 23:46:57,361 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:47:35,983 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:47:36,137 - app.services.batch_service - INFO - Created detection session 7 with 1 images
+2025-07-17 23:47:36,141 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:47:36,147 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:47:36,405 - app.services.batch_service - INFO - Updated session 7: status=processing, processed=None
+2025-07-17 23:47:36,406 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_7\Untitled_design_7.png
+2025-07-17 23:47:36,510 - app.services.batch_service - INFO - Updated session 7: status=processing, processed=1
+2025-07-17 23:47:36,515 - app.services.batch_service - INFO - Updated session 7: status=completed, processed=1
+2025-07-17 23:47:36,516 - app.services.batch_service - INFO - Batch processing completed for session 7
+2025-07-17 23:47:36,516 - app.api.upload - INFO - Single image processing completed for session 7
+2025-07-17 23:47:38,401 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:49:02,618 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:49:02,810 - app.services.batch_service - INFO - Created detection session 8 with 1 images
+2025-07-17 23:49:02,814 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:49:02,829 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:49:03,469 - app.services.batch_service - INFO - Updated session 8: status=processing, processed=None
+2025-07-17 23:49:03,469 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_8\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_8.jpg
+2025-07-17 23:49:03,584 - app.services.batch_service - INFO - Updated session 8: status=processing, processed=1
+2025-07-17 23:49:03,588 - app.services.batch_service - INFO - Updated session 8: status=completed, processed=1
+2025-07-17 23:49:03,588 - app.services.batch_service - INFO - Batch processing completed for session 8
+2025-07-17 23:49:03,589 - app.api.upload - INFO - Single image processing completed for session 8
+2025-07-17 23:49:05,421 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:51:11,225 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:51:11,412 - app.services.batch_service - INFO - Created detection session 9 with 1 images
+2025-07-17 23:51:11,416 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:51:11,427 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:51:11,742 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=None
+2025-07-17 23:51:11,744 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_9\combine_9.png
+2025-07-17 23:51:11,887 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=1
+2025-07-17 23:51:11,890 - app.services.batch_service - INFO - Updated session 9: status=completed, processed=1
+2025-07-17 23:51:11,890 - app.services.batch_service - INFO - Batch processing completed for session 9
+2025-07-17 23:51:11,890 - app.api.upload - INFO - Single image processing completed for session 9
+2025-07-17 23:51:14,358 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:52:40,397 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:52:40,548 - app.services.batch_service - INFO - Created detection session 10 with 1 images
+2025-07-17 23:52:40,551 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:52:40,558 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-17 23:52:40,861 - app.services.batch_service - INFO - Updated session 10: status=processing, processed=None
+2025-07-17 23:52:40,861 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_10\combine_10.png
+2025-07-17 23:52:40,995 - app.services.batch_service - INFO - Updated session 10: status=processing, processed=1
+2025-07-17 23:52:40,998 - app.services.batch_service - INFO - Updated session 10: status=completed, processed=1
+2025-07-17 23:52:40,998 - app.services.batch_service - INFO - Batch processing completed for session 10
+2025-07-17 23:52:40,999 - app.api.upload - INFO - Single image processing completed for session 10
+2025-07-17 23:52:42,835 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train6\weights\best.pt
+2025-07-18 15:31:01,587 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-18 15:31:01,595 - app.main - INFO - Database tables created successfully
+2025-07-18 15:31:01,595 - app.main - INFO - Created directory: uploads
+2025-07-18 15:31:01,595 - app.main - INFO - Created directory: results
+2025-07-18 15:31:01,596 - app.main - INFO - Created directory: reports
+2025-07-18 15:31:01,596 - app.main - INFO - Created directory: analytics
+2025-07-18 15:31:01,596 - app.main - INFO - Created directory: static
+2025-07-18 15:31:01,596 - app.main - INFO - Created directory: static/images
+2025-07-18 15:44:02,637 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/8 "HTTP/1.1 200 OK"
+2025-07-18 15:44:02,646 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/8 "HTTP/1.1 404 Not Found"
+2025-07-18 15:44:02,646 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:44:08,724 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/4 "HTTP/1.1 200 OK"
+2025-07-18 15:44:08,727 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/4 "HTTP/1.1 404 Not Found"
+2025-07-18 15:44:08,728 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:47:57,698 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:47:59,817 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-18 15:47:59,820 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:47:59,830 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:00,299 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-18 15:48:00,299 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\20221213_084018_jpg.rf.d64fa7fc9a0f47f7324e118d8c6800d2_4.jpg
+2025-07-18 15:48:00,426 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-18 15:48:00,431 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-18 15:48:00,431 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-18 15:48:00,431 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-18 15:48:02,259 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:34,311 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:34,455 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-18 15:48:34,457 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:34,466 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:34,695 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-18 15:48:34,696 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\20221213_084406_jpg.rf.790b93a2e56a98879659401d50b69202_5.jpg
+2025-07-18 15:48:34,744 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-18 15:48:34,748 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-18 15:48:34,748 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-18 15:48:34,748 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-18 15:48:36,702 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:47,361 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:47,480 - app.services.batch_service - INFO - Created detection session 6 with 1 images
+2025-07-18 15:48:47,482 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:47,490 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:48:47,721 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=None
+2025-07-18 15:48:47,722 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_6\20221213_090631_jpg.rf.5f40a7180cf2fed1f67b36c0c5f9ecc0_6.jpg
+2025-07-18 15:48:47,768 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=1
+2025-07-18 15:48:47,771 - app.services.batch_service - INFO - Updated session 6: status=completed, processed=1
+2025-07-18 15:48:47,771 - app.services.batch_service - INFO - Batch processing completed for session 6
+2025-07-18 15:48:47,771 - app.api.upload - INFO - Single image processing completed for session 6
+2025-07-18 15:48:50,371 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:09,289 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:09,415 - app.services.batch_service - INFO - Created detection session 7 with 1 images
+2025-07-18 15:49:09,417 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:09,423 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:09,670 - app.services.batch_service - INFO - Updated session 7: status=processing, processed=None
+2025-07-18 15:49:09,670 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_7\20221213_091013_jpg.rf.ade461ea100537d339eee05086c6f51a_7.jpg
+2025-07-18 15:49:09,715 - app.services.batch_service - INFO - Updated session 7: status=processing, processed=1
+2025-07-18 15:49:09,717 - app.services.batch_service - INFO - Updated session 7: status=completed, processed=1
+2025-07-18 15:49:09,717 - app.services.batch_service - INFO - Batch processing completed for session 7
+2025-07-18 15:49:09,718 - app.api.upload - INFO - Single image processing completed for session 7
+2025-07-18 15:49:12,365 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:57,236 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:57,570 - app.services.batch_service - INFO - Created detection session 8 with 1 images
+2025-07-18 15:49:57,572 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:57,578 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:49:57,867 - app.services.batch_service - INFO - Updated session 8: status=processing, processed=None
+2025-07-18 15:49:57,867 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_8\20221213_091626_jpg.rf.76fc5ecc16246d1dde312503198f96b6_8.jpg
+2025-07-18 15:49:57,929 - app.services.batch_service - INFO - Updated session 8: status=processing, processed=1
+2025-07-18 15:49:57,933 - app.services.batch_service - INFO - Updated session 8: status=completed, processed=1
+2025-07-18 15:49:57,933 - app.services.batch_service - INFO - Batch processing completed for session 8
+2025-07-18 15:49:57,934 - app.api.upload - INFO - Single image processing completed for session 8
+2025-07-18 15:50:00,365 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:53:14,257 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:53:14,403 - app.services.batch_service - INFO - Created detection session 9 with 50 images
+2025-07-18 15:53:14,433 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:53:14,452 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:53:14,686 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=None
+2025-07-18 15:53:14,686 - app.services.batch_service - INFO - Processing image 1/50: uploads\session_9\IMG_7220_JPG.rf.648a8b2d8f2ed91fe17b5add907a0f1d_9.jpg
+2025-07-18 15:53:14,745 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=1
+2025-07-18 15:53:14,745 - app.services.batch_service - INFO - Processing image 2/50: uploads\session_9\20221213_091705_jpg.rf.7683bcebc09a835727eb4fe316964be3_9.jpg
+2025-07-18 15:53:14,794 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=2
+2025-07-18 15:53:14,794 - app.services.batch_service - INFO - Processing image 3/50: uploads\session_9\20221213_091759_jpg.rf.b347a0757fe0465f2c5ab31497a658b0_9.jpg
+2025-07-18 15:53:14,840 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=3
+2025-07-18 15:53:14,840 - app.services.batch_service - INFO - Processing image 4/50: uploads\session_9\20221213_091904_jpg.rf.c65fa7095080b487c605d3faf19e1617_9.jpg
+2025-07-18 15:53:14,887 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=4
+2025-07-18 15:53:14,888 - app.services.batch_service - INFO - Processing image 5/50: uploads\session_9\20221213_094304_jpg.rf.a26b573ae33c45be2222ff5b2654db56_9.jpg
+2025-07-18 15:53:14,945 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=5
+2025-07-18 15:53:14,945 - app.services.batch_service - INFO - Processing image 6/50: uploads\session_9\20221213_094405_jpg.rf.7755798e44006d86b07bcf3c781a5790_9.jpg
+2025-07-18 15:53:15,016 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=6
+2025-07-18 15:53:15,016 - app.services.batch_service - INFO - Processing image 7/50: uploads\session_9\20221213_095212_jpg.rf.1519eb8996b88ff0e4a70770597e6b47_9.jpg
+2025-07-18 15:53:15,071 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=7
+2025-07-18 15:53:15,071 - app.services.batch_service - INFO - Processing image 8/50: uploads\session_9\20221213_095253_jpg.rf.8d3495cd7336d602296ed3bd0ec6b4c6_9.jpg
+2025-07-18 15:53:15,122 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=8
+2025-07-18 15:53:15,122 - app.services.batch_service - INFO - Processing image 9/50: uploads\session_9\20221213_095403_jpg.rf.ce70c3e21b391944f342f9ed1469c59f_9.jpg
+2025-07-18 15:53:15,165 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=9
+2025-07-18 15:53:15,165 - app.services.batch_service - INFO - Processing image 10/50: uploads\session_9\IMG_3410_JPG.rf.3d769f5d926b48a61389fac9cb2a8ac1_9.jpg
+2025-07-18 15:53:15,209 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=10
+2025-07-18 15:53:15,209 - app.services.batch_service - INFO - Processing image 11/50: uploads\session_9\IMG_3413_JPG.rf.01070b9e886b111cc88610d592893d57_9.jpg
+2025-07-18 15:53:15,254 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=11
+2025-07-18 15:53:15,254 - app.services.batch_service - INFO - Processing image 12/50: uploads\session_9\IMG_3417_JPG.rf.5f91b64c47345a912dad131fa212253c_9.jpg
+2025-07-18 15:53:15,299 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=12
+2025-07-18 15:53:15,299 - app.services.batch_service - INFO - Processing image 13/50: uploads\session_9\IMG_3427_JPG.rf.6d00e4e4922e02043794d87fd0f16a69_9.jpg
+2025-07-18 15:53:15,353 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=13
+2025-07-18 15:53:15,354 - app.services.batch_service - INFO - Processing image 14/50: uploads\session_9\IMG_3454_JPG.rf.b052a655c967962e1370f1fcecc29104_9.jpg
+2025-07-18 15:53:15,416 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=14
+2025-07-18 15:53:15,416 - app.services.batch_service - INFO - Processing image 15/50: uploads\session_9\IMG_3464_JPG.rf.3f21cfad065147223fa77cf3f26d82a5_9.jpg
+2025-07-18 15:53:15,464 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=15
+2025-07-18 15:53:15,464 - app.services.batch_service - INFO - Processing image 16/50: uploads\session_9\IMG_3467_JPG.rf.6c66d5e6bc56eb7dd3431f7d53f84830_9.jpg
+2025-07-18 15:53:15,508 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=16
+2025-07-18 15:53:15,508 - app.services.batch_service - INFO - Processing image 17/50: uploads\session_9\IMG_3476_JPG.rf.65434626ce759e2d5fda2c03e080b390_9.jpg
+2025-07-18 15:53:15,552 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=17
+2025-07-18 15:53:15,552 - app.services.batch_service - INFO - Processing image 18/50: uploads\session_9\IMG_3483_JPG.rf.f54b230c58a4c175fa7b82b1f5fad909_9.jpg
+2025-07-18 15:53:15,603 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=18
+2025-07-18 15:53:15,604 - app.services.batch_service - INFO - Processing image 19/50: uploads\session_9\IMG_3488_JPG.rf.633b0a2ce59ac651db732ad8418dcf73_9.jpg
+2025-07-18 15:53:15,653 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=19
+2025-07-18 15:53:15,653 - app.services.batch_service - INFO - Processing image 20/50: uploads\session_9\IMG_3504_JPG.rf.3b591eb7c6ffca5ef455a6b3959b14e5_9.jpg
+2025-07-18 15:53:15,698 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=20
+2025-07-18 15:53:15,698 - app.services.batch_service - INFO - Processing image 21/50: uploads\session_9\IMG_3529_JPG.rf.4632169622958a63077749d6bb7e0453_9.jpg
+2025-07-18 15:53:15,743 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=21
+2025-07-18 15:53:15,744 - app.services.batch_service - INFO - Processing image 22/50: uploads\session_9\IMG_3533_JPG.rf.d391ef9dcb9cc52c48d987a85a33a5bb_9.jpg
+2025-07-18 15:53:15,788 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=22
+2025-07-18 15:53:15,788 - app.services.batch_service - INFO - Processing image 23/50: uploads\session_9\IMG_3545_JPG.rf.977f2693cfd1a7fc22ab5e709aa5fdcc_9.jpg
+2025-07-18 15:53:15,831 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=23
+2025-07-18 15:53:15,831 - app.services.batch_service - INFO - Processing image 24/50: uploads\session_9\IMG_3575_JPG.rf.b1769032ee89eadb6ae5f321d740c311_9.jpg
+2025-07-18 15:53:15,874 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=24
+2025-07-18 15:53:15,874 - app.services.batch_service - INFO - Processing image 25/50: uploads\session_9\IMG_3576_JPG.rf.1bb37f2a0264016c720b3da9b0dab84e_9.jpg
+2025-07-18 15:53:15,928 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=25
+2025-07-18 15:53:15,928 - app.services.batch_service - INFO - Processing image 26/50: uploads\session_9\IMG_3586_JPG.rf.680fa0295181afb6145634c53c8de1fa_9.jpg
+2025-07-18 15:53:15,990 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=26
+2025-07-18 15:53:15,990 - app.services.batch_service - INFO - Processing image 27/50: uploads\session_9\IMG_3588_JPG.rf.117d0d87fe0eba7dfedd08017b6d2600_9.jpg
+2025-07-18 15:53:16,042 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=27
+2025-07-18 15:53:16,043 - app.services.batch_service - INFO - Processing image 28/50: uploads\session_9\IMG_3598_JPG.rf.2151bb445d5b0984553301e27e333736_9.jpg
+2025-07-18 15:53:16,096 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=28
+2025-07-18 15:53:16,096 - app.services.batch_service - INFO - Processing image 29/50: uploads\session_9\IMG_3630_JPG.rf.d423512a00addfdf0c8fda8ca286c61e_9.jpg
+2025-07-18 15:53:16,142 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=29
+2025-07-18 15:53:16,142 - app.services.batch_service - INFO - Processing image 30/50: uploads\session_9\IMG_6738_JPG.rf.ff01f292792a95f9c8ee6a9349ce5d9c_9.jpg
+2025-07-18 15:53:16,191 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=30
+2025-07-18 15:53:16,191 - app.services.batch_service - INFO - Processing image 31/50: uploads\session_9\IMG_6740_JPG.rf.97035f22aaa05762f05d59bbeba14323_9.jpg
+2025-07-18 15:53:16,238 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=31
+2025-07-18 15:53:16,238 - app.services.batch_service - INFO - Processing image 32/50: uploads\session_9\IMG_6769_JPG.rf.2f402e66e4bd4d20b1af4fea318b52dc_9.jpg
+2025-07-18 15:53:16,283 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=32
+2025-07-18 15:53:16,283 - app.services.batch_service - INFO - Processing image 33/50: uploads\session_9\IMG_6777_JPG.rf.3709903880d629be6ffc879d9447aeac_9.jpg
+2025-07-18 15:53:16,331 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=33
+2025-07-18 15:53:16,331 - app.services.batch_service - INFO - Processing image 34/50: uploads\session_9\IMG_6780_JPG.rf.2d2f25769b41c2cc3624ed8e1a5d7d57_9.jpg
+2025-07-18 15:53:16,378 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=34
+2025-07-18 15:53:16,378 - app.services.batch_service - INFO - Processing image 35/50: uploads\session_9\IMG_6794_JPG.rf.9be7c6b15914221eeab83ca08309053a_9.jpg
+2025-07-18 15:53:16,422 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=35
+2025-07-18 15:53:16,422 - app.services.batch_service - INFO - Processing image 36/50: uploads\session_9\IMG_6804_JPG.rf.ec9807f84afaddb7eec2735c9b64626e_9.jpg
+2025-07-18 15:53:16,465 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=36
+2025-07-18 15:53:16,465 - app.services.batch_service - INFO - Processing image 37/50: uploads\session_9\IMG_6805_JPG.rf.43dd9b6ea7fcc8175ff5c09c9fff6af3_9.jpg
+2025-07-18 15:53:16,510 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=37
+2025-07-18 15:53:16,510 - app.services.batch_service - INFO - Processing image 38/50: uploads\session_9\IMG_7115_JPG.rf.82f67ed9cf321a6144db76ae59219c93_9.jpg
+2025-07-18 15:53:16,553 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=38
+2025-07-18 15:53:16,553 - app.services.batch_service - INFO - Processing image 39/50: uploads\session_9\IMG_7126_JPG.rf.b24cd71c64301161489843e3324cc1c4_9.jpg
+2025-07-18 15:53:16,598 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=39
+2025-07-18 15:53:16,598 - app.services.batch_service - INFO - Processing image 40/50: uploads\session_9\IMG_7132_JPG.rf.41eabf2d6e56d3977a16dedecbc836f4_9.jpg
+2025-07-18 15:53:16,644 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=40
+2025-07-18 15:53:16,644 - app.services.batch_service - INFO - Processing image 41/50: uploads\session_9\IMG_7149_JPG.rf.da2036961a9df6c45e9bbef5c9e0ecf2_9.jpg
+2025-07-18 15:53:16,692 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=41
+2025-07-18 15:53:16,692 - app.services.batch_service - INFO - Processing image 42/50: uploads\session_9\IMG_7152_JPG.rf.59fac434f91514da707de36b0a07475a_9.jpg
+2025-07-18 15:53:16,736 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=42
+2025-07-18 15:53:16,737 - app.services.batch_service - INFO - Processing image 43/50: uploads\session_9\IMG_7153_JPG.rf.153e4cda8cb7f106c3b8bc74fca2edc7_9.jpg
+2025-07-18 15:53:16,783 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=43
+2025-07-18 15:53:16,784 - app.services.batch_service - INFO - Processing image 44/50: uploads\session_9\IMG_7159_JPG.rf.973a85d89dba5cd7186d42c795cf18fb_9.jpg
+2025-07-18 15:53:16,831 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=44
+2025-07-18 15:53:16,831 - app.services.batch_service - INFO - Processing image 45/50: uploads\session_9\IMG_7163_JPG.rf.20f4c6c5b8a92f33522e75801062db2d_9.jpg
+2025-07-18 15:53:16,887 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=45
+2025-07-18 15:53:16,887 - app.services.batch_service - INFO - Processing image 46/50: uploads\session_9\IMG_7181_JPG.rf.3faab4342fcd27a1855ab2ded9a2710e_9.jpg
+2025-07-18 15:53:16,936 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=46
+2025-07-18 15:53:16,937 - app.services.batch_service - INFO - Processing image 47/50: uploads\session_9\IMG_7186_JPG.rf.49f734e279affee9350c6c1b8b5e0a4b_9.jpg
+2025-07-18 15:53:16,984 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=47
+2025-07-18 15:53:16,985 - app.services.batch_service - INFO - Processing image 48/50: uploads\session_9\IMG_7205_JPG.rf.042e6d4ef1da3daf0a1baa7d57f7ab08_9.jpg
+2025-07-18 15:53:17,034 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=48
+2025-07-18 15:53:17,034 - app.services.batch_service - INFO - Processing image 49/50: uploads\session_9\IMG_7210_JPG.rf.7cfcf18540d97ff2352d4880a6a50130_9.jpg
+2025-07-18 15:53:17,082 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=49
+2025-07-18 15:53:17,082 - app.services.batch_service - INFO - Processing image 50/50: uploads\session_9\IMG_7217_JPG.rf.08736aa00912e7a348dfa4bc3935e5f1_9.jpg
+2025-07-18 15:53:17,131 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=50
+2025-07-18 15:53:17,134 - app.services.batch_service - INFO - Updated session 9: status=completed, processed=50
+2025-07-18 15:53:17,135 - app.services.batch_service - INFO - Batch processing completed for session 9
+2025-07-18 15:53:17,135 - app.api.upload - INFO - Batch processing completed for session 9
+2025-07-18 15:53:17,362 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 15:56:44,863 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/9 "HTTP/1.1 200 OK"
+2025-07-18 15:56:44,867 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/9 "HTTP/1.1 404 Not Found"
+2025-07-18 15:56:44,867 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:56:53,103 - app.services.analytics_service - INFO - Ollama server and Llava-Phi3 model are available
+2025-07-18 15:56:53,107 - app.api.analytics - INFO - Found 50 completed results for session 9
+2025-07-18 15:56:53,107 - app.api.analytics - INFO - Starting batch analysis for session 9
+2025-07-18 15:56:53,257 - app.services.analytics_service - INFO - Combined 50 images into: results\combined_batch_1752825413.jpg
+2025-07-18 15:56:53,267 - app.services.analytics_service - INFO - Analyzing combined image with 50 sub-images
+2025-07-18 15:56:53,267 - app.services.analytics_service - INFO - Encoding image for analysis: results\combined_batch_1752825413.jpg
+2025-07-18 15:56:53,284 - app.services.analytics_service - INFO - Sending analysis request to Llava-Phi3...
+2025-07-18 15:57:13,669 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/9 "HTTP/1.1 200 OK"
+2025-07-18 15:57:13,672 - app.services.analytics_service - INFO - Received response from Llava-Phi3, length: 2786 characters
+2025-07-18 15:57:13,673 - app.services.analytics_service - INFO - Parsed analysis result from response for image: results\combined_batch_1752825413.jpg
+2025-07-18 15:57:13,674 - app.services.analytics_service - INFO - Analysis result saved: analytics\analysis_52406029_1752825433.json
+2025-07-18 15:57:13,675 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/9 "HTTP/1.1 404 Not Found"
+2025-07-18 15:57:13,675 - app.services.analytics_service - INFO - Analysis result saved for image: results\combined_batch_1752825413.jpg
+2025-07-18 15:57:13,676 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:57:13,676 - app.services.analytics_service - INFO - Analysis completed in 20.41 seconds
+2025-07-18 15:57:13,677 - app.api.analytics - INFO - Analysis completed for session 9
+2025-07-18 15:57:13,850 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_52406029_1752825433
+2025-07-18 15:59:17,296 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/8 "HTTP/1.1 200 OK"
+2025-07-18 15:59:17,299 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/8 "HTTP/1.1 404 Not Found"
+2025-07-18 15:59:17,300 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:59:21,146 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/6 "HTTP/1.1 200 OK"
+2025-07-18 15:59:21,149 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/6 "HTTP/1.1 404 Not Found"
+2025-07-18 15:59:21,150 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 15:59:30,821 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/9 "HTTP/1.1 200 OK"
+2025-07-18 15:59:30,825 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/9 "HTTP/1.1 404 Not Found"
+2025-07-18 15:59:30,826 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:01:12,518 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:12,672 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-18 16:01:12,675 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:12,682 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:12,960 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-18 16:01:12,961 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\captured_image_1752825670190_4.jpg
+2025-07-18 16:01:13,065 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-18 16:01:13,068 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-18 16:01:13,069 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-18 16:01:13,069 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-18 16:01:15,363 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:40,488 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:40,633 - app.services.batch_service - INFO - Created detection session 5 with 1 images
+2025-07-18 16:01:40,636 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:40,643 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:01:41,125 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=None
+2025-07-18 16:01:41,126 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_5\captured_image_1752825696530_5.jpg
+2025-07-18 16:01:41,213 - app.services.batch_service - INFO - Updated session 5: status=processing, processed=1
+2025-07-18 16:01:41,216 - app.services.batch_service - INFO - Updated session 5: status=completed, processed=1
+2025-07-18 16:01:41,216 - app.services.batch_service - INFO - Batch processing completed for session 5
+2025-07-18 16:01:41,216 - app.api.upload - INFO - Single image processing completed for session 5
+2025-07-18 16:01:43,378 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:02:20,168 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:02:20,300 - app.services.batch_service - INFO - Created detection session 6 with 1 images
+2025-07-18 16:02:20,302 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:02:20,309 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:02:20,577 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=None
+2025-07-18 16:02:20,579 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_6\captured_image_1752825736801_6.jpg
+2025-07-18 16:02:20,639 - app.services.batch_service - INFO - Updated session 6: status=processing, processed=1
+2025-07-18 16:02:20,642 - app.services.batch_service - INFO - Updated session 6: status=completed, processed=1
+2025-07-18 16:02:20,643 - app.services.batch_service - INFO - Batch processing completed for session 6
+2025-07-18 16:02:20,643 - app.api.upload - INFO - Single image processing completed for session 6
+2025-07-18 16:02:22,581 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:02:43,138 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:02:43,142 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:02:43,142 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:02:43,418 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:02:43,421 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:02:43,422 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:02:43,530 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_83230007_1752669179
+2025-07-18 16:04:05,528 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:04:05,532 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:05,533 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:05,806 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:04:05,809 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:05,810 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:06,275 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_83230007_1752669179
+2025-07-18 16:04:07,366 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-18 16:04:07,372 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:07,373 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:07,656 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-18 16:04:07,662 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:07,663 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:07,796 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_b978c8d2_1752669447
+2025-07-18 16:04:42,353 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:04:42,356 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:42,357 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:44,525 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:04:44,528 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:44,528 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:04:44,673 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_159721b8_1752669110
+2025-07-18 16:04:45,318 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:04:45,323 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:04:45,324 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:01,284 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-18 16:06:01,287 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:01,287 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:01,577 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-18 16:06:01,580 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:01,580 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:01,722 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_b978c8d2_1752669447
+2025-07-18 16:06:03,928 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:06:03,931 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:03,932 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:04,654 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:06:04,658 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:04,659 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:04,757 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_159721b8_1752669110
+2025-07-18 16:06:15,638 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:06:15,640 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:15,641 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:16,533 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/3 "HTTP/1.1 200 OK"
+2025-07-18 16:06:16,536 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/3 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:16,536 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:16,848 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:06:16,850 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:16,851 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:17,125 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:06:17,127 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:06:17,128 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:06:17,214 - app.api.analytics - INFO - Retrieved analysis result for analysis_id: analysis_83230007_1752669179
+2025-07-18 16:10:05,533 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:10:05,680 - app.services.batch_service - INFO - Created detection session 4 with 1 images
+2025-07-18 16:10:05,683 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:10:05,696 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:10:05,992 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=None
+2025-07-18 16:10:05,992 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_4\IMG_3488_JPG.rf.633b0a2ce59ac651db732ad8418dcf73_4.jpg
+2025-07-18 16:10:06,046 - app.services.batch_service - INFO - Updated session 4: status=processing, processed=1
+2025-07-18 16:10:06,051 - app.services.batch_service - INFO - Updated session 4: status=completed, processed=1
+2025-07-18 16:10:06,051 - app.services.batch_service - INFO - Batch processing completed for session 4
+2025-07-18 16:10:06,051 - app.api.upload - INFO - Single image processing completed for session 4
+2025-07-18 16:10:07,951 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:10:16,868 - app.main - INFO - Shutting down Tea Leaf Detection API...
