@@ -985,3 +985,43 @@
 2025-07-18 16:10:06,051 - app.api.upload - INFO - Single image processing completed for session 4
 2025-07-18 16:10:07,951 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
 2025-07-18 16:10:16,868 - app.main - INFO - Shutting down Tea Leaf Detection API...
+2025-07-18 16:48:59,464 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-18 16:48:59,466 - app.main - INFO - Database tables created successfully
+2025-07-18 16:48:59,467 - app.main - INFO - Created directory: uploads
+2025-07-18 16:48:59,467 - app.main - INFO - Created directory: results
+2025-07-18 16:48:59,467 - app.main - INFO - Created directory: reports
+2025-07-18 16:48:59,467 - app.main - INFO - Created directory: analytics
+2025-07-18 16:48:59,467 - app.main - INFO - Created directory: static
+2025-07-18 16:48:59,468 - app.main - INFO - Created directory: static/images
+2025-07-18 16:49:22,308 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:49:24,089 - app.services.batch_service - INFO - Created detection session 9 with 1 images
+2025-07-18 16:49:24,091 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:49:24,104 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:49:24,372 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=None
+2025-07-18 16:49:24,372 - app.services.batch_service - INFO - Processing image 1/1: uploads\session_9\IMG_7765_JPG.rf.95b810e47cda816b06c54c2612d02a02_9.jpg
+2025-07-18 16:49:24,495 - app.services.batch_service - INFO - Updated session 9: status=processing, processed=1
+2025-07-18 16:49:24,500 - app.services.batch_service - INFO - Updated session 9: status=completed, processed=1
+2025-07-18 16:49:24,500 - app.services.batch_service - INFO - Batch processing completed for session 9
+2025-07-18 16:49:24,500 - app.api.upload - INFO - Single image processing completed for session 9
+2025-07-18 16:49:26,357 - app.services.detection_service - INFO - Loading YOLO model from: C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt
+2025-07-18 16:51:29,975 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/4 "HTTP/1.1 200 OK"
+2025-07-18 16:51:29,979 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/4 "HTTP/1.1 404 Not Found"
+2025-07-18 16:51:29,980 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:52:12,493 - app.main - INFO - Shutting down Tea Leaf Detection API...
+2025-07-18 16:52:27,806 - app.main - INFO - Starting Tea Leaf Detection API...
+2025-07-18 16:52:27,808 - app.main - INFO - Database tables created successfully
+2025-07-18 16:52:27,808 - app.main - INFO - Created directory: uploads
+2025-07-18 16:52:27,808 - app.main - INFO - Created directory: results
+2025-07-18 16:52:27,808 - app.main - INFO - Created directory: reports
+2025-07-18 16:52:27,809 - app.main - INFO - Created directory: analytics
+2025-07-18 16:52:27,809 - app.main - INFO - Created directory: static
+2025-07-18 16:52:27,809 - app.main - INFO - Created directory: static/images
+2025-07-18 16:52:37,866 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:52:37,871 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:52:37,872 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:52:38,537 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/1 "HTTP/1.1 200 OK"
+2025-07-18 16:52:38,540 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/1 "HTTP/1.1 404 Not Found"
+2025-07-18 16:52:38,541 - app.main - WARNING - Analysis data not found or error: 404
+2025-07-18 16:56:18,975 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/results/2 "HTTP/1.1 200 OK"
+2025-07-18 16:56:18,979 - httpx - INFO - HTTP Request: GET http://localhost:8000/api/analytics/batch/2 "HTTP/1.1 404 Not Found"
+2025-07-18 16:56:18,979 - app.main - WARNING - Analysis data not found or error: 404
