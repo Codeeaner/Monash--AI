@@ -71,6 +71,18 @@
  								<p><strong>Total Leaves:</strong> <span class="text-gray-600-custom font-bold-custom">{{ total_leaves }}</span></p> 
  								<p><strong>Healthy:</strong> <span class="text-green-600-custom font-semibold-custom">{{ total_healthy }}</span></p> 
  								<p><strong>Unhealthy:</strong> <span class="text-red-600-custom font-semibold-custom">{{ total_unhealthy }}</span></p> 
+ 								
+ 								<!-- Pollution Diagnosis Summary (populated by JavaScript after analysis) -->
+								<div id="pollution-diagnosis-summary" style="display: none;">
+									<div class="mb-2">
+										<p><strong>Symptoms Observed:</strong></p>
+										<div id="symptoms-observed-list" class="text-gray-600-custom text-xs-custom ml-2"></div>
+									</div>
+									<div>
+										<p><strong>Primary Pollution Source:</strong></p>
+										<div id="primary-pollution-source" class="text-red-600-custom font-semibold-custom text-xs-custom ml-2"></div>
+									</div>
+								</div>
  							</div> 
  						</div> 
  						<div class="col-12 col-md-6">
@@ -124,11 +136,14 @@
 						<div id="grid-view" class="images-grid-container" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 1.5rem;">
 							{% for result in session.results %} 
 							<div class="image-tile-card"> 
-								<div class="image-tile-container" onclick="enlargeImageWithDetails('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
-									<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
+								<div class="image-tile-container" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/static/images/placeholder.png" 
 										alt="Annotated image" 
 										class="image-tile-img" 
-										onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
+										data-image-name="{{ result.image_name }}"
+										data-session-id="{{ session.id }}"
+										onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
+										onerror="handleImageError(this);" 
 									> 
 									<div class="image-tile-overlay"> 
 										<div class="image-overlay-icon-bg">
@@ -194,11 +209,14 @@
 						<div id="list-view" class="images-list-container" style="display: none;">
 							{% for result in session.results %} 
 							<div class="image-list-item"> 
-								<div class="image-list-thumbnail" onclick="enlargeImageWithDetails('/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
-									<img src="/results/{{ result.image_name | replace('.jpg', '_annotated.jpg') }}" 
+								<div class="image-list-thumbnail" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/static/images/placeholder.png" 
 										alt="Annotated image" 
 										class="list-thumbnail-img" 
-										onerror="this.src='/results/{{ result.image_name }}'; this.onerror=function(){this.src='/static/images/placeholder.png'; this.alt='Image not available';};" 
+										data-image-name="{{ result.image_name }}"
+										data-session-id="{{ session.id }}"
+										onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
+										onerror="handleImageError(this);" 
 									> 
 									<div class="list-thumbnail-overlay"> 
 										<i class="fas fa-search-plus text-white"></i> 
@@ -318,6 +336,18 @@
 						</div>
 					</div>
 
+					<!-- Pollution Diagnosis Section -->
+					<div class="row g-4 mb-5" id="pollution-diagnosis-section" style="display: none;">
+						<div class="col-12">
+							<div class="card-custom">
+								<h3 class="font-semibold-custom text-lg-custom text-red-600-custom mb-3 d-flex align-items-center">
+									<i class="fas fa-exclamation-triangle me-2"></i>Pollution Diagnosis
+								</h3>
+								<div id="pollution-diagnosis-content"></div>
+							</div>
+						</div>
+					</div>
+
 					<!-- Processing Recommendations Section -->
 					<div class="row g-4 mb-5" id="processing-recommendations-section" style="display: none;">
 						<div class="col-12">
@@ -412,6 +442,80 @@
  <script> 
  // NOTE: The JavaScript logic is mostly unchanged, but the 'displayAnalysisData' function 
  // has been updated to use the new Tailwind CSS classes for styling the dynamic content. 
+
+// Function to find the correct image path by trying multiple possibilities
+function findImagePath(imageName, sessionId) {
+	const baseName = imageName.replace(/\.[^/.]+$/, ''); // Remove extension
+	const extension = imageName.split('.').pop(); // Get extension
+	
+	const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+	const possiblePaths = [];
+	
+	// Generate all possible paths as specified
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_annotated_${sessionId}.${ext}`);
+	});
+	
+	possiblePaths.push(`/results/${imageName}`);
+	possiblePaths.push(`/results/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${imageName}`);
+	
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}.${ext}_annotated`);
+	});
+	
+	// Return the first possible path - we'll handle errors with handleImageError
+	return possiblePaths[0];
+}
+
+// Function to handle image loading errors by trying alternative paths
+function handleImageError(imgElement) {
+	const imageName = imgElement.dataset.imageName;
+	const sessionId = imgElement.dataset.sessionId;
+	
+	if (!imgElement.dataset.pathIndex) {
+		imgElement.dataset.pathIndex = '0';
+	}
+	
+	const pathIndex = parseInt(imgElement.dataset.pathIndex);
+	const baseName = imageName.replace(/\.[^/.]+$/, ''); // Remove extension
+	const extension = imageName.split('.').pop(); // Get extension
+	
+	const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+	const possiblePaths = [];
+	
+	// Generate all possible paths (same as findImagePath)
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_annotated_${sessionId}.${ext}`);
+	});
+	
+	possiblePaths.push(`/results/${imageName}`);
+	possiblePaths.push(`/results/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${imageName}`);
+	
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}.${ext}_annotated`);
+	});
+	
+	// Try the next path in the list
+	const nextIndex = pathIndex + 1;
+	if (nextIndex < possiblePaths.length) {
+		imgElement.dataset.pathIndex = nextIndex.toString();
+		imgElement.src = possiblePaths[nextIndex];
+	} else {
+		// All paths failed, use placeholder
+		imgElement.src = '/static/images/placeholder.png';
+		imgElement.alt = 'Image not available';
+	}
+}
 
  // Function to format date for display 
  function formatDate(dateString) { 
@@ -736,6 +840,47 @@ function displayAnalysisData(analysisData) {
 		});
 	}
 
+	// Function to populate pollution diagnosis summary in Detection Results section
+	function populatePollutionDiagnosisSummary(pollutionDiagnosis, unhealthyCount = 0) {
+		const summarySection = document.getElementById('pollution-diagnosis-summary');
+		const symptomsContainer = document.getElementById('symptoms-observed-list');
+		const pollutionSourceContainer = document.getElementById('primary-pollution-source');
+		
+		if (!summarySection || !symptomsContainer || !pollutionSourceContainer) return;
+		
+		// If no unhealthy leaves detected, hide the pollution diagnosis summary
+		if (unhealthyCount === 0) {
+			summarySection.style.display = 'none';
+			return;
+		}
+		
+		// Show the summary section
+		summarySection.style.display = 'block';
+		
+		// Populate symptoms observed
+		if (pollutionDiagnosis.symptoms_observed && Array.isArray(pollutionDiagnosis.symptoms_observed)) {
+			const symptomsList = pollutionDiagnosis.symptoms_observed
+				.slice(0, 3) // Show max 3 symptoms to keep it concise
+				.map(symptom => `• ${symptom}`)
+				.join('<br>');
+			symptomsContainer.innerHTML = symptomsList;
+			
+			// Add "and more..." if there are more than 3 symptoms
+			if (pollutionDiagnosis.symptoms_observed.length > 3) {
+				symptomsContainer.innerHTML += '<br>• and more...';
+			}
+		} else {
+			symptomsContainer.innerHTML = 'No symptoms identified';
+		}
+		
+		// Populate primary pollution source
+		if (pollutionDiagnosis.primary_pollution_source) {
+			pollutionSourceContainer.innerHTML = pollutionDiagnosis.primary_pollution_source;
+		} else {
+			pollutionSourceContainer.innerHTML = 'Not determined';
+		}
+	}
+
 	if (analysisData) {
 		const id = analysisData.batch_analysis_id || analysisData.analysis_id || 'N/A';
 		const type = analysisData.batch_analysis_id ? 'Batch Analysis' : (analysisData.analysis_id ? 'Analysis' : 'Generic Analysis');
@@ -750,6 +895,22 @@ function displayAnalysisData(analysisData) {
 			if (ai.analysis) {
 				showSection('overall-assessment-section', true);
 				renderSectionContent(ai.analysis, 'overall-assessment-content');
+			}
+			
+			// Pollution Diagnosis
+			if (ai.pollution_diagnosis) {
+				// Check if there are any unhealthy leaves before showing pollution diagnosis
+				const detectionSummary = analysisData.detection_summary || {};
+				const unhealthyCount = detectionSummary.unhealthy_count || 0;
+				
+				// Only show pollution diagnosis if there are unhealthy leaves
+				if (unhealthyCount > 0) {
+					showSection('pollution-diagnosis-section', true);
+					renderSectionContent(ai.pollution_diagnosis, 'pollution-diagnosis-content');
+					
+					// Also populate the summary in Detection Results section
+					populatePollutionDiagnosisSummary(ai.pollution_diagnosis, unhealthyCount);
+				}
 			}
 			
 			// Processing Recommendations
@@ -785,6 +946,22 @@ function displayAnalysisData(analysisData) {
 			if (agg.overall_assessment) {
 				showSection('overall-assessment-section', true);
 				renderSectionContent(agg.overall_assessment, 'overall-assessment-content');
+			}
+			
+			// Pollution Diagnosis (if available in batch analysis)
+			if (agg.pollution_diagnosis) {
+				// Check if there are any unhealthy leaves before showing pollution diagnosis
+				const detectionSummary = analysisData.detection_summary || {};
+				const unhealthyCount = detectionSummary.unhealthy_count || 0;
+				
+				// Only show pollution diagnosis if there are unhealthy leaves
+				if (unhealthyCount > 0) {
+					showSection('pollution-diagnosis-section', true);
+					renderSectionContent(agg.pollution_diagnosis, 'pollution-diagnosis-content');
+					
+					// Also populate the summary in Detection Results section
+					populatePollutionDiagnosisSummary(agg.pollution_diagnosis, unhealthyCount);
+				}
 			}
 			
 			// Batch Processing Strategy
@@ -837,6 +1014,39 @@ function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthSc
 	img.src = src;
 	img.alt = 'Enlarged Image';
 	img.className = 'modal-image';
+	
+	// If src is just an image name, extract session ID from the page
+	if (!src.startsWith('/') && !src.startsWith('http')) {
+		const sessionElement = document.getElementById('session-id');
+		const sessionId = sessionElement ? sessionElement.dataset.sessionId : null;
+		if (sessionId) {
+			img.src = findImagePath(src, sessionId);
+			img.dataset.imageName = src;
+			img.dataset.sessionId = sessionId;
+		}
+	}
+	
+	img.onerror = function() {
+		if (this.dataset.imageName && this.dataset.sessionId) {
+			handleImageError(this);
+		} else {
+			// Fallback for cases where we don't have the dataset
+			this.onerror = null;
+			this.src = src.replace('_annotated.jpg', '_annotated.png');
+			this.onerror = function() {
+				this.onerror = null;
+				this.src = src.replace('_annotated.jpg', '_annotated.webp');
+				this.onerror = function() {
+					this.onerror = null;
+					this.src = src.replace('_annotated.jpg', '.jpg');
+					this.onerror = function() {
+						this.src = '/static/images/placeholder.png';
+						this.alt = 'Image not available';
+					};
+				};
+			};
+		}
+	};
 	
 	imageSection.appendChild(img);
 	
@@ -961,10 +1171,27 @@ function enlargeImage(src, title) {
         const sessionId = sessionElement.dataset.sessionId;
         console.log('Page loaded, attempting to load analysis data for session:', sessionId);
         loadAnalysisData(sessionId);
+        
+        // Initialize image loading for all images
+        initializeImageLoading();
     } else {
         console.error('Session ID element not found or missing session ID');
     }
 });
+
+// Function to initialize image loading for all images on the page
+function initializeImageLoading() {
+    const allImages = document.querySelectorAll('img[data-image-name][data-session-id]');
+    allImages.forEach(img => {
+        if (img.src.includes('placeholder.png')) {
+            const imageName = img.dataset.imageName;
+            const sessionId = img.dataset.sessionId;
+            if (imageName && sessionId) {
+                img.src = findImagePath(imageName, sessionId);
+            }
+        }
+    });
+}
  
 // Add switchView function for grid/list toggle
 function switchView(viewType) {

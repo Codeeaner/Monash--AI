@@ -1,0 +1,73 @@
+{
+  "analysis_id": "analysis_3b016fb6_1752896722",
+  "session_id": 13,
+  "timestamp": "2025-07-19T11:45:10.511228",
+  "processing_time": 12.355513,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\20221213_084406_jpg.rf.790b93a2e56a98879659401d50b69202_13_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 1,
+    "total_count": 1,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "```json\n{\n    \"analysis\": {\n        \"overall_assessment\": \"The image shows a single, unhealthy tea leaf with no other leaves visible. The leaf appears to be discolored and may have some necrotic spots...",
+      "defect_types": [
+        "Various defects detected"
+      ],
+      "severity_level": "medium",
+      "quality_grade": "standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Sort leaves by quality",
+        "Separate healthy from unhealthy"
+      ],
+      "sorting_strategy": "Manual sorting recommended",
+      "processing_method": "Standard processing with quality controls",
+      "quality_preservation": [
+        "Store in dry conditions",
+        "Process quickly"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "Healthy portions can be fully utilized",
+      "alternative_uses": [
+        "Compost unhealthy leaves",
+        "Use for fertilizer"
+      ],
+      "composting_guidelines": "Standard composting procedures",
+      "prevention_measures": [
+        "Regular quality monitoring",
+        "Improved harvesting practices"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "15-25%",
+      "cost_saving_opportunities": [
+        "Improved sorting",
+        "Better processing"
+      ],
+      "value_recovery_methods": [
+        "Alternative products",
+        "Composting"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Sort immediately",
+        "Process healthy leaves first",
+        "Plan waste utilization"
+      ],
+      "timeline": "Immediate action recommended",
+      "monitoring_points": [
+        "Quality trends",
+        "Processing efficiency"
+      ]
+    },
+    "raw_response": "```json\n{\n    \"analysis\": {\n        \"overall_assessment\": \"The image shows a single, unhealthy tea leaf with no other leaves visible. The leaf appears to be discolored and may have some necrotic spots or burnt edges.\",\n        \"severity_level\": \"High\",\n        \"quality_grade\": \"Reject\"\n    },\n    \"pollution_diagnosis\": {\n        \"symptoms_observed\": [\n            \"Yellowing or bleaching\",\n            \"Black or necrotic spots\", \n            \"Burnt edges or browning tips\",\n            \"Sticky residues / sheen\",\n            \"Deformation/curling\",\n            \"Dusty or dull surface\"\n        ],\n        \"primary_pollution_source\": [\"Acid rain or excess nitrogen fertilizers\"],\n    },\n    \"processing_recommendations\": {\n        \"immediate_actions\": [\n            \"Remove affected leaves from processing line\",\n            \"Adjust pH of water and nutrient solutions to optimal levels\"\n        ],\n        \"sorting_strategy\": \"Separate healthy leaves from unhealthy ones during harvesting\",\n        \"processing_method\": \"Implement regular monitoring of leaf quality throughout processing stages\"\n    },\n    \"waste_prevention\": {\n        \"salvageable_portions\": \"Healthy leaves can be used for lower-grade products or as compost material after proper treatment\",\n        \"alternative uses\": [\"Use unhealthy leaves in baked goods, such as breads and pastries\"],\n        \"composting_guidelines\": \"Compost affected leaves separately from healthy ones to prevent contamination\"\n    },\n    \"economic_impact\": {\n        \"estimated_loss_percentage\": \"Significant loss due to reduced yield and quality of tea products\",\n        \"cost_saving_opportunities\": [\"Invest in soil and water quality monitoring systems\"],\n        \"value_recovery_methods\": [\"Promote the sale of affected leaves for alternative uses\"]\n    },\n    \"recommendations\": {\n        \"priority_actions\": [\n            \"Adjust pH levels during processing\",\n            \"Implement regular leaf quality monitoring\",\n            \"Separate healthy and unhealthy leaves during harvesting\"\n        ],\n        \"timeline\": \"Immediate actions to be taken within the next 24 hours, long-term measures to be implemented over the next 6 months\",\n        \"monitoring_points\": [\"Monitor leaf quality at each processing stage\"]\n    }\n}\n```"
+  },
+  "status": "completed"
+}

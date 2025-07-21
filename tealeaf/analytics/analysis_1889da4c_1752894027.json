@@ -1,0 +1,77 @@
+{
+  "analysis_id": "analysis_1889da4c_1752894027",
+  "session_id": 8,
+  "timestamp": "2025-07-19T11:00:16.010081",
+  "processing_time": 11.049162,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\20221213_091904_jpg.rf.c65fa7095080b487c605d3faf19e1617_8_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 1,
+    "unhealthy_count": 1,
+    "total_count": 2,
+    "health_percentage": 50.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a single leaf with some visible damage, indicating that it may be affected by pollution or disease.",
+      "severity_level": "Low",
+      "quality_grade": "Standard"
+    },
+    "pollution_diagnosis": {
+      "symptoms_observed": [
+        "Yellowing or bleaching"
+      ],
+      "primary_pollution_source": [
+        "Sulfur dioxide (SO₂) exposure"
+      ],
+      "pollution_reduction_solutions": [
+        "Implement air filtration systems to reduce SO2 emissions",
+        "Consider using sulfur-tolerant tea varieties",
+        "Regularly monitor and adjust soil pH levels"
+      ]
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Remove affected leaf from processing line"
+      ],
+      "sorting_strategy": "Separate healthy leaves from damaged ones",
+      "processing_method": "Continue with standard processing for undamaged leaves, discard or treat damaged leaves separately",
+      "quality_preservation": [
+        "Ensure proper sanitation of equipment to prevent cross-contamination"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "Healthy leaf parts can be used for tea processing, while damaged portions should be discarded",
+      "alternative uses": [
+        "Composting of undesirable leaves"
+      ],
+      "composting_guidelines": "Mix with brown materials and turn regularly to ensure proper decomposition",
+      "prevention_measures": [
+        "Regularly inspect and maintain processing equipment"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "1% of economic loss due to discarded leaf",
+      "cost_saving_opportunities": [
+        "Invest in air filtration systems"
+      ],
+      "value_recovery_methods": [
+        "Composting or selling as mulch"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Implement air filtration system",
+        "Regularly monitor and adjust soil pH levels",
+        "Maintain proper sanitation of processing equipment"
+      ],
+      "timeline": "Immediate actions to be taken within 1 week, long-term measures within 3 months",
+      "monitoring_points": [
+        "Regularly inspect and maintain air filtration system",
+        "Monitor soil pH levels monthly",
+        "Conduct routine equipment sanitation checks"
+      ]
+    }
+  },
+  "status": "completed"
+}

@@ -1,0 +1,76 @@
+{
+  "analysis_id": "analysis_d69b0e42_1752896820",
+  "session_id": 13,
+  "timestamp": "2025-07-19T11:46:47.844534",
+  "processing_time": 13.068389,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\IMG_3488_JPG.rf.633b0a2ce59ac651db732ad8418dcf73_13_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 1,
+    "total_count": 1,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "The image shows a single, unhealthy tea leaf with brown spots on its surface.",
+      "severity_level": "High",
+      "quality_grade": "Below standard"
+    },
+    "pollution_diagnosis": {
+      "symptoms_observed": [
+        "Burnt edges or browning tips"
+      ],
+      "primary_pollution_source": [
+        "Herbicide damage or chemical spray"
+      ],
+      "pollution_reduction_solutions": [
+        "Implement integrated pest management (IPM) strategies to reduce herbicide use",
+        "Rotate crops and diversify plant species in tea fields to minimize chemical exposure",
+        "Invest in organic or natural alternatives for weed control"
+      ]
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Sort out the unhealthy leaf from the healthy ones to prevent cross-contamination",
+        "Inspect other leaves in the batch for similar symptoms and remove any affected ones"
+      ],
+      "sorting_strategy": "Carefully sort through each tea leaf, removing those with visible brown spots or burnt edges",
+      "processing_method": "Process only healthy leaves to avoid contamination of the final product",
+      "quality_preservation": [
+        "Ensure proper sanitation and cleanliness in processing equipment to prevent cross-contamination"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "The healthy parts of the tea leaves can still be used for making tea",
+      "alternative_uses": [
+        "Use burnt or damaged leaves in baking, cooking, or as a natural fertilizer"
+      ],
+      "composting_guidelines": "Compost unhealthy leaves separately from healthy ones to prevent contamination",
+      "prevention_measures": [
+        "Implement regular monitoring and inspection of tea plants for early detection of pollution symptoms"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "The loss percentage cannot be accurately determined from a single image, but it is likely to be significant due to the high severity level",
+      "cost_saving_opportunities": [
+        "Invest in more sustainable and environmentally friendly farming practices"
+      ],
+      "value_recovery_methods": [
+        "Explore alternative uses for burnt or damaged leaves to minimize waste"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Implement IPM strategies",
+        "Rotate crops and diversify plant species in tea fields",
+        "Invest in organic or natural alternatives for weed control"
+      ],
+      "timeline": "Begin implementing these measures immediately, with a review of progress after 3 months to ensure effectiveness",
+      "monitoring_points": [
+        "Monitor the health of tea plants regularly and adjust farming practices as needed"
+      ]
+    }
+  },
+  "status": "completed"
+}

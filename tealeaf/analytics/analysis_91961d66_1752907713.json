@@ -1,0 +1,73 @@
+{
+  "analysis_id": "analysis_91961d66_1752907713",
+  "session_id": 16,
+  "timestamp": "2025-07-19T14:48:20.292195",
+  "processing_time": 12.99859,
+  "model_used": "llava-phi3:3.8b",
+  "image_path": "results\\20221213_091904_jpg.rf.c65fa7095080b487c605d3faf19e1617_16_annotated.jpg",
+  "detection_summary": {
+    "healthy_count": 0,
+    "unhealthy_count": 1,
+    "total_count": 1,
+    "health_percentage": 0.0
+  },
+  "ai_analysis": {
+    "analysis": {
+      "overall_assessment": "```json\n{\n    \"analysis\": {\n        \"overall_assessment\": \"The image shows an unhealthy tea leaf with a single visible symptom of burnt edges or browning tips.\",\n        \"severity_level\": \"Low\",\n     ...",
+      "defect_types": [
+        "Various defects detected"
+      ],
+      "severity_level": "medium",
+      "quality_grade": "standard"
+    },
+    "processing_recommendations": {
+      "immediate_actions": [
+        "Sort leaves by quality",
+        "Separate healthy from unhealthy"
+      ],
+      "sorting_strategy": "Manual sorting recommended",
+      "processing_method": "Standard processing with quality controls",
+      "quality_preservation": [
+        "Store in dry conditions",
+        "Process quickly"
+      ]
+    },
+    "waste_prevention": {
+      "salvageable_portions": "Healthy portions can be fully utilized",
+      "alternative_uses": [
+        "Compost unhealthy leaves",
+        "Use for fertilizer"
+      ],
+      "composting_guidelines": "Standard composting procedures",
+      "prevention_measures": [
+        "Regular quality monitoring",
+        "Improved harvesting practices"
+      ]
+    },
+    "economic_impact": {
+      "estimated_loss_percentage": "15-25%",
+      "cost_saving_opportunities": [
+        "Improved sorting",
+        "Better processing"
+      ],
+      "value_recovery_methods": [
+        "Alternative products",
+        "Composting"
+      ]
+    },
+    "recommendations": {
+      "priority_actions": [
+        "Sort immediately",
+        "Process healthy leaves first",
+        "Plan waste utilization"
+      ],
+      "timeline": "Immediate action recommended",
+      "monitoring_points": [
+        "Quality trends",
+        "Processing efficiency"
+      ]
+    },
+    "raw_response": "```json\n{\n    \"analysis\": {\n        \"overall_assessment\": \"The image shows an unhealthy tea leaf with a single visible symptom of burnt edges or browning tips.\",\n        \"severity_level\": \"Low\",\n        \"quality_grade\": \"Below standard\"\n    },\n    \"pollution_diagnosis\": {\n        \"symptoms_observed\": [\n            \"Burnt edges or browning tips\"\n        ],\n        \"primary_pollution_source\": [\"Acid rain or excess nitrogen fertilizers\"],\n    },\n    \"processing_recommendations\": {\n        \"immediate_actions\": [\"Remove affected leaves from processing batch\", \"Adjust pH of water used for steeping to reduce acidity\"],\n        \"sorting_strategy\": \"Separate healthy and unhealthy leaves during sorting process\",\n        \"processing_method\": \"Use a gentler steeping method, such as cold-steep or shorter steep times\",\n        \"quality_preservation\": [\"Monitor water pH regularly to ensure optimal conditions for tea leaf growth\"]\n    },\n    \"waste_prevention\": {\n        \"salvageable_portions\": \"The healthy parts of the leaves can still be used in tea production.\",\n        \"alternative_uses\": [\"Use burnt edges or browning tips as a natural flavoring agent\"],\n        \"composting_guidelines\": \"Compost unhealthy leaves separately from healthy ones to prevent contamination\",\n        \"prevention_measures\": [\"Regularly test soil pH and adjust fertilizer use accordingly\"]\n    },\n    \"economic_impact\": {\n        \"estimated_loss_percentage\": \"1% loss in overall tea production due to affected leaves\",\n        \"cost_saving_opportunities\": [\"Invest in soil and water quality testing to prevent future issues\"],\n        \"value_recovery_methods\": [\"Use burnt edges or browning tips as a natural flavoring agent\"]\n    },\n    \"recommendations\": {\n        \"priority_actions\": [\n            \"Remove affected leaves from processing batch\", \n            \"Adjust pH of water used for steeping to reduce acidity\", \n            \"Invest in soil and water quality testing\"\n        ],\n        \"timeline\": \"Implement immediate actions within the next week, invest in testing within the next month\",\n        \"monitoring_points\": [\n            \"Monitor water pH regularly during steeping process\",\n            \"Regularly test soil pH and adjust fertilizer use accordingly\"\n        ]\n    }\n}\n```"
+  },
+  "status": "completed"
+}

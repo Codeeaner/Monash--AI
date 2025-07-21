@@ -101,6 +101,18 @@ Please analyze this image and provide detailed recommendations in the following 
         "severity_level": "Low/Medium/High",
         "quality_grade": "Premium/Standard/Below standard/Reject"
     }},
+    "pollution_diagnosis": {{
+        "symptoms_observed": [ Choose one symptom from the following list based on the image:
+            "Yellowing or bleaching",
+            "Black or necrotic spots", 
+            "Burnt edges or browning tips",
+            "Sticky residues / sheen",
+            "Deformation/curling",
+            "Dusty or dull surface"
+        ],
+        "primary_pollution_source": ["Ozone (O3) exposure", "Sulfur dioxide (SO₂)", "NOx", "Acid rain or excess nitrogen fertilizers", "Pesticide or chemical spray", "Herbicide damage or soil contamination", "Particulate matter (PM10, PM2.5)"],
+        "pollution_reduction_solutions": [List the most practical, implementable solutions to reduce exposure to the pollution source, including both immediate protective measures and long-term environmental improvements]
+    }},
     "processing_recommendations": {{
         "immediate_actions": ["List of immediate actions to take"],
         "sorting_strategy": "How to sort and separate leaves",
@@ -124,6 +136,14 @@ Please analyze this image and provide detailed recommendations in the following 
         "monitoring_points": ["What to monitor going forward"]
     }}
 }}
+
+For the pollution diagnosis section:
+- Only return result if the there is a unhealthy leaf detected or else return empty object
+- Examine the tea leaves carefully and identify the most visible symptoms from the provided list
+- Based on the symptoms, determine the most likely pollution source
+- Provide practical, implementable solutions to reduce exposure to that pollution source
+- Include both immediate protective measures and long-term environmental improvements
+- Just provide one result for each field, even if multiple symptoms or sources are present
 
 Focus on practical, actionable advice that can help minimize waste and maximize value recovery from the detected tea leaves. Consider both the healthy and unhealthy leaves in your analysis.
 """

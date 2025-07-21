@@ -512,17 +512,22 @@ function displayResults(session) {
                 // Construct image paths with multiple fallbacks, accounting for session ID in filename and additional variations
                 const baseName = result.image_name.split('.').slice(0, -1).join('.');
                 const extension = result.image_name.split('.').pop();
-                const possiblePaths = [
-                    `/results/${baseName}_annotated.${extension}`,
-                    `/results/${baseName}_${session.id}_annotated.${extension}`,
-                    `/results/${baseName}_annotated_${session.id}.${extension}`,
-                    `/results/${result.image_name}`,
-                    `/results/${baseName}_${session.id}.${extension}`,
-                    `/uploads/session_${session.id}/${baseName}_${session.id}.${extension}`,
-                    `/uploads/session_${session.id}/${result.image_name}`,
-                    `/results/${baseName}.${extension}_annotated`,
-                    `/results/${baseName}_${session.id}.${extension}_annotated`
-                ];
+                // Accept common image types for annotated images
+                const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+                const possiblePaths = [];
+                imageTypes.forEach(ext => {
+                    possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+                    possiblePaths.push(`/results/${baseName}_${session.id}_annotated.${ext}`);
+                    possiblePaths.push(`/results/${baseName}_annotated_${session.id}.${ext}`);
+                });
+                possiblePaths.push(`/results/${result.image_name}`);
+                possiblePaths.push(`/results/${baseName}_${session.id}.${extension}`);
+                possiblePaths.push(`/uploads/session_${session.id}/${baseName}_${session.id}.${extension}`);
+                possiblePaths.push(`/uploads/session_${session.id}/${result.image_name}`);
+                imageTypes.forEach(ext => {
+                    possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+                    possiblePaths.push(`/results/${baseName}_${session.id}.${ext}_annotated`);
+                });
                 console.log("Attempting image paths for", result.image_name, ":", possiblePaths);
                 // Use the first path as default, with onerror fallbacks
                 return `
@@ -549,7 +554,7 @@ function displayResults(session) {
                                 </div>
                                 <div class="mt-3">
                                     <img src="${possiblePaths[0]}" alt="Annotated ${result.image_name}" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;" 
-                                         onerror="this.src='${possiblePaths[1]}'; this.onerror=function(){this.src='${possiblePaths[2]}'; this.onerror=function(){this.src='${possiblePaths[3]}'; this.onerror=function(){this.src='${possiblePaths[4]}'; this.onerror=function(){this.src='${possiblePaths[5]}'; this.onerror=function(){this.src='${possiblePaths[6]}'; this.onerror=function(){this.src='${possiblePaths[7]}'; this.onerror=function(){this.src='${possiblePaths[8]}'; this.onerror=function(){this.src=''; this.alt='Image not found'; this.style.border='1px solid #ccc'; this.style.padding='10px'; this.innerText='Image could not be loaded';};};};};};};};};">
+                                         onerror="let idx=1;const paths=${JSON.stringify(possiblePaths)};const tryNext=(img)=><paths.length){img.src=paths[idx++];img.onerror=function(){tryNext(img);};}else{img.src='';img.alt='Image not found';img.style.border='1px solid #ccc';img.style.padding='10px';img.innerText='Image could not be loaded';}};tryNext(this);">
                                 </div>
                             </div>
                         </div>

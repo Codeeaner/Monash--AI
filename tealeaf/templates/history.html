@@ -298,15 +298,11 @@ async function loadSessions() {
     try {
         showLoading(true);
         
-        // Build query parameters
+        // Build query parameters (no pagination, fetch all sessions)
         const params = new URLSearchParams();
-        params.append('skip', (currentPage - 1) * 10);
-        params.append('limit', 10);
-        
         if (currentFilters.status) {
             params.append('status', currentFilters.status);
         }
-        
         // Note: Date and search filtering are now handled client-side in this example
         // For large datasets, it's better to pass these to the API
         const response = await fetch(`/api/sessions?${params.toString()}`);
@@ -314,9 +310,8 @@ async function loadSessions() {
             const errorData = await response.json().catch(() => ({ detail: 'Unknown server error' }));
             throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
         }
-        
         const sessions = await response.json();
-        allSessions = sessions; // Store all sessions fetched for the current page
+        allSessions = sessions; // Store all sessions fetched
         displaySessions(allSessions);
         updateSessionCount(allSessions.length); // This should ideally be total count from API
 
