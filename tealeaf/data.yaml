@@ -3,5 +3,5 @@ val: C:\Users\amber\2025\T4G\data\valid\images
 test: C:\Users\amber\2025\T4G\data\test\images
 
 nc: 2
-names: ['0', '1']
+names: ['unhealthy', 'healthy']
 

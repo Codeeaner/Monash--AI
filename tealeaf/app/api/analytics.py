@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.analytics_service import AnalyticsService
+from app.services.decision_support_service import DecisionSupportService
 from app.models.detection import DetectionSession, DetectionResult
 from app.models.analytics import (
     AnalysisResult, 
@@ -14,10 +15,153 @@ from app.models.analytics import (
     QualityMetric,
     ProcessingAction
 )
+import uuid
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["analytics"])
+
+
+def _build_decision_support_payload(
+    session: DetectionSession,
+    db: Session,
+    lot_value_estimate: Optional[float] = None,
+    estimated_weight_kg: Optional[float] = None,
+    price_per_kg: Optional[float] = None,
+    currency: Optional[str] = None,
+) -> dict:
+    """Build a decision-support payload from completed results in a session."""
+
+    completed_results = db.query(DetectionResult).filter(
+        DetectionResult.session_id == session.id,
+        DetectionResult.status == "completed"
+    ).all()
+
+    healthy_count = sum(result.healthy_count for result in completed_results)
+    unhealthy_count = sum(result.unhealthy_count for result in completed_results)
+
+    decision_service = DecisionSupportService()
+    return decision_service.build_decision_support(
+        session_id=session.id,
+        session_name=session.name,
+        total_images=session.total_images,
+        completed_images=len(completed_results),
+        healthy_count=healthy_count,
+        unhealthy_count=unhealthy_count,
+        lot_value_estimate=lot_value_estimate,
+        estimated_weight_kg=estimated_weight_kg,
+        price_per_kg=price_per_kg,
+        currency=currency,
+    )
+
+
+def _build_dashboard_payload(
+    session: DetectionSession,
+    individual_analyses: List[AnalysisResult],
+    decision_support: dict,
+    batch_analysis: Optional[BatchAnalysisResult] = None,
+) -> dict:
+    """Build a dashboard payload for trend and impact visualizations."""
+
+    def _label_for_analysis(index: int, created_at_value) -> str:
+        if isinstance(created_at_value, datetime):
+            return created_at_value.strftime("%d %b")
+
+        if created_at_value:
+            try:
+                return datetime.fromisoformat(str(created_at_value)).strftime("%d %b")
+            except (TypeError, ValueError):
+                pass
+
+        return f"Scan {index + 1}"
+
+    sorted_analyses = sorted(
+        individual_analyses,
+        key=lambda analysis: analysis.created_at.isoformat() if analysis.created_at else "",
+    )
+
+    summary = decision_support.get("summary", {}) if isinstance(decision_support, dict) else {}
+    batch_decision = decision_support.get("batch_decision", {}) if isinstance(decision_support, dict) else {}
+    economic_impact = decision_support.get("economic_impact", {}) if isinstance(decision_support, dict) else {}
+    detection_summary = decision_support.get("detection_summary", {}) if isinstance(decision_support, dict) else {}
+
+    health_percentage = float(summary.get("health_percentage") or 0.0)
+    healthy_percentage = round(health_percentage, 1)
+    unhealthy_percentage = round(max(100.0 - health_percentage, 0.0), 1)
+    healthy_count = int(detection_summary.get("healthy_count") or 0)
+    unhealthy_count = int(detection_summary.get("unhealthy_count") or 0)
+
+    quality_trend = []
+    for index, analysis in enumerate(sorted_analyses):
+        quality_trend.append({
+            "label": _label_for_analysis(index, analysis.created_at),
+            "health_percentage": round(float(analysis.health_percentage or 0.0), 1),
+            "status": analysis.status,
+        })
+
+    if not quality_trend and batch_analysis:
+        quality_trend.append({
+            "label": "Current batch",
+            "health_percentage": round(float(batch_analysis.overall_health_percentage or 0.0), 1),
+            "status": batch_analysis.status,
+        })
+
+    if not quality_trend:
+        quality_trend.append({
+            "label": "Current batch",
+            "health_percentage": healthy_percentage,
+            "status": decision_support.get("status", "completed") if isinstance(decision_support, dict) else "completed",
+        })
+
+    currency = economic_impact.get("currency", "USD")
+    money_saved = float(economic_impact.get("profit_improvement_per_batch") or economic_impact.get("potential_savings_from_waste_reduction") or 0.0)
+    waste_reduced_kg = float(economic_impact.get("waste_reduction_kg") or 0.0)
+
+    return {
+        "summary": {
+            "session_name": session.name,
+            "total_scans": len(individual_analyses),
+            "health_percentage": healthy_percentage,
+            "healthy_percentage": healthy_percentage,
+            "unhealthy_percentage": unhealthy_percentage,
+            "healthy_count": healthy_count,
+            "unhealthy_count": unhealthy_count,
+            "waste_reduced_kg": waste_reduced_kg,
+            "money_saved": money_saved,
+            "currency": currency,
+            "recommended_action": batch_decision.get("action_label") if isinstance(batch_decision, dict) else None,
+            "quality_grade": economic_impact.get("sale_grade") or summary.get("quality_grade"),
+        },
+        "quality_trend": quality_trend,
+        "composition": {
+            "healthy_leaves": healthy_count,
+            "unhealthy_leaves": unhealthy_count,
+            "healthy_percentage": healthy_percentage,
+            "unhealthy_percentage": unhealthy_percentage,
+        },
+        "economic": {
+            "currency": currency,
+            "estimated_income_loss": float(economic_impact.get("estimated_income_loss") or 0.0),
+            "potential_savings_from_waste_reduction": float(economic_impact.get("potential_savings_from_waste_reduction") or 0.0),
+            "profit_before_action": float(economic_impact.get("profit_before_action") or 0.0),
+            "profit_after_action": float(economic_impact.get("profit_after_action") or 0.0),
+            "profit_improvement_per_batch": float(economic_impact.get("profit_improvement_per_batch") or 0.0),
+            "profit_improvement_pct": float(economic_impact.get("profit_improvement_pct") or 0.0),
+        },
+        "waste": {
+            "waste_before_kg": float(economic_impact.get("waste_before_kg") or 0.0),
+            "waste_after_kg": float(economic_impact.get("waste_after_kg") or 0.0),
+            "waste_reduction_kg": waste_reduced_kg,
+            "waste_reduction_pct": float(economic_impact.get("waste_reduction_pct") or 0.0),
+            "recovered_value": float(economic_impact.get("recovered_value") or 0.0),
+        },
+        "decision": {
+            "action": batch_decision.get("action") if isinstance(batch_decision, dict) else None,
+            "action_label": batch_decision.get("action_label") if isinstance(batch_decision, dict) else None,
+            "reason": batch_decision.get("reason") if isinstance(batch_decision, dict) else None,
+            "allocation": batch_decision.get("allocation") if isinstance(batch_decision, dict) else {},
+        },
+    }
 
 
 @router.post("/analyze/{result_id}")
@@ -27,7 +171,7 @@ async def analyze_detection_result(
     db: Session = Depends(get_db)
 ):
     """
-    Analyze a single detection result using Llama 3.2 Vision.
+    Analyze a single detection result using Qwen3-VL.
     
     Args:
         result_id: ID of the detection result to analyze
@@ -92,7 +236,7 @@ async def analyze_batch_results(
     db: Session = Depends(get_db)
 ):
     """
-    Analyze all detection results in a session using Llama 3.2 Vision.
+    Analyze all detection results in a session using Qwen3-VL.
     
     Args:
         session_id: ID of the detection session
@@ -130,16 +274,48 @@ async def analyze_batch_results(
                 "status": existing_batch_analysis.status
             }
         
+        # Generate batch analysis ID
+        timestamp = int(datetime.now().timestamp())
+        unique_id = uuid.uuid4().hex[:8]
+        batch_analysis_id = f"batch_{unique_id}_{timestamp}"
+        
+        # Get detection results count for initial record
+        results_count = db.query(DetectionResult).filter(
+            DetectionResult.session_id == session_id,
+            DetectionResult.status == "completed"
+        ).count()
+        
+        # Create batch analysis record with processing status
+        batch_analysis_record = BatchAnalysisResult(
+            batch_analysis_id=batch_analysis_id,
+            session_id=session_id,
+            total_images=results_count,
+            analyzed_images=0,
+            processing_time=0.0,
+            status="processing",
+            total_healthy_leaves=0,
+            total_unhealthy_leaves=0,
+            total_leaves=0,
+            overall_health_percentage=0.0,
+            aggregate_recommendations={},
+            individual_analysis_ids=[]
+        )
+        
+        db.add(batch_analysis_record)
+        db.commit()
+        db.refresh(batch_analysis_record)
+        
         # Start batch analysis in background
         background_tasks.add_task(
             analyze_batch_background,
             session_id,
+            batch_analysis_id,
             db
         )
         
         return {
             "message": f"Batch analysis started for session {session_id}",
-            "session_id": session_id,
+            "batch_analysis_id": batch_analysis_id,
             "status": "processing"
         }
         
@@ -157,7 +333,7 @@ async def analyze_batch_results_by_id(
     db: Session = Depends(get_db)
 ):
     """
-    Analyze all detection results in a batch using Llama 3.2 Vision, identified by batch ID.
+    Analyze all detection results in a batch using Qwen3-VL, identified by batch ID.
     
     Args:
         batch_id: ID of the batch (session ID)
@@ -195,16 +371,48 @@ async def analyze_batch_results_by_id(
                 "status": existing_batch_analysis.status
             }
         
+        # Generate batch analysis ID
+        timestamp = int(datetime.now().timestamp())
+        unique_id = uuid.uuid4().hex[:8]
+        batch_analysis_id = f"batch_{unique_id}_{timestamp}"
+        
+        # Get detection results count for initial record
+        results_count = db.query(DetectionResult).filter(
+            DetectionResult.session_id == batch_id,
+            DetectionResult.status == "completed"
+        ).count()
+        
+        # Create batch analysis record with processing status
+        batch_analysis_record = BatchAnalysisResult(
+            batch_analysis_id=batch_analysis_id,
+            session_id=batch_id,
+            total_images=results_count,
+            analyzed_images=0,
+            processing_time=0.0,
+            status="processing",
+            total_healthy_leaves=0,
+            total_unhealthy_leaves=0,
+            total_leaves=0,
+            overall_health_percentage=0.0,
+            aggregate_recommendations={},
+            individual_analysis_ids=[]
+        )
+        
+        db.add(batch_analysis_record)
+        db.commit()
+        db.refresh(batch_analysis_record)
+        
         # Start batch analysis in background
         background_tasks.add_task(
             analyze_batch_background,
             batch_id,
+            batch_analysis_id,
             db
         )
         
         return {
             "message": f"Batch analysis started for batch {batch_id}",
-            "batch_id": batch_id,
+            "batch_analysis_id": batch_analysis_id,
             "status": "processing"
         }
         
@@ -369,6 +577,9 @@ async def get_session_analytics(
                 WastePreventionRecommendation.analysis_result_id == analysis.id
             ).all()
             recommendations.extend(analysis_recommendations)
+
+        decision_support = _build_decision_support_payload(session, db)
+        dashboard = _build_dashboard_payload(session, individual_analyses, decision_support, batch_analysis)
         
         return {
             "session_id": session_id,
@@ -387,6 +598,8 @@ async def get_session_analytics(
                 "overall_health_percentage": batch_analysis.overall_health_percentage,
                 "created_at": batch_analysis.created_at
             } if batch_analysis else None,
+            "decision_support": decision_support,
+            "dashboard": dashboard,
             "total_recommendations": len(recommendations),
             "pending_recommendations": len([r for r in recommendations if r.status == "pending"]),
             "implemented_recommendations": len([r for r in recommendations if r.status == "implemented"])
@@ -396,6 +609,41 @@ async def get_session_analytics(
         raise
     except Exception as e:
         logger.error(f"Error getting session analytics {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.get("/decision-support/{session_id}")
+async def get_decision_support(
+    session_id: int,
+    lot_value_estimate: Optional[float] = Query(None, ge=0, description="Optional estimated batch value"),
+    estimated_weight_kg: Optional[float] = Query(None, ge=0, description="Optional estimated batch weight in kilograms"),
+    price_per_kg: Optional[float] = Query(None, ge=0, description="Optional market price per kilogram"),
+    currency: Optional[str] = Query(None, min_length=3, max_length=3, description="Optional 3-letter currency code"),
+    db: Session = Depends(get_db)
+):
+    """Return farmer-facing batch decision support for a session."""
+
+    try:
+        session = db.query(DetectionSession).filter(
+            DetectionSession.id == session_id
+        ).first()
+
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+        return _build_decision_support_payload(
+            session,
+            db,
+            lot_value_estimate=lot_value_estimate,
+            estimated_weight_kg=estimated_weight_kg,
+            price_per_kg=price_per_kg,
+            currency=currency,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error building decision support for session {session_id}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -637,7 +885,7 @@ def analyze_detection_background(result_id: int, db: Session):
         db.rollback()
 
 
-def analyze_batch_background(session_id: int, db: Session):
+def analyze_batch_background(session_id: int, batch_analysis_id: str, db: Session):
     """Background task to analyze a batch of detection results."""
     
     try:
@@ -675,6 +923,15 @@ def analyze_batch_background(session_id: int, db: Session):
         logger.info(f"Starting batch analysis for session {session_id}")
         batch_analysis = analytics_service.analyze_batch_results(batch_data, session_id)
         
+        # Get the batch analysis record
+        batch_record = db.query(BatchAnalysisResult).filter(
+            BatchAnalysisResult.batch_analysis_id == batch_analysis_id
+        ).first()
+        
+        if not batch_record:
+            logger.error(f"Batch analysis record {batch_analysis_id} not found")
+            return
+        
         # Handle analysis results
         if batch_analysis.get("status") in ["single_analysis_only", "batch_combined_analysis"]:
             logger.info(f"Analysis completed for session {session_id}")
@@ -702,46 +959,45 @@ def analyze_batch_background(session_id: int, db: Session):
                     )
                     db.add(db_analysis)
                     db.commit()
+            
+            # Update batch analysis result
+            batch_summary = batch_analysis.get("individual_analyses", [{}])[0].get("batch_summary", {})
+            if batch_summary:
+                batch_record.total_images = batch_summary.get("total_images", len(results))
+                batch_record.analyzed_images = batch_summary.get("analyzed_images", len(results))
+                batch_record.processing_time = batch_analysis["individual_analyses"][0]["processing_time"]
+                batch_record.status = "completed"
+                batch_record.total_healthy_leaves = batch_summary.get("total_healthy_leaves", 0)
+                batch_record.total_unhealthy_leaves = batch_summary.get("total_unhealthy_leaves", 0)
+                batch_record.total_leaves = batch_summary.get("total_leaves", 0)
+                batch_record.overall_health_percentage = batch_summary.get("overall_health_percentage", 0.0)
+                batch_record.aggregate_recommendations = batch_analysis["individual_analyses"][0]["ai_analysis"]
+                batch_record.individual_analysis_ids = [a["analysis_id"] for a in batch_analysis.get("individual_analyses", [])]
+                
+                db.commit()
+                logger.info(f"Successfully updated batch analysis result for session {session_id}")
+            
             return
         
         # Handle failed analysis
         logger.error(f"Batch analysis failed for session {session_id}")
-        
-    except Exception as e:
-        logger.error(f"Error in background batch analysis for session {session_id}: {e}", exc_info=True)
-        db.rollback()
-        logger.info(f"Rollback completed for session {session_id} due to error")
-        
-        db_batch_analysis = BatchAnalysisResult(
-            batch_analysis_id=batch_analysis["batch_analysis_id"],
-            session_id=session_id,
-            total_images=batch_analysis["batch_summary"]["total_images"],
-            analyzed_images=batch_analysis["batch_summary"]["analyzed_images"],
-            processing_time=batch_analysis["processing_time"],
-            status=batch_analysis["status"],
-            total_healthy_leaves=batch_analysis["batch_summary"]["total_healthy_leaves"],
-            total_unhealthy_leaves=batch_analysis["batch_summary"]["total_unhealthy_leaves"],
-            total_leaves=batch_analysis["batch_summary"]["total_leaves"],
-            overall_health_percentage=batch_analysis["batch_summary"]["overall_health_percentage"],
-            aggregate_recommendations=batch_analysis["aggregate_recommendations"],
-            individual_analysis_ids=[a["analysis_id"] for a in batch_analysis.get("individual_analyses", [])]
-        )
-        
-        logger.info(f"Adding batch analysis {batch_analysis['batch_analysis_id']} for session {session_id} to database")
-        db.add(db_batch_analysis)
+        batch_record.status = "failed"
+        batch_record.aggregate_recommendations = {"error": "Batch analysis failed"}
         db.commit()
-        logger.info(f"Successfully committed batch analysis {batch_analysis['batch_analysis_id']} for session {session_id} to database")
-        
-        # Verify the save operation
-        saved_analysis = db.query(BatchAnalysisResult).filter(
-            BatchAnalysisResult.batch_analysis_id == batch_analysis["batch_analysis_id"]
-        ).first()
-        if saved_analysis:
-            logger.info(f"Verified batch analysis {batch_analysis['batch_analysis_id']} exists in database for session {session_id}")
-        else:
-            logger.error(f"Failed to verify batch analysis {batch_analysis['batch_analysis_id']} in database for session {session_id}")
         
     except Exception as e:
         logger.error(f"Error in background batch analysis for session {session_id}: {e}", exc_info=True)
-        db.rollback()
-        logger.info(f"Rollback completed for session {session_id} due to error")
+        
+        # Update batch record to failed status
+        try:
+            batch_record = db.query(BatchAnalysisResult).filter(
+                BatchAnalysisResult.batch_analysis_id == batch_analysis_id
+            ).first()
+            if batch_record:
+                batch_record.status = "failed"
+                batch_record.aggregate_recommendations = {"error": str(e)}
+                db.commit()
+                logger.info(f"Updated batch analysis record to failed for session {session_id}")
+        except Exception as update_error:
+            logger.error(f"Failed to update batch analysis record to failed: {update_error}")
+            db.rollback()

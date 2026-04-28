@@ -1,4 +1,4 @@
-"""Analytics service using Llava-Phi3 for tea leaf analysis and waste prevention recommendations."""
+"""Analytics service using Qwen3-VL for tea leaf analysis and waste prevention recommendations."""
 
 import os
 import base64
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class AnalyticsService:
-    """Service for analyzing detection results and providing waste prevention recommendations using Llava-Phi3."""
+    """Service for analyzing detection results and providing waste prevention recommendations using Qwen3-VL."""
     
     def __init__(self, ollama_host: str = "http://localhost:11434"):
         """
@@ -26,7 +26,7 @@ class AnalyticsService:
             ollama_host: Ollama server host URL
         """
         self.ollama_host = ollama_host
-        self.model_name = "llava-phi3:3.8b"
+        self.model_name = "qwen3-vl:235b-cloud"
         self.analytics_dir = "analytics"
         
         # Create analytics directory
@@ -44,9 +44,9 @@ class AnalyticsService:
                 model_names = [model.get("name", "") for model in models]
                 
                 if not any(self.model_name in name for name in model_names):
-                    logger.warning(f"Llava-Phi3 model ({self.model_name}) not found. Please install it with: ollama pull {self.model_name}")
+                    logger.warning(f"Qwen3-VL model ({self.model_name}) not found. Please install it with: ollama pull {self.model_name}")
                 else:
-                    logger.info("Ollama server and Llava-Phi3 model are available")
+                    logger.info("Ollama server and Qwen3-VL model are available")
             else:
                 logger.warning(f"Ollama server not responding correctly: {response.status_code}")
         except Exception as e:
@@ -71,7 +71,7 @@ class AnalyticsService:
     
     def _create_analysis_prompt(self, detection_data: Dict[str, Any]) -> str:
         """
-        Create analysis prompt for Llava-Phi3.
+        Create analysis prompt for Qwen3-VL.
         
         Args:
             detection_data: Detection results data
@@ -102,14 +102,7 @@ Please analyze this image and provide detailed recommendations in the following 
         "quality_grade": "Premium/Standard/Below standard/Reject"
     }},
     "pollution_diagnosis": {{
-        "symptoms_observed": [ Choose one symptom from the following list based on the image:
-            "Yellowing or bleaching",
-            "Black or necrotic spots", 
-            "Burnt edges or browning tips",
-            "Sticky residues / sheen",
-            "Deformation/curling",
-            "Dusty or dull surface"
-        ],
+        "symptoms_observed": "Choose one symptom from the following list based on the image: Yellowing or bleaching, Black or necrotic spots, Burnt edges or browning tips, Sticky residues / sheen, Deformation/curling, Dusty or dull surface",
         "primary_pollution_source": ["Ozone (O3) exposure", "Sulfur dioxide (SO₂)", "NOx", "Acid rain or excess nitrogen fertilizers", "Pesticide or chemical spray", "Herbicide damage or soil contamination", "Particulate matter (PM10, PM2.5)"],
         "pollution_reduction_solutions": [List the most practical, implementable solutions to reduce exposure to the pollution source, including both immediate protective measures and long-term environmental improvements]
     }},
@@ -153,7 +146,7 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                                annotated_image_path: str, 
                                session_id: Optional[int] = None) -> Dict[str, Any]:
         """
-        Analyze detection results using Llava-Phi3 and provide recommendations.
+        Analyze detection results using Qwen3-VL and provide recommendations.
 
         Args:
             detection_data: Detection results from the detection service
@@ -184,17 +177,17 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
                 "images": [image_b64],
                 "stream": False,
                 "options": {
-                    "temperature": 0.3,  # Lower temperature for more consistent analysis
-                    "num_predict": 2048   # Allow longer responses
+                    "temperature": 0.4,  # Lower temperature for more consistent analysis
+                    "num_predict": 4096   # Allow longer responses
                 }
             }
             
             # Send request to Ollama
-            logger.info("Sending analysis request to Llava-Phi3...")
+            logger.info("Sending analysis request to Qwen3-VL...")
             response = requests.post(
                 f"{self.ollama_host}/api/generate",
                 json=payload,
-                timeout=120  # 2 minute timeout for vision model
+                timeout=60  # 1 minute timeout for vision model
             )
             
             if response.status_code != 200:
@@ -204,8 +197,8 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
             response_data = response.json()
             llama_response = response_data.get("response", "")
             if not llama_response:
-                raise Exception("Empty response from Llava-Phi3")
-            logger.info(f"Received response from Llava-Phi3, length: {len(llama_response)} characters")
+                raise Exception("Empty response from Qwen3-VL")
+            logger.info(f"Received response from Qwen3-VL, length: {len(llama_response)} characters")
             analysis_result = self._parse_llama_response(llama_response)
             logger.info(f"Parsed analysis result from response for image: {annotated_image_path}")
             # Add metadata
@@ -239,10 +232,10 @@ Focus on practical, actionable advice that can help minimize waste and maximize 
     
     def _parse_llama_response(self, response: str) -> Dict[str, Any]:
         """
-        Parse JSON response from Llava-Phi3.
+        Parse JSON response from Qwen3-VL.
         
         Args:
-            response: Raw response string from Llava-Phi3
+            response: Raw response string from Qwen3-VL
             
         Returns:
             Parsed analysis data

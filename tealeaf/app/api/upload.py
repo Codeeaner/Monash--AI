@@ -3,6 +3,7 @@
 import os
 import shutil
 import logging
+import json
 from typing import List
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, BackgroundTasks
@@ -17,7 +18,7 @@ from app.schemas import (
     ProgressUpdateSchema
 )
 from app.services.batch_service import BatchProcessingService
-from app.models.detection import DetectionSession
+from app.models.detection import DetectionSession, DetectionResult
 
 logger = logging.getLogger(__name__)
 
@@ -335,6 +336,76 @@ async def delete_session(session_id: int, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         logger.error(f"Error deleting session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.delete("/upload/sessions/all")
+async def delete_all_sessions(db: Session = Depends(get_db)):
+    """
+    Delete all detection sessions and associated files.
+    
+    Args:
+        db: Database session
+        
+    Returns:
+        Success message with count of deleted sessions
+    """
+    
+    try:
+        # Get all sessions
+        sessions = db.query(DetectionSession).all()
+        deleted_count = len(sessions)
+        
+        if deleted_count == 0:
+            return {"message": "No sessions to delete", "deleted_count": 0}
+        
+        # Delete associated files and database records
+        for session in sessions:
+            try:
+                # Delete session directory and files
+                session_dir = os.path.join("uploads", f"session_{session.id}")
+                if os.path.exists(session_dir):
+                    import shutil
+                    shutil.rmtree(session_dir)
+                    logger.info(f"Deleted session directory: {session_dir}")
+                
+                # Delete associated detection results
+                db.query(DetectionResult).filter(DetectionResult.session_id == session.id).delete()
+                
+                # Delete associated analytics results
+                from app.models.analytics import AnalysisResult, BatchAnalysisResult
+                db.query(AnalysisResult).filter(AnalysisResult.session_id == session.id).delete()
+                db.query(BatchAnalysisResult).filter(BatchAnalysisResult.session_id == session.id).delete()
+                
+                # Delete analytics files
+                analytics_dir = "analytics"
+                if os.path.exists(analytics_dir):
+                    for filename in os.listdir(analytics_dir):
+                        if filename.endswith('.json'):
+                            try:
+                                filepath = os.path.join(analytics_dir, filename)
+                                with open(filepath, 'r') as f:
+                                    data = json.load(f)
+                                    if data.get('session_id') == session.id:
+                                        os.remove(filepath)
+                                        logger.info(f"Deleted analytics file: {filepath}")
+                            except Exception as e:
+                                logger.warning(f"Could not check/delete analytics file {filename}: {e}")
+                
+            except Exception as e:
+                logger.error(f"Error deleting files for session {session.id}: {e}")
+                # Continue with other sessions
+        
+        # Delete all sessions from database
+        db.query(DetectionSession).delete()
+        db.commit()
+        
+        logger.info(f"Successfully deleted {deleted_count} sessions and associated data")
+        return {"message": f"Successfully deleted {deleted_count} sessions and all associated data", "deleted_count": deleted_count}
+        
+    except Exception as e:
+        logger.error(f"Error deleting all sessions: {e}")
+        db.rollback()
         raise HTTPException(status_code=500, detail="Internal server error")
 @router.post("/detect", response_model=dict)
 async def detect_image(

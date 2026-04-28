@@ -2,7 +2,7 @@
 """
 Test script for Tea Leaf Analytics functionality.
 
-This script tests the analytics service integration with Llama 3.2 Vision 11B
+This script tests the analytics service integration with Qwen3-VL 235B Cloud
 to ensure waste prevention recommendations are working correctly.
 """
 
@@ -274,7 +274,7 @@ def main():
         print("⚠️  Some tests failed. Check the setup and try again.")
         print("\n💡 Tips:")
         print("   - Ensure Ollama is running: ollama serve")
-        print("   - Install the model: ollama pull llama3.2-vision:11b")
+        print("   - Install the model: ollama pull qwen3-vl:235b-cloud")
         print("   - Check system resources (RAM, disk space)")
         print("   - Add test images to static/images/ directory")
     

@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block title %}Tea Leaf Detection - Farmer Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-hero {
+    background: linear-gradient(135deg, #0f766e 0%, #16a34a 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 1.25rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.kpi-card {
+    border-radius: 14px;
+    padding: 0.85rem;
+    background: #fff;
+    border: 1px solid rgba(6, 95, 70, 0.15);
+}
+
+.kpi-title {
+    font-size: 0.8rem;
+    margin: 0;
+    color: #4b5563;
+}
+
+.kpi-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0.2rem 0 0;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.canvas-wrap {
+    position: relative;
+    height: 260px;
+}
+
+.meta-chip {
+    display: inline-block;
+    background: #e6fffa;
+    color: #0f766e;
+    font-size: 0.78rem;
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    margin-right: 0.4rem;
+}
+
+.simple-list {
+    margin: 0;
+    padding-left: 1rem;
+}
+
+.simple-list li {
+    margin-bottom: 0.4rem;
+}
+
+.data-box {
+    background: #0f172a;
+    color: #d1fae5;
+    border-radius: 12px;
+    padding: 0.9rem;
+    font-size: 0.78rem;
+    overflow-x: auto;
+}
+
+@media (max-width: 576px) {
+    .canvas-wrap { height: 220px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-12">
+        <div class="dashboard-hero">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <h1 class="h4 mb-1"><i class="fas fa-seedling me-2"></i>Farmer Dashboard</h1>
+                    <p class="mb-0">Quick view of leaf quality, waste, and money impact.</p>
+                </div>
+                <div>
+                    <span class="meta-chip">Period: This Month</span>
+                    <span class="meta-chip">Farm: Main Plot</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <p class="kpi-title"><i class="fas fa-leaf text-success me-1"></i>Healthy Leaves</p>
+                <p class="kpi-value text-success" id="healthyPct">82.4%</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-title"><i class="fas fa-triangle-exclamation text-danger me-1"></i>Unhealthy Leaves</p>
+                <p class="kpi-value text-danger" id="unhealthyPct">17.6%</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-title"><i class="fas fa-recycle text-primary me-1"></i>Waste Reduced</p>
+                <p class="kpi-value text-primary" id="wasteReduced">145.2 kg</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-title"><i class="fas fa-coins text-warning me-1"></i>Money Saved</p>
+                <p class="kpi-value text-warning" id="moneySaved">MYR 1,240.50</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="section-title mb-3">Quality Trends Over Time</h2>
+                <div class="canvas-wrap"><canvas id="qualityTrendChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="section-title mb-3">Healthy vs Unhealthy</h2>
+                <div class="canvas-wrap"><canvas id="healthSplitChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="section-title mb-3">Waste Reduction Metrics</h2>
+                <div class="canvas-wrap"><canvas id="wasteChart"></canvas></div>
+                <p class="mt-2 mb-0 text-muted">12% less waste than last month.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="section-title mb-3">Economic Impact (Money Saved)</h2>
+                <div class="canvas-wrap"><canvas id="moneyChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const dashboardData = { 
+    farm_id: "live",
+    period: "recent_sessions",
+    summary: {
+        healthy_pct: 0,
+        unhealthy_pct: 0,
+        waste_reduced_kg: 0,
+        money_saved: 0,
+        currency: "USD"
+    },
+    quality_trends: [],
+    waste_metrics: [],
+    economic_impact: []
+};
+
+function formatCurrency(value) {
+    return `${dashboardData.summary.currency} ${Number(value || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+}
+
+function updateKPIText() {
+    document.getElementById("healthyPct").textContent = `${dashboardData.summary.healthy_pct.toFixed(1)}%`;
+    document.getElementById("unhealthyPct").textContent = `${dashboardData.summary.unhealthy_pct.toFixed(1)}%`;
+    document.getElementById("wasteReduced").textContent = `${dashboardData.summary.waste_reduced_kg.toFixed(1)} kg`;
+    document.getElementById("moneySaved").textContent = formatCurrency(dashboardData.summary.money_saved);
+}
+
+function renderCharts() {
+    const labels = dashboardData.quality_trends.map(x => x.date);
+
+    new Chart(document.getElementById("qualityTrendChart"), {
+        type: "line",
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: "Healthy %",
+                    data: dashboardData.quality_trends.map(x => x.healthy_pct),
+                    borderColor: "#16a34a",
+                    backgroundColor: "rgba(22, 163, 74, 0.12)",
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: "Unhealthy %",
+                    data: dashboardData.quality_trends.map(x => x.unhealthy_pct),
+                    borderColor: "#dc2626",
+                    backgroundColor: "rgba(220, 38, 38, 0.12)",
+                    tension: 0.3,
+                    fill: false
+                }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("healthSplitChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Healthy", "Unhealthy"],
+            datasets: [{
+                data: [dashboardData.summary.healthy_pct, dashboardData.summary.unhealthy_pct],
+                backgroundColor: ["#16a34a", "#dc2626"]
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("wasteChart"), {
+        type: "bar",
+        data: {
+            labels: dashboardData.waste_metrics.map(x => x.date),
+            datasets: [
+                { label: "Current Waste (kg)", data: dashboardData.waste_metrics.map(x => x.waste_kg), backgroundColor: "#0ea5e9" },
+                { label: "Baseline Waste (kg)", data: dashboardData.waste_metrics.map(x => x.baseline_waste_kg), backgroundColor: "#94a3b8" }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("moneyChart"), {
+        type: "line",
+        data: {
+            labels: dashboardData.economic_impact.map(x => x.date),
+            datasets: [{
+                label: "Saved Amount",
+                data: dashboardData.economic_impact.map(x => x.saved_amount),
+                borderColor: "#ca8a04",
+                backgroundColor: "rgba(202, 138, 4, 0.22)",
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    ticks: {
+                        callback: (value) => `${dashboardData.summary.currency} ${value}`
+                    }
+                }
+            }
+        }
+    });
+}
+
+function formatSessionLabel(session) {
+    const dt = new Date(session.created_at);
+    if (Number.isNaN(dt.getTime())) {
+        return `Session ${session.id}`;
+    }
+    return dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed ${url}: ${response.status}`);
+    }
+    return response.json();
+}
+
+async function loadDashboardData() {
+    const sessions = await fetchJson("/api/sessions?limit=8");
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+        return;
+    }
+
+    const completedSessions = sessions
+        .filter(session => session.status === "completed")
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    if (completedSessions.length === 0) {
+        return;
+    }
+
+    dashboardData.quality_trends = completedSessions.map(session => {
+        const healthyPct = Number(session.average_health_percentage || 0);
+        return {
+            date: formatSessionLabel(session),
+            healthy_pct: healthyPct,
+            unhealthy_pct: Math.max(0, 100 - healthyPct),
+            total_scanned: Number(session.processed_images || 0)
+        };
+    });
+
+    const analyticsResponses = await Promise.all(
+        completedSessions.map(async (session) => {
+            try {
+                const data = await fetchJson(`/api/analytics/session/${session.id}`);
+                return { session, data };
+            } catch (error) {
+                return { session, data: null };
+            }
+        })
+    );
+
+    let totalHealthy = 0;
+    let totalUnhealthy = 0;
+    let totalWasteReduced = 0;
+    let totalMoneySaved = 0;
+    let currency = "USD";
+
+    dashboardData.waste_metrics = analyticsResponses.map(({ session, data }) => {
+        const waste = Number(data?.dashboard?.waste?.waste_after_kg || 0);
+        const baseline = Number(data?.dashboard?.waste?.waste_before_kg || 0);
+        totalWasteReduced += Number(data?.dashboard?.waste?.waste_reduction_kg || 0);
+        return {
+            date: formatSessionLabel(session),
+            waste_kg: waste,
+            baseline_waste_kg: baseline
+        };
+    });
+
+    dashboardData.economic_impact = analyticsResponses.map(({ session, data }) => {
+        const moneySaved = Number(data?.dashboard?.economic?.profit_improvement_per_batch || 0);
+        totalMoneySaved += moneySaved;
+        if (data?.dashboard?.economic?.currency) {
+            currency = data.dashboard.economic.currency;
+        }
+        const comp = data?.dashboard?.composition || {};
+        totalHealthy += Number(comp.healthy_leaves || 0);
+        totalUnhealthy += Number(comp.unhealthy_leaves || 0);
+        return {
+            date: formatSessionLabel(session),
+            saved_amount: moneySaved
+        };
+    });
+
+    if (totalHealthy === 0 && totalUnhealthy === 0) {
+        totalHealthy = completedSessions.reduce((sum, s) => sum + Number(s.total_healthy || 0), 0);
+        totalUnhealthy = completedSessions.reduce((sum, s) => sum + Number(s.total_unhealthy || 0), 0);
+    }
+
+    const totalLeaves = totalHealthy + totalUnhealthy;
+    const healthyPct = totalLeaves > 0 ? (totalHealthy / totalLeaves) * 100 : 0;
+    const unhealthyPct = Math.max(0, 100 - healthyPct);
+
+    dashboardData.summary.healthy_pct = healthyPct;
+    dashboardData.summary.unhealthy_pct = unhealthyPct;
+    dashboardData.summary.waste_reduced_kg = totalWasteReduced;
+    dashboardData.summary.money_saved = totalMoneySaved;
+    dashboardData.summary.currency = currency;
+}
+
+async function initDashboard() {
+    try {
+        await loadDashboardData();
+        updateKPIText();
+        renderCharts();
+    } catch (error) {
+        console.error("Dashboard load error:", error);
+        updateKPIText();
+        renderCharts();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", initDashboard);
+</script>
+{% endblock %}

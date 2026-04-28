@@ -26,9 +26,32 @@ class TeaLeafDetectionService:
             confidence_threshold: Minimum confidence for detections
         """
         if model_path is None:
-            # Use the existing model path from the project
-            model_path = r"C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt"
-        
+            env_model_path = os.getenv("MODEL_PATH")
+            if env_model_path:
+                env_candidate = Path(env_model_path).expanduser()
+                if env_candidate.exists():
+                    model_path = str(env_candidate)
+                    logger.info(f"Using MODEL_PATH from environment: {model_path}")
+                else:
+                    logger.warning(f"MODEL_PATH is set but missing: {env_candidate}")
+
+        if model_path is None:
+            # Auto-discover the most recently trained model under runs/detect/.
+            runs_dir = Path(__file__).resolve().parents[3] / "runs" / "detect"
+            candidates = sorted(
+                runs_dir.glob("*/weights/best.pt"),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True,
+            )
+            if candidates:
+                model_path = str(candidates[0])
+                logger.info(f"Auto-selected model: {model_path}")
+            else:
+                model_path = str(
+                    Path(__file__).resolve().parents[3]
+                    / "runs" / "detect" / "train3" / "weights" / "best.pt"
+                )
+
         self.model_path = model_path
         self.confidence_threshold = confidence_threshold
         self.model = None
@@ -79,8 +102,21 @@ class TeaLeafDetectionService:
                     # Load with explicit weights_only=False
                     checkpoint = torch.load(self.model_path, map_location='cpu', weights_only=False)
                     
-                    # Create new YOLO model and load the weights
-                    self.model = YOLO('yolov8n.pt')  # Start with base model
+                    # Create a fresh YOLO model and load the weights.
+                    # Try newer model families first, then fall back to the older baseline.
+                    base_model_candidates = ['yolo26n.pt', 'yolov26n.pt', 'yolo11n.pt', 'yolov8n.pt']
+                    last_error = None
+                    for base_model in base_model_candidates:
+                        try:
+                            self.model = YOLO(base_model)
+                            logger.info(f"Using base architecture {base_model} for manual weight loading")
+                            break
+                        except Exception as model_error:
+                            last_error = model_error
+                            logger.warning(f"Could not load base architecture {base_model}: {model_error}")
+
+                    if self.model is None:
+                        raise last_error or RuntimeError("Unable to initialize fallback YOLO architecture")
                     
                     # Load the state dict from checkpoint
                     if 'model' in checkpoint:

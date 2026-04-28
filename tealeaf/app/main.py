@@ -103,6 +103,13 @@ async def history_page(request: Request):
     """Serve the history page."""
     return templates.TemplateResponse("history.html", {"request": request})
 
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page(request: Request):
+    """Serve the farmer-friendly analytics dashboard page."""
+    return templates.TemplateResponse("dashboard.html", {"request": request})
+
+
 @app.get("/session/{session_id}", response_class=HTMLResponse)
 async def session_detail(request: Request, session_id: int):
     """Serve the session detail page with AI analysis."""
@@ -185,7 +192,8 @@ async def get_api_info():
                 "Detection history",
                 "PDF and CSV reports",
                 "Real-time progress tracking",
-                "AI-powered analytics with Llama 3.2 Vision",
+                "AI-powered analytics with Qwen3-VL",
+                "Farmer decision support for sell/process/discard routing",
                 "Waste prevention recommendations",
                 "Quality metrics tracking"
             ],
@@ -203,6 +211,7 @@ async def get_api_info():
                 "get_analysis": "/api/analytics/results/{analysis_id}",
                 "get_batch_analysis": "/api/analytics/batch/{batch_analysis_id}",
                 "get_recommendations": "/api/analytics/recommendations/{analysis_id}",
+                "decision_support": "/api/analytics/decision-support/{session_id}",
                 "analytics_history": "/api/analytics/history"
             }
         }

@@ -21,15 +21,7 @@ class DetectionSession(Base):
     
     # Relationships
     results = relationship("DetectionResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analysis = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analysis = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
     batch_analytics = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analytics = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analytics = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analytics = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analytics = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analysis = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
-    batch_analysis = relationship("BatchAnalysisResult", back_populates="session", cascade="all, delete-orphan")
 
 
 class DetectionResult(Base):

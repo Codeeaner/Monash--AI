@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 
 
-def run_inference(source="test.jpg", model_path=r"C:\Users\amber\OneDrive\Documents\GitHub\Monash--AI\runs\detect\train3\weights\best.pt", save=True, show=True):
+def run_inference(source="test.jpg", model_path=r"C:\yolo_runs\train6\weights\best.pt", save=True, show=True):
     # Load the trained model
     model = YOLO(model_path)
 
@@ -11,7 +11,7 @@ def run_inference(source="test.jpg", model_path=r"C:\Users\amber\OneDrive\Docume
         source=source,        # Image, folder, video, webcam, etc.
         save=save,            # Save the results (image with boxes) to disk
         conf=0.25,            # Confidence threshold
-        imgsz=640             # Inference image size
+        imgsz=1280             # Inference image size
     )
 
     # Count healthy vs unhealthy leaves
@@ -49,4 +49,4 @@ def run_inference(source="test.jpg", model_path=r"C:\Users\amber\OneDrive\Docume
 if __name__ == "__main__":
     # Example usage:
     # Test on one image
-    run_inference(source=r"C:\Users\amber\Downloads\combine (7).png")
+    run_inference(source=r"C:\Users\amber\Downloads\combine (1).png")
