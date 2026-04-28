@@ -7,25 +7,27 @@ This script sets up the environment to handle PyTorch compatibility issues.
 import os
 import sys
 
-# Set environment variable to handle PyTorch 2.6+ compatibility
-os.environ['TORCH_WEIGHTS_ONLY'] = 'False'
+# Tell PyTorch to allow legacy checkpoint loading when Ultralytics needs it.
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
 
 # Import and run the main application
 if __name__ == "__main__":
     try:
         # Import after setting environment
         import torch
+        from ultralytics.nn.modules import Bottleneck, C2f, Conv, Detect, SPPF
+        from ultralytics.nn.tasks import DetectionModel
         
         # Additional compatibility setup
         if hasattr(torch, 'serialization') and hasattr(torch.serialization, 'add_safe_globals'):
             try:
                 torch.serialization.add_safe_globals([
-                    'ultralytics.nn.tasks.DetectionModel',
-                    'ultralytics.nn.modules.Conv',
-                    'ultralytics.nn.modules.Bottleneck',
-                    'ultralytics.nn.modules.C2f',
-                    'ultralytics.nn.modules.SPPF',
-                    'ultralytics.nn.modules.Detect'
+                    DetectionModel,
+                    Conv,
+                    Bottleneck,
+                    C2f,
+                    SPPF,
+                    Detect,
                 ])
                 print("✅ PyTorch safe globals configured for Ultralytics")
             except Exception as e:

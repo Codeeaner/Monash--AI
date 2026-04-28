@@ -12,6 +12,8 @@ import uuid
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+DEFAULT_MODEL_PATH = Path(__file__).resolve().parents[3] / "runs" / "detect" / "train3" / "weights" / "best.pt"
+
 
 class TeaLeafDetectionService:
     """Service for tea leaf detection using YOLO model."""
@@ -35,24 +37,8 @@ class TeaLeafDetectionService:
                     logger.warning(f"MODEL_PATH is set but missing: {env_candidate}")
 
         if model_path is None:
-            runs_dir = Path(__file__).resolve().parents[3] / "runs" / "detect"
-            candidates = sorted(
-                runs_dir.glob("*/weights/best.pt"),
-                key=lambda p: p.stat().st_mtime,
-                reverse=True,
-            )
-            if candidates:
-                model_path = str(candidates[0])
-                logger.info(f"Auto-selected model: {model_path}")
-            else:
-                model_path = str(
-                    Path(__file__).resolve().parents[3]
-                    / "runs"
-                    / "detect"
-                    / "train3"
-                    / "weights"
-                    / "best.pt"
-                )
+            model_path = str(DEFAULT_MODEL_PATH)
+            logger.info(f"Using default model path: {model_path}")
 
         self.model_path = model_path
         self.confidence_threshold = confidence_threshold
