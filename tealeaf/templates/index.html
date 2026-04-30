@@ -1,175 +1,686 @@
 {% extends "base.html" %}
 
-{% block title %}Tea Leaf Detection - Home{% endblock %}
+{% block title %}Tea Leaf Scan - Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    .farm-home {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .farm-hero,
+    .scan-panel,
+    .summary-panel {
+        border-radius: 28px;
+        overflow: hidden;
+    }
+
+    .farm-hero {
+        background: linear-gradient(135deg, rgba(31, 122, 77, 0.96), rgba(24, 77, 53, 0.96));
+        color: #fff;
+        border: none;
+        box-shadow: 0 18px 38px rgba(18, 48, 34, 0.18);
+    }
+
+    .farm-logo-tile {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .farm-logo-tile img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .farm-eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        opacity: 0.88;
+        margin-bottom: 0.35rem;
+    }
+
+    .farm-hero h1 {
+        font-size: clamp(1.8rem, 4.3vw, 3rem);
+        line-height: 1.05;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .farm-hero p {
+        color: rgba(255, 255, 255, 0.88);
+    }
+
+    .farm-muted {
+        color: #5b6b61;
+    }
+
+    .farm-hero .farm-muted {
+        color: rgba(255, 255, 255, 0.88);
+    }
+
+    .hero-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+    }
+
+    .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .hero-action-grid,
+    .upload-zone-actions,
+    .result-actions {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .farm-hero .btn-outline-success,
+    .farm-hero .btn-outline-secondary {
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .farm-hero .btn-outline-success:hover,
+    .farm-hero .btn-outline-secondary:hover,
+    .farm-hero .btn-outline-success:focus,
+    .farm-hero .btn-outline-secondary:focus {
+        color: #184d35;
+        background: rgba(255, 255, 255, 0.92);
+        border-color: rgba(255, 255, 255, 0.92);
+    }
+
+    .process-grid,
+    .result-summary-grid,
+    .summary-grid,
+    .result-image-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .process-card {
+        height: 100%;
+        padding: 1rem;
+        border-radius: 22px;
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 10px 24px rgba(18, 48, 34, 0.06);
+    }
+
+    .process-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 999px;
+        background: rgba(31, 122, 77, 0.1);
+        color: #1f7a4d;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+    }
+
+    .process-card i {
+        font-size: 1.6rem;
+        color: #1f7a4d;
+        margin-bottom: 0.6rem;
+    }
+
+    .process-card h2,
+    .process-card h3 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .process-card p {
+        margin-bottom: 0;
+        color: #5b6b61;
+    }
+
+    .scan-panel .card-body,
+    .summary-panel .card-body {
+        padding: 1.1rem;
+    }
+
+    .scan-panel .form-label,
+    .summary-panel h2,
+    .summary-panel h3 {
+        color: #153223;
+        font-weight: 800;
+    }
+
+    .farm-advanced {
+        margin-top: 0.85rem;
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.86);
+        padding: 0.95rem 1rem;
+    }
+
+    .farm-advanced summary {
+        list-style: none;
+        cursor: pointer;
+        font-weight: 800;
+        color: #184d35;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+
+    .farm-advanced summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .upload-zone {
+        border: 2px dashed rgba(31, 122, 77, 0.32);
+        border-radius: 24px;
+        padding: 1.2rem;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(31, 122, 77, 0.06), rgba(196, 163, 95, 0.06));
+        cursor: pointer;
+    }
+
+    .upload-zone h3,
+    .upload-zone h4 {
+        color: #153223;
+        font-weight: 800;
+    }
+
+    .upload-zone-actions .btn,
+    .camera-actions .btn,
+    #file-list .btn {
+        width: 100%;
+    }
+
+    .camera-section {
+        margin-top: 1rem;
+    }
+
+    .camera-feed {
+        width: 100%;
+        min-height: 240px;
+        border-radius: 22px;
+        background: #0f172a;
+        object-fit: cover;
+    }
+
+    .selected-file-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        height: 2rem;
+        padding: 0 0.6rem;
+        border-radius: 999px;
+        background: rgba(31, 122, 77, 0.1);
+        color: #1f7a4d;
+        font-weight: 800;
+    }
+
+    #selected-files .list-group-item {
+        border-color: rgba(24, 77, 53, 0.12);
+        border-radius: 18px;
+        margin-bottom: 0.6rem;
+    }
+
+    .progress-panel {
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        border-radius: 20px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.82);
+    }
+
+    .summary-stat {
+        min-height: 110px;
+        padding: 1rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        box-shadow: 0 8px 18px rgba(18, 48, 34, 0.05);
+    }
+
+    .summary-stat .label {
+        display: block;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .summary-stat .value {
+        display: block;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #153223;
+        line-height: 1;
+    }
+
+    .session-quick-card {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        text-align: left;
+        padding: 0.95rem 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 8px 18px rgba(18, 48, 34, 0.05);
+    }
+
+    .session-quick-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .session-quick-card + .session-quick-card {
+        margin-top: 0.75rem;
+    }
+
+    .session-quick-card .meta {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .session-quick-card .name {
+        font-weight: 800;
+        color: #153223;
+    }
+
+    .session-quick-card .date {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .result-modal .modal-content {
+        border: none;
+        border-radius: 28px;
+        overflow: hidden;
+    }
+
+    .result-modal .modal-header,
+    .result-modal .modal-footer {
+        border-color: rgba(24, 77, 53, 0.12);
+        padding: 1rem 1.2rem;
+    }
+
+    .result-modal .modal-body {
+        background: linear-gradient(180deg, rgba(245, 248, 243, 0.95), rgba(255, 255, 255, 0.96));
+        padding: 1.2rem;
+    }
+
+    .result-summary-card {
+        min-height: 120px;
+        padding: 1rem;
+        border-radius: 20px;
+        background: #fff;
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        box-shadow: 0 10px 24px rgba(18, 48, 34, 0.05);
+    }
+
+    .result-summary-card .label {
+        display: block;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .result-summary-card .value {
+        display: block;
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: #153223;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .result-banner {
+        display: flex;
+        gap: 0.85rem;
+        align-items: flex-start;
+        border-radius: 22px;
+        padding: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+    }
+
+    .result-banner i {
+        font-size: 1.3rem;
+        margin-top: 0.15rem;
+    }
+
+    .result-banner.good {
+        background: rgba(31, 122, 77, 0.1);
+        border-color: rgba(31, 122, 77, 0.18);
+        color: #114226;
+    }
+
+    .result-banner.warn {
+        background: rgba(196, 123, 31, 0.12);
+        border-color: rgba(196, 123, 31, 0.2);
+        color: #6b3f05;
+    }
+
+    .result-banner.bad {
+        background: rgba(192, 57, 43, 0.12);
+        border-color: rgba(192, 57, 43, 0.2);
+        color: #6a1d17;
+    }
+
+    .result-actions {
+        margin-bottom: 1rem;
+    }
+
+    .result-image-card {
+        border-radius: 22px;
+        border: 1px solid rgba(24, 77, 53, 0.12);
+        background: #fff;
+        padding: 1rem;
+        box-shadow: 0 10px 24px rgba(18, 48, 34, 0.05);
+    }
+
+    .result-image-card img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+        border-radius: 18px;
+        background: #f3f5f1;
+    }
+
+    .result-image-placeholder {
+        margin-top: 0.75rem;
+        padding: 1rem;
+        border-radius: 16px;
+        border: 1px dashed rgba(24, 77, 53, 0.16);
+        background: rgba(248, 250, 245, 0.9);
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .w-md-auto {
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .w-md-auto {
+            width: auto !important;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .hero-action-grid,
+        .result-actions {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .upload-zone-actions,
+        .camera-actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .process-grid,
+        .result-summary-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .result-image-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 992px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Welcome Section -->
-    <div class="col-12 mb-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <div class="leaf-icon">
-                    <img src="/static/images/logo.svg" alt="Logo" style="height:4rem;">
+<div class="farm-home">
+    <section class="farm-hero card">
+        <div class="card-body p-4 p-lg-5">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div class="farm-logo-tile">
+                    <img src="/static/images/logo.svg" alt="Tea leaf scan logo">
                 </div>
-                <h1 class="card-title mb-3">AI-Powered Tea Leaf Health Detection</h1>
-                <p class="card-text lead">
-                    Upload your tea leaf images and get instant AI-powered health analysis. 
-                    Our advanced YOLO model detects and classifies healthy and unhealthy leaves with high accuracy.
-                </p>
+                <div>
+                    <p class="farm-eyebrow mb-1">Tea leaf scan</p>
+                    <h1>One photo. Clear next step.</h1>
+                    <p class="mb-0">Built for field teams and small tea farms.</p>
+                </div>
+            </div>
+
+            <div class="hero-chip-row mt-3">
+                <span class="hero-chip"><i class="fas fa-camera"></i>Use camera</span>
+                <span class="hero-chip"><i class="fas fa-upload"></i>Upload photos</span>
+                <span class="hero-chip"><i class="fas fa-arrow-right"></i>See result</span>
+            </div>
+
+            <div class="hero-action-grid mt-3">
+                <button type="button" class="btn btn-primary btn-lg" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-image me-2"></i>Choose photos
+                </button>
+                <button type="button" class="btn btn-outline-success btn-lg" onclick="switchToCamera()">
+                    <i class="fas fa-camera me-2"></i>Open camera
+                </button>
+                <a href="/history-page" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-clock-rotate-left me-2"></i>Past scans
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Statistics Cards -->
-    <div class="col-12 mb-4">
-        <div class="row" id="stats-container">
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-images fa-2x text-primary mb-2"></i>
-                        <h5 class="card-title">Total Images</h5>
-                        <h3 class="text-primary" id="total-images">-</h3>
+    <section class="process-grid">
+        <div class="process-card">
+            <span class="process-step">1</span>
+            <i class="fas fa-image d-block"></i>
+            <h2>Add photos</h2>
+            <p>Take a picture in the field or upload a whole batch.</p>
+        </div>
+        <div class="process-card">
+            <span class="process-step">2</span>
+            <i class="fas fa-leaf d-block"></i>
+            <h2>See the result</h2>
+            <p>Healthy and unhealthy leaves appear in a simple summary.</p>
+        </div>
+        <div class="process-card">
+            <span class="process-step">3</span>
+            <i class="fas fa-route d-block"></i>
+            <h2>Take action</h2>
+            <p>Open the full report, download it, or review past scans.</p>
+        </div>
+    </section>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="row g-3" id="stats-container">
+                <div class="col-6 col-lg-3">
+                    <div class="summary-stat text-center">
+                        <i class="fas fa-images fa-2x text-success mb-2"></i>
+                        <span class="label">Scanned</span>
+                        <span class="value text-success" id="total-images">-</span>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <img src="/static/images/logo.svg" alt="Healthy Leaf" style="height:2rem;" class="mb-2">
-                        <h5 class="card-title">Healthy Leaves</h5>
-                        <h3 class="text-success" id="healthy-leaves">-</h3>
+                <div class="col-6 col-lg-3">
+                    <div class="summary-stat text-center">
+                        <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                        <span class="label">Healthy</span>
+                        <span class="value text-success" id="healthy-leaves">-</span>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
-                        <h5 class="card-title">Unhealthy Leaves</h5>
-                        <h3 class="text-danger" id="unhealthy-leaves">-</h3>
+                <div class="col-6 col-lg-3">
+                    <div class="summary-stat text-center">
+                        <i class="fas fa-triangle-exclamation fa-2x text-danger mb-2"></i>
+                        <span class="label">Need attention</span>
+                        <span class="value text-danger" id="unhealthy-leaves">-</span>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-percentage fa-2x text-info mb-2"></i>
-                        <h5 class="card-title">Health Score</h5>
-                        <h3 class="text-info" id="health-percentage">-</h3>
+                <div class="col-6 col-lg-3">
+                    <div class="summary-stat text-center">
+                        <i class="fas fa-gauge-high fa-2x text-primary mb-2"></i>
+                        <span class="label">Health score</span>
+                        <span class="value text-primary" id="health-percentage">-</span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Upload Section -->
-    <div class="col-lg-8 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-upload"></i> Upload Tea Leaf Images</h3>
+        <div class="col-12 col-lg-7">
+            <div class="card scan-panel">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-3">
+                        <div>
+                            <p class="farm-eyebrow mb-1 text-success">Scan area</p>
+                            <h2 class="h4 mb-0">Add a batch</h2>
+                        </div>
+                        <span class="badge rounded-pill bg-success-subtle text-success-emphasis align-self-start">mobile-first</span>
+                    </div>
+
+                    <form id="upload-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="session-name" class="form-label">Batch name</label>
+                            <input type="text" class="form-control" id="session-name" name="session_name"
+                                   placeholder="e.g. Block A morning pick" required>
+                        </div>
+
+                        <details class="farm-advanced">
+                            <summary><i class="fas fa-sliders-h"></i>Scan strictness</summary>
+                            <div class="mt-3">
+                                <label for="confidence-threshold" class="form-label">
+                                    Sensitivity: <span id="confidence-value">0.25</span>
+                                </label>
+                                <input type="range" class="form-range" id="confidence-threshold"
+                                       name="confidence_threshold" min="0.1" max="0.9" step="0.05" value="0.25">
+                                <div class="form-text">Higher = stricter. Lower = more detections.</div>
+                            </div>
+                        </details>
+
+                        <div class="upload-zone mt-3" id="upload-zone">
+                            <i class="fas fa-cloud-arrow-up fa-3x text-success mb-3"></i>
+                            <h3 class="h5 mb-2">Drop or tap to add photos</h3>
+                            <p class="farm-muted mb-3">Upload one photo or a whole batch from the field.</p>
+                            <div class="upload-zone-actions">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="document.getElementById('file-input').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Choose photos
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-lg" onclick="switchToCamera()">
+                                    <i class="fas fa-camera me-2"></i>Use camera
+                                </button>
+                            </div>
+                            <input type="file" id="file-input" name="files" multiple accept="image/*" style="display: none;">
+                        </div>
+
+                        <div id="camera-section" class="camera-section" style="display: none;">
+                            <h3 class="h6 mb-2">Camera capture</h3>
+                            <video id="camera-feed" autoplay playsinline class="camera-feed"></video>
+                            <div class="camera-actions mt-3">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="captureImage()">
+                                    <i class="fas fa-camera me-2"></i>Take picture
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="switchToUpload()">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to upload
+                                </button>
+                            </div>
+                            <canvas id="camera-canvas" style="display: none;"></canvas>
+                        </div>
+
+                        <div id="file-list" class="mt-3" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h3 class="h6 mb-0">Selected photos</h3>
+                                <span class="selected-file-count" id="selected-count">0</span>
+                            </div>
+                            <ul class="list-group list-group-flush" id="selected-files"></ul>
+                            <div class="d-grid gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-play me-2"></i>Start scan
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="clearFiles()">
+                                    <i class="fas fa-times me-2"></i>Clear photos
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="progress-section" class="progress-panel mt-4" style="display: none;">
+                        <h3 class="h6 mb-2">Processing</h3>
+                        <div class="progress mb-2" style="height: 12px; border-radius: 999px;">
+                            <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div id="progress-info" class="text-muted"></div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <!-- Upload Form -->
-                <form id="upload-form" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="session-name" class="form-label">Session Name</label>
-                        <input type="text" class="form-control" id="session-name" name="session_name" 
-                               placeholder="Enter a name for this detection session" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="confidence-threshold" class="form-label">
-                            Confidence Threshold: <span id="confidence-value">0.25</span>
-                        </label>
-                        <input type="range" class="form-range" id="confidence-threshold" 
-                               name="confidence_threshold" min="0.1" max="0.9" step="0.05" value="0.25">
-                        <div class="form-text">Higher values = more confident detections, fewer false positives</div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="card summary-panel">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="farm-eyebrow mb-1 text-success">Live summary</p>
+                            <h2 class="h4 mb-0">Farm snapshot</h2>
+                        </div>
+                        <i class="fas fa-seedling fa-2x text-success"></i>
                     </div>
 
-                    <!-- Upload Zone -->
-                    <div class="upload-zone" id="upload-zone">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
-                        <h4>Drag & Drop Images Here</h4>
-                        <p class="text-muted">or click to browse files</p>
-                        <input type="file" id="file-input" name="files" multiple accept="image/*" style="display: none;">
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-                                <i class="fas fa-folder-open"></i> Browse Files
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="switchToCamera()">
-                                <i class="fas fa-camera"></i> Use Camera
-                            </button>
+                    <div class="summary-grid mb-4">
+                        <div class="summary-stat">
+                            <span class="label">What has been scanned</span>
+                            <span class="value text-success" id="summary-total-images">-</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Healthy leaves</span>
+                            <span class="value text-success" id="summary-healthy-leaves">-</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Leaves to review</span>
+                            <span class="value text-danger" id="summary-unhealthy-leaves">-</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="label">Health score</span>
+                            <span class="value text-primary" id="summary-health-percentage">-</span>
                         </div>
                     </div>
 
-                    <!-- Camera Section -->
-                    <div id="camera-section" style="display: none;">
-                        <h6>Camera Capture</h6>
-                        <video id="camera-feed" autoplay playsinline style="width: 100%; max-height: 300px; background: black;"></video>
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-success" onclick="captureImage()">
-                                <i class="fas fa-camera"></i> Take Picture
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="switchToUpload()">
-                                <i class="fas fa-arrow-left"></i> Back to Upload
-                            </button>
-                        </div>
-                        <canvas id="camera-canvas" style="display: none;"></canvas>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h3 class="h6 mb-0">Recent scans</h3>
+                        <a href="/dashboard" class="small text-decoration-none text-success fw-semibold">Farm view</a>
                     </div>
 
-                    <!-- File List -->
-                    <div id="file-list" class="mt-3" style="display: none;">
-                        <h6>Selected Files:</h6>
-                        <ul class="list-group" id="selected-files"></ul>
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-play"></i> Start Detection
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="clearFiles()">
-                                <i class="fas fa-times"></i> Clear Files
-                            </button>
-                        </div>
+                    <div id="recent-sessions">
+                        <p class="text-muted mb-0">Loading recent scans...</p>
                     </div>
-                </form>
-
-                <!-- Progress Section -->
-                <div id="progress-section" class="mt-4" style="display: none;">
-                    <h6>Processing Progress</h6>
-                    <div class="progress mb-2">
-                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
-                    <div id="progress-info" class="text-muted"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="col-lg-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary" onclick="window.location.href='/history-page'">
-                        <i class="fas fa-history"></i> View Detection History
-                    </button>
-                    <button class="btn btn-outline-info" onclick="window.location.href='/docs'">
-                        <i class="fas fa-book"></i> API Documentation
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Sessions -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6><i class="fas fa-clock"></i> Recent Sessions</h6>
-            </div>
-            <div class="card-body">
-                <div id="recent-sessions">
-                    <p class="text-muted">Loading recent sessions...</p>
                 </div>
             </div>
         </div>
@@ -178,22 +689,27 @@
 
 <!-- Results Modal -->
 <div class="modal fade" id="results-modal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content result-modal">
             <div class="modal-header">
-                <h5 class="modal-title">Detection Results</h5>
+                <div>
+                    <p class="farm-eyebrow mb-1 text-success">Result</p>
+                    <h5 class="modal-title mb-0">What the scan found</h5>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="results-content">
                 <!-- Results will be loaded here -->
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="download-pdf-btn">
-                    <i class="fas fa-file-pdf"></i> Download PDF
+            <div class="modal-footer flex-column flex-md-row gap-2">
+                <a href="#" class="btn btn-primary btn-lg w-100 w-md-auto" id="open-session-btn">
+                    <i class="fas fa-arrow-right me-2"></i>Open full result
+                </a>
+                <button type="button" class="btn btn-outline-primary btn-lg w-100 w-md-auto" id="download-pdf-btn">
+                    <i class="fas fa-file-pdf me-2"></i>PDF
                 </button>
-                <button type="button" class="btn btn-success" id="download-csv-btn">
-                    <i class="fas fa-file-csv"></i> Download CSV
+                <button type="button" class="btn btn-outline-success btn-lg w-100 w-md-auto" id="download-csv-btn">
+                    <i class="fas fa-file-csv me-2"></i>CSV
                 </button>
             </div>
         </div>
@@ -205,6 +721,65 @@
 <script>
 let currentSessionId = null;
 let selectedFiles = [];
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getResultRecommendation(healthPercentage) {
+    if (healthPercentage >= 75) {
+        return {
+            label: 'Ready to sell',
+            tone: 'good',
+            icon: 'fa-leaf',
+            message: 'Most leaves are healthy. Move this batch to the selling line.'
+        };
+    }
+
+    if (healthPercentage >= 50) {
+        return {
+            label: 'Sort and process',
+            tone: 'warn',
+            icon: 'fa-scissors',
+            message: 'Keep the good leaves separate and process the rest.'
+        };
+    }
+
+    return {
+        label: 'Keep separate',
+        tone: 'bad',
+        icon: 'fa-triangle-exclamation',
+        message: 'This batch needs review before it is mixed with the main lot.'
+    };
+}
+
+function handleResultImageFallback(image) {
+    try {
+        const paths = JSON.parse(image.dataset.fallbackPaths || '[]');
+        const currentIndex = Number(image.dataset.fallbackIndex || '0');
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < paths.length) {
+            image.dataset.fallbackIndex = String(nextIndex);
+            image.src = paths[nextIndex];
+            return;
+        }
+    } catch (error) {
+        console.warn('Image fallback failed:', error);
+    }
+
+    image.onerror = null;
+    image.style.display = 'none';
+    const placeholder = image.parentElement.querySelector('.result-image-placeholder');
+    if (placeholder) {
+        placeholder.classList.remove('d-none');
+    }
+}
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
@@ -271,8 +846,12 @@ function handleFileSelect(event) {
 function displaySelectedFiles() {
     const fileList = document.getElementById('file-list');
     const selectedFilesList = document.getElementById('selected-files');
+    const selectedCount = document.getElementById('selected-count');
     
     selectedFilesList.innerHTML = '';
+    if (selectedCount) {
+        selectedCount.textContent = selectedFiles.length.toString();
+    }
     
     selectedFiles.forEach((file, index) => {
         const listItem = document.createElement('li');
@@ -280,7 +859,7 @@ function displaySelectedFiles() {
         listItem.innerHTML = `
             <div>
                 <i class="fas fa-image text-primary me-2"></i>
-                ${file.name}
+                ${escapeHtml(file.name)}
                 <small class="text-muted">(${formatFileSize(file.size)})</small>
             </div>
             <div>
@@ -482,6 +1061,7 @@ async function loadResults(sessionId) {
 
 function displayResults(session) {
     const resultsContent = document.getElementById('results-content');
+    const openSessionBtn = document.getElementById('open-session-btn');
     
     // Calculate totals
     const completedResults = session.results.filter(r => r.status === 'completed');
@@ -489,30 +1069,53 @@ function displayResults(session) {
     const totalUnhealthy = completedResults.reduce((sum, r) => sum + r.unhealthy_count, 0);
     const totalLeaves = totalHealthy + totalUnhealthy;
     const averageHealth = totalLeaves > 0 ? (totalHealthy / totalLeaves * 100) : 0;
+    const recommendation = getResultRecommendation(averageHealth);
     
     resultsContent.innerHTML = `
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h6>Session: ${session.name}</h6>
-                <p><strong>Status:</strong> <span class="badge bg-success">${session.status}</span></p>
-                <p><strong>Images Processed:</strong> ${session.processed_images}/${session.total_images}</p>
+        <div class="result-summary-grid">
+            <div class="result-summary-card">
+                <span class="label">Healthy</span>
+                <span class="value text-success">${totalHealthy}</span>
+                <small class="text-muted">Leaves ready for sale</small>
             </div>
-            <div class="col-md-6">
-                <h6>Detection Summary</h6>
-                <p><strong>Total Leaves:</strong> ${totalLeaves}</p>
-                <p><strong>Healthy:</strong> <span class="health-score-green">${totalHealthy}</span></p>
-                <p><strong>Unhealthy:</strong> <span class="health-score-red">${totalUnhealthy}</span></p>
-                <p><strong>Health Score:</strong> ${averageHealth.toFixed(1)}%</p>
+            <div class="result-summary-card">
+                <span class="label">Need attention</span>
+                <span class="value text-danger">${totalUnhealthy}</span>
+                <small class="text-muted">Leaves to review or sort</small>
+            </div>
+            <div class="result-summary-card">
+                <span class="label">Health score</span>
+                <span class="value text-primary">${averageHealth.toFixed(1)}%</span>
+                <div class="progress mt-2" style="height: 10px; border-radius: 999px;">
+                    <div class="progress-bar bg-success" style="width: ${averageHealth}%"></div>
+                </div>
             </div>
         </div>
-        
-        <div class="row">
+
+        <div class="result-banner ${recommendation.tone}">
+            <i class="fas ${recommendation.icon}"></i>
+            <div>
+                <div class="fw-bold mb-1">${recommendation.label}</div>
+                <div>${recommendation.message}</div>
+            </div>
+        </div>
+
+        <div class="result-actions">
+            <a href="/session/${session.id}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-right me-2"></i>Open full result
+            </a>
+            <button type="button" class="btn btn-outline-primary btn-lg" onclick="downloadReport('pdf', ${session.id})">
+                <i class="fas fa-file-pdf me-2"></i>Download PDF
+            </button>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="downloadReport('csv', ${session.id})">
+                <i class="fas fa-file-csv me-2"></i>Download CSV
+            </button>
+        </div>
+
+        <div class="result-image-grid">
             ${completedResults.map(result => {
-                console.log("Image name from backend:", result.image_name);
-                // Construct image paths with multiple fallbacks, accounting for session ID in filename and additional variations
                 const baseName = result.image_name.split('.').slice(0, -1).join('.');
                 const extension = result.image_name.split('.').pop();
-                // Accept common image types for annotated images
                 const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
                 const possiblePaths = [];
                 imageTypes.forEach(ext => {
@@ -528,37 +1131,28 @@ function displayResults(session) {
                     possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
                     possiblePaths.push(`/results/${baseName}_${session.id}.${ext}_annotated`);
                 });
-                console.log("Attempting image paths for", result.image_name, ":", possiblePaths);
-                // Use the first path as default, with onerror fallbacks
+
                 return `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">${result.image_name}</h6>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Healthy:</small>
-                                        <div class="fw-bold text-success">${result.healthy_count}</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Unhealthy:</small>
-                                        <div class="fw-bold text-danger">${result.unhealthy_count}</div>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">Health Score:</small>
-                                    <div class="fw-bold">${result.health_percentage.toFixed(1)}%</div>
-                                    <div class="progress mt-1" style="height: 5px;">
-                                        <div class="progress-bar" style="width: ${result.health_percentage}%"></div>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <img src="${possiblePaths[0]}" alt="Annotated ${result.image_name}" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;" 
-                                         onerror="let idx=1;const paths=${JSON.stringify(possiblePaths)};const tryNext=(img)=><paths.length){img.src=paths[idx++];img.onerror=function(){tryNext(img);};}else{img.src='';img.alt='Image not found';img.style.border='1px solid #ccc';img.style.padding='10px';img.innerText='Image could not be loaded';}};tryNext(this);">
-                                </div>
+                    <article class="result-image-card">
+                        <img
+                            src="${possiblePaths[0]}"
+                            alt="Annotated ${escapeHtml(result.image_name)}"
+                            data-fallback-index="0"
+                            data-fallback-paths='${JSON.stringify(possiblePaths).replace(/'/g, "&apos;")}'
+                            onerror="handleResultImageFallback(this)"
+                        >
+                        <div class="d-flex justify-content-between align-items-start gap-2 mt-3">
+                            <div class="me-2">
+                                <div class="fw-bold">${escapeHtml(result.image_name)}</div>
+                                <small class="text-muted">Health ${result.health_percentage.toFixed(1)}%</small>
+                            </div>
+                            <div class="d-flex gap-2 flex-shrink-0">
+                                <span class="badge bg-success-subtle text-success">H ${result.healthy_count}</span>
+                                <span class="badge bg-danger-subtle text-danger">U ${result.unhealthy_count}</span>
                             </div>
                         </div>
-                    </div>
+                        <div class="result-image-placeholder d-none">Image preview unavailable</div>
+                    </article>
                 `;
             }).join('')}
         </div>
@@ -567,6 +1161,7 @@ function displayResults(session) {
     // Update download buttons
     document.getElementById('download-pdf-btn').onclick = () => downloadReport('pdf', session.id);
     document.getElementById('download-csv-btn').onclick = () => downloadReport('csv', session.id);
+    openSessionBtn.href = `/session/${session.id}`;
     
     // Show modal
     new bootstrap.Modal(document.getElementById('results-modal')).show();
@@ -582,10 +1177,23 @@ async function loadStatistics() {
         const stats = await response.json();
         
         if (response.ok) {
-            document.getElementById('total-images').textContent = stats.total_images_processed.toLocaleString();
-            document.getElementById('healthy-leaves').textContent = stats.total_healthy_leaves.toLocaleString();
-            document.getElementById('unhealthy-leaves').textContent = stats.total_unhealthy_leaves.toLocaleString();
-            document.getElementById('health-percentage').textContent = stats.average_health_percentage.toFixed(1) + '%';
+            const values = {
+                'total-images': stats.total_images_processed.toLocaleString(),
+                'healthy-leaves': stats.total_healthy_leaves.toLocaleString(),
+                'unhealthy-leaves': stats.total_unhealthy_leaves.toLocaleString(),
+                'health-percentage': stats.average_health_percentage.toFixed(1) + '%',
+                'summary-total-images': stats.total_images_processed.toLocaleString(),
+                'summary-healthy-leaves': stats.total_healthy_leaves.toLocaleString(),
+                'summary-unhealthy-leaves': stats.total_unhealthy_leaves.toLocaleString(),
+                'summary-health-percentage': stats.average_health_percentage.toFixed(1) + '%'
+            };
+
+            Object.entries(values).forEach(([id, text]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = text;
+                }
+            });
         }
     } catch (error) {
         console.error('Error loading statistics:', error);
@@ -601,17 +1209,18 @@ async function loadRecentSessions() {
         
         if (response.ok && sessions.length > 0) {
             recentSessionsDiv.innerHTML = sessions.map(session => `
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded" style="cursor: pointer;" onclick="window.location.href='/session/${session.id}'">
-                    <div>
-                        <small class="fw-bold">${session.name}</small><br>
-                        <small class="text-muted">${formatDate(session.created_at)}</small>
+                <button type="button" class="session-quick-card" onclick="window.location.href='/session/${session.id}'">
+                    <div class="meta">
+                        <span class="name">${escapeHtml(session.name)}</span>
+                        <span class="date">${formatDate(session.created_at)}</span>
                     </div>
-                    <div>
-                        <span class="badge bg-${session.status === 'completed' ? 'success' : session.status === 'failed' ? 'danger' : 'warning'}">
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                        <span class="badge bg-${session.status === 'completed' ? 'success' : session.status === 'failed' ? 'danger' : 'warning'} text-capitalize">
                             ${session.status}
                         </span>
+                        <i class="fas fa-chevron-right text-muted"></i>
                     </div>
-                </div>
+                </button>
             `).join('');
         } else {
             recentSessionsDiv.innerHTML = '<p class="text-muted">No recent sessions</p>';

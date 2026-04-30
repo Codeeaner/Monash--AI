@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Tea Leaf Detection - Farmer Dashboard{% endblock %}
+{% block title %}Tea Leaf Scan - Farm view{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -9,6 +9,25 @@
     color: #fff;
     border-radius: 18px;
     padding: 1.25rem;
+}
+
+.period-switcher {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.period-switcher .btn {
+    border-color: rgba(255, 255, 255, 0.45);
+    color: #fff;
+}
+
+.period-switcher .btn:hover,
+.period-switcher .btn:focus,
+.period-switcher .btn.active {
+    background: #fff;
+    color: #0f766e;
+    border-color: #fff;
 }
 
 .kpi-grid {
@@ -86,12 +105,16 @@
         <div class="dashboard-hero">
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                 <div>
-                    <h1 class="h4 mb-1"><i class="fas fa-seedling me-2"></i>Farmer Dashboard</h1>
+                    <h1 class="h4 mb-1"><i class="fas fa-seedling me-2"></i>Farm view</h1>
                     <p class="mb-0">Quick view of leaf quality, waste, and money impact.</p>
                 </div>
-                <div>
-                    <span class="meta-chip">Period: This Month</span>
-                    <span class="meta-chip">Farm: Main Plot</span>
+                <div class="text-end">
+                    <div class="period-switcher mb-2" role="group" aria-label="Farm view period filter">
+                        <button type="button" class="btn btn-sm btn-outline-light active" data-period="7">7 days</button>
+                        <button type="button" class="btn btn-sm btn-outline-light" data-period="30">30 days</button>
+                        <button type="button" class="btn btn-sm btn-outline-light" data-period="365">1 year</button>
+                        <button type="button" class="btn btn-sm btn-outline-light" data-period="all">All time</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -164,7 +187,8 @@
 <script>
 const dashboardData = { 
     farm_id: "live",
-    period: "recent_sessions",
+    period: "7",
+    all_sessions: [],
     summary: {
         healthy_pct: 0,
         unhealthy_pct: 0,
@@ -176,6 +200,38 @@ const dashboardData = {
     waste_metrics: [],
     economic_impact: []
 };
+
+let qualityTrendChart = null;
+let healthSplitChart = null;
+let wasteChart = null;
+let moneyChart = null;
+
+function getPeriodLabel(period) {
+    if (period === "all") {
+        return "All time";
+    }
+
+    if (period === "365") {
+        return "Last 1 year";
+    }
+
+    return `Last ${period} days`;
+}
+
+function getPeriodCutoff(period) {
+    if (period === "all") {
+        return null;
+    }
+
+    const days = Number(period);
+    if (!Number.isFinite(days) || days <= 0) {
+        return null;
+    }
+
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return cutoff;
+}
 
 function formatCurrency(value) {
     return `${dashboardData.summary.currency} ${Number(value || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -189,9 +245,14 @@ function updateKPIText() {
 }
 
 function renderCharts() {
+    if (qualityTrendChart) qualityTrendChart.destroy();
+    if (healthSplitChart) healthSplitChart.destroy();
+    if (wasteChart) wasteChart.destroy();
+    if (moneyChart) moneyChart.destroy();
+
     const labels = dashboardData.quality_trends.map(x => x.date);
 
-    new Chart(document.getElementById("qualityTrendChart"), {
+    qualityTrendChart = new Chart(document.getElementById("qualityTrendChart"), {
         type: "line",
         data: {
             labels,
@@ -217,7 +278,7 @@ function renderCharts() {
         options: { responsive: true, maintainAspectRatio: false }
     });
 
-    new Chart(document.getElementById("healthSplitChart"), {
+    healthSplitChart = new Chart(document.getElementById("healthSplitChart"), {
         type: "doughnut",
         data: {
             labels: ["Healthy", "Unhealthy"],
@@ -229,7 +290,7 @@ function renderCharts() {
         options: { responsive: true, maintainAspectRatio: false }
     });
 
-    new Chart(document.getElementById("wasteChart"), {
+    wasteChart = new Chart(document.getElementById("wasteChart"), {
         type: "bar",
         data: {
             labels: dashboardData.waste_metrics.map(x => x.date),
@@ -241,7 +302,7 @@ function renderCharts() {
         options: { responsive: true, maintainAspectRatio: false }
     });
 
-    new Chart(document.getElementById("moneyChart"), {
+    moneyChart = new Chart(document.getElementById("moneyChart"), {
         type: "line",
         data: {
             labels: dashboardData.economic_impact.map(x => x.date),
@@ -284,21 +345,57 @@ async function fetchJson(url) {
     return response.json();
 }
 
-async function loadDashboardData() {
-    const sessions = await fetchJson("/api/sessions?limit=8");
-    if (!Array.isArray(sessions) || sessions.length === 0) {
-        return;
+async function fetchAllSessions() {
+    const sessions = [];
+    const pageSize = 100;
+    let skip = 0;
+
+    while (true) {
+        const batch = await fetchJson(`/api/sessions?skip=${skip}&limit=${pageSize}`);
+        if (!Array.isArray(batch) || batch.length === 0) {
+            break;
+        }
+
+        sessions.push(...batch);
+
+        if (batch.length < pageSize) {
+            break;
+        }
+
+        skip += pageSize;
     }
 
-    const completedSessions = sessions
+    return sessions;
+}
+
+function applyPeriodFilter(period) {
+    dashboardData.period = period;
+
+    const cutoff = getPeriodCutoff(period);
+    const sessions = dashboardData.all_sessions
         .filter(session => session.status === "completed")
+        .filter(session => {
+            if (!cutoff) {
+                return true;
+            }
+
+            const createdAt = new Date(session.created_at);
+            return !Number.isNaN(createdAt.getTime()) && createdAt >= cutoff;
+        })
         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-    if (completedSessions.length === 0) {
+    if (sessions.length === 0) {
+        dashboardData.quality_trends = [];
+        dashboardData.waste_metrics = [];
+        dashboardData.economic_impact = [];
+        dashboardData.summary.healthy_pct = 0;
+        dashboardData.summary.unhealthy_pct = 0;
+        dashboardData.summary.waste_reduced_kg = 0;
+        dashboardData.summary.money_saved = 0;
         return;
     }
 
-    dashboardData.quality_trends = completedSessions.map(session => {
+    dashboardData.quality_trends = sessions.map(session => {
         const healthyPct = Number(session.average_health_percentage || 0);
         return {
             date: formatSessionLabel(session),
@@ -308,53 +405,31 @@ async function loadDashboardData() {
         };
     });
 
-    const analyticsResponses = await Promise.all(
-        completedSessions.map(async (session) => {
-            try {
-                const data = await fetchJson(`/api/analytics/session/${session.id}`);
-                return { session, data };
-            } catch (error) {
-                return { session, data: null };
-            }
-        })
-    );
-
     let totalHealthy = 0;
     let totalUnhealthy = 0;
     let totalWasteReduced = 0;
     let totalMoneySaved = 0;
     let currency = "USD";
 
-    dashboardData.waste_metrics = analyticsResponses.map(({ session, data }) => {
-        const waste = Number(data?.dashboard?.waste?.waste_after_kg || 0);
-        const baseline = Number(data?.dashboard?.waste?.waste_before_kg || 0);
-        totalWasteReduced += Number(data?.dashboard?.waste?.waste_reduction_kg || 0);
-        return {
-            date: formatSessionLabel(session),
-            waste_kg: waste,
-            baseline_waste_kg: baseline
-        };
-    });
+    dashboardData.waste_metrics = sessions.map(session => ({
+        date: formatSessionLabel(session),
+        waste_kg: Number(session.total_unhealthy || 0),
+        baseline_waste_kg: Number(session.total_healthy || 0) + Number(session.total_unhealthy || 0)
+    }));
 
-    dashboardData.economic_impact = analyticsResponses.map(({ session, data }) => {
-        const moneySaved = Number(data?.dashboard?.economic?.profit_improvement_per_batch || 0);
+    dashboardData.economic_impact = sessions.map(session => {
+        const healthy = Number(session.total_healthy || 0);
+        const unhealthy = Number(session.total_unhealthy || 0);
+        totalHealthy += healthy;
+        totalUnhealthy += unhealthy;
+        totalWasteReduced += unhealthy;
+        const moneySaved = Math.max(0, healthy - unhealthy) * 0.25;
         totalMoneySaved += moneySaved;
-        if (data?.dashboard?.economic?.currency) {
-            currency = data.dashboard.economic.currency;
-        }
-        const comp = data?.dashboard?.composition || {};
-        totalHealthy += Number(comp.healthy_leaves || 0);
-        totalUnhealthy += Number(comp.unhealthy_leaves || 0);
         return {
             date: formatSessionLabel(session),
             saved_amount: moneySaved
         };
     });
-
-    if (totalHealthy === 0 && totalUnhealthy === 0) {
-        totalHealthy = completedSessions.reduce((sum, s) => sum + Number(s.total_healthy || 0), 0);
-        totalUnhealthy = completedSessions.reduce((sum, s) => sum + Number(s.total_unhealthy || 0), 0);
-    }
 
     const totalLeaves = totalHealthy + totalUnhealthy;
     const healthyPct = totalLeaves > 0 ? (totalHealthy / totalLeaves) * 100 : 0;
@@ -367,11 +442,29 @@ async function loadDashboardData() {
     dashboardData.summary.currency = currency;
 }
 
+async function loadDashboardData() {
+    dashboardData.all_sessions = await fetchAllSessions();
+    if (!Array.isArray(dashboardData.all_sessions) || dashboardData.all_sessions.length === 0) {
+        return;
+    }
+
+    applyPeriodFilter(dashboardData.period);
+}
+
 async function initDashboard() {
     try {
         await loadDashboardData();
         updateKPIText();
         renderCharts();
+        document.querySelectorAll(".period-switcher [data-period]").forEach(button => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll(".period-switcher [data-period]").forEach(item => item.classList.remove("active"));
+                button.classList.add("active");
+                applyPeriodFilter(button.dataset.period);
+                updateKPIText();
+                renderCharts();
+            });
+        });
     } catch (error) {
         console.error("Dashboard load error:", error);
         updateKPIText();

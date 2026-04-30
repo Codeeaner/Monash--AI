@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Detection History - Tea Leaf Detection{% endblock %}
+{% block title %}Tea Leaf Scan - Past scans{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -111,13 +111,13 @@
                 <div class="d-flex flex-column">
                     <h2 class="h3 mb-1 d-flex align-items-center gap-2">
                         <i class="fas fa-history me-2 text-primary"></i>
-                        <span class="fw-bold text-primary">Detection History</span>
+                        <span class="fw-bold text-primary">Past scans</span>
                     </h2>
-                    <p class="text-muted mb-0">View and manage your tea leaf detection sessions.</p>
+                    <p class="text-muted mb-0">Browse and manage previous scans.</p>
                 </div>
                 <div>
                     <a href="/" class="btn btn-primary d-block d-sm-inline-block rounded-xl">
-                        <i class="fas fa-plus me-1"></i> New Detection
+                        <i class="fas fa-plus me-1"></i> New Scan
                     </a>
                 </div>
             </div>
@@ -148,8 +148,8 @@
                             </select>
                         </div>
                         <div class="col-lg-4">
-                            <label for="search-input" class="form-label">Search Sessions</label>
-                            <input type="text" class="form-control" id="search-input" placeholder="Search by session name...">
+                            <label for="search-input" class="form-label">Search scans</label>
+                            <input type="text" class="form-control" id="search-input" placeholder="Search by batch name...">
                         </div>
                         <div class="col-lg-2 filter-buttons">
                            <div class="d-grid">
@@ -167,7 +167,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Detection Sessions</h5>
+                    <h5 class="mb-0">Past scans</h5>
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-danger btn-sm" onclick="confirmDeleteAllSessions()" id="delete-all-btn">
                             <i class="fas fa-trash-alt me-1"></i> Delete All
@@ -192,10 +192,10 @@
                     <!-- Empty state -->
                     <div id="empty-state" class="text-center py-5" style="display: none;">
                         <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                        <h5>No Detection Sessions Found</h5>
-                        <p class="text-muted">Start by uploading some tea leaf images for detection.</p>
+                        <h5>No past scans yet</h5>
+                        <p class="text-muted">Start by uploading a tea leaf photo batch.</p>
                         <a href="/" class="btn btn-primary mt-2">
-                            <i class="fas fa-upload me-1"></i> Upload Images
+                            <i class="fas fa-upload me-1"></i> Start scan
                         </a>
                     </div>
 

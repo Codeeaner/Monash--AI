@@ -1,6 +1,6 @@
 {% extends "base.html" %} 
 
-{% block title %}Session Details - Tea Leaf Detection{% endblock %} 
+{% block title %}Tea Leaf Scan - Batch result{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -226,15 +226,15 @@
                     <div class="icon-bg-gradient">
                         <i class="fas fa-info-circle text-white text-xs-custom"></i>
                     </div>
-                    Session Details
+					Batch result
                 </h1>
                 <p class="text-gray-600-custom mt-1" style="word-break: break-word;">Session: {{ session.name }}</p>
             </div>
             
             <div class="flex-shrink-0 d-flex align-items-center gap-2">
-                <button class="btn-back-history" onclick="window.location.href='/history-page'">
+				<button class="btn-back-history" onclick="window.location.href='/history-page'">
                     <i class="fas fa-history text-xs-custom"></i>
-                    <span>Back to History</span>
+					<span>Back to past scans</span>
                 </button>
                 <button class="btn btn-outline-primary ms-2" onclick="downloadReport('pdf', {{ session.id }})">
                     <i class="fas fa-file-pdf"></i> PDF
