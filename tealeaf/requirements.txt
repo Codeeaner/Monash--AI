@@ -18,3 +18,4 @@ python-dotenv==1.0.0
 matplotlib==3.8.2
 ollama==0.3.3
 requests==2.31.0
+seaborn==0.13.2
