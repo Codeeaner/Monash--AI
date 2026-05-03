@@ -425,22 +425,15 @@
 						<div id="grid-view" class="images-grid-container" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 1.5rem;">
 							{% for result in session.results %} 
 							<div class="image-tile-card"> 
-								<div class="image-tile-container" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}', '{{ result.annotated_image or '' }}')">
-									{% if result.annotated_image %}
-										<img src="data:image/jpeg;base64,{{ result.annotated_image }}" 
-											alt="Annotated image" 
-											class="image-tile-img"
-										> 
-									{% else %}
-										<img src="/static/images/placeholder.png" 
-											alt="Annotated image" 
-											class="image-tile-img" 
-											data-image-name="{{ result.image_name }}"
-											data-session-id="{{ session.id }}"
-											onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
-											onerror="handleImageError(this);" 
-										> 
-									{% endif %}
+								<div class="image-tile-container" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/static/images/placeholder.png" 
+										alt="Annotated image" 
+										class="image-tile-img" 
+										data-image-name="{{ result.image_name }}"
+										data-session-id="{{ session.id }}"
+										onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
+										onerror="handleImageError(this);" 
+									> 
 									<div class="image-tile-overlay"> 
 										<div class="image-overlay-icon-bg">
 											<i class="fas fa-search-plus text-white text-xl-custom"></i> 
@@ -505,22 +498,15 @@
 						<div id="list-view" class="images-list-container" style="display: none;">
 							{% for result in session.results %} 
 							<div class="image-list-item"> 
-								<div class="image-list-thumbnail" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}', '{{ result.annotated_image or '' }}')">
-									{% if result.annotated_image %}
-										<img src="data:image/jpeg;base64,{{ result.annotated_image }}" 
-											alt="Annotated image" 
-											class="list-thumbnail-img"
-										> 
-									{% else %}
-										<img src="/static/images/placeholder.png" 
-											alt="Annotated image" 
-											class="list-thumbnail-img" 
-											data-image-name="{{ result.image_name }}"
-											data-session-id="{{ session.id }}"
-											onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
-											onerror="handleImageError(this);" 
-										> 
-									{% endif %}
+								<div class="image-list-thumbnail" onclick="enlargeImageWithDetails('{{ result.image_name }}', '{{ result.image_name }}', {{ result.healthy_count }}, {{ result.unhealthy_count }}, {{ result.total_count }}, {{ result.health_percentage|default(0)|round(1) }}, '{{ result.status }}')">
+									<img src="/static/images/placeholder.png" 
+										alt="Annotated image" 
+										class="list-thumbnail-img" 
+										data-image-name="{{ result.image_name }}"
+										data-session-id="{{ session.id }}"
+										onload="if(this.src.includes('placeholder.png')) { this.src = findImagePath(this.dataset.imageName, this.dataset.sessionId); }"
+										onerror="handleImageError(this);" 
+									> 
 									<div class="list-thumbnail-overlay"> 
 										<i class="fas fa-search-plus text-white"></i> 
 									</div> 
@@ -745,6 +731,80 @@
  <script> 
  // NOTE: The JavaScript logic is mostly unchanged, but the 'displayAnalysisData' function 
  // has been updated to use the new Tailwind CSS classes for styling the dynamic content. 
+
+// Function to find the correct image path by trying multiple possibilities
+function findImagePath(imageName, sessionId) {
+	const baseName = imageName.replace(/\.[^/.]+$/, ''); // Remove extension
+	const extension = imageName.split('.').pop(); // Get extension
+	
+	const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+	const possiblePaths = [];
+	
+	// Generate all possible paths as specified
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_annotated_${sessionId}.${ext}`);
+	});
+	
+	possiblePaths.push(`/results/${imageName}`);
+	possiblePaths.push(`/results/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${imageName}`);
+	
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}.${ext}_annotated`);
+	});
+	
+	// Return the first possible path - we'll handle errors with handleImageError
+	return possiblePaths[0];
+}
+
+// Function to handle image loading errors by trying alternative paths
+function handleImageError(imgElement) {
+	const imageName = imgElement.dataset.imageName;
+	const sessionId = imgElement.dataset.sessionId;
+	
+	if (!imgElement.dataset.pathIndex) {
+		imgElement.dataset.pathIndex = '0';
+	}
+	
+	const pathIndex = parseInt(imgElement.dataset.pathIndex);
+	const baseName = imageName.replace(/\.[^/.]+$/, ''); // Remove extension
+	const extension = imageName.split('.').pop(); // Get extension
+	
+	const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+	const possiblePaths = [];
+	
+	// Generate all possible paths (same as findImagePath)
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}_annotated.${ext}`);
+		possiblePaths.push(`/results/${baseName}_annotated_${sessionId}.${ext}`);
+	});
+	
+	possiblePaths.push(`/results/${imageName}`);
+	possiblePaths.push(`/results/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${baseName}_${sessionId}.${extension}`);
+	possiblePaths.push(`/uploads/session_${sessionId}/${imageName}`);
+	
+	imageTypes.forEach(ext => {
+		possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+		possiblePaths.push(`/results/${baseName}_${sessionId}.${ext}_annotated`);
+	});
+	
+	// Try the next path in the list
+	const nextIndex = pathIndex + 1;
+	if (nextIndex < possiblePaths.length) {
+		imgElement.dataset.pathIndex = nextIndex.toString();
+		imgElement.src = possiblePaths[nextIndex];
+	} else {
+		// All paths failed, use placeholder
+		imgElement.src = '/static/images/placeholder.png';
+		imgElement.alt = 'Image not available';
+	}
+}
 
  // Function to format date for display 
  function formatDate(dateString) { 
@@ -1592,7 +1652,7 @@ function formatCurrency(amount, currency) {
 }
 
 // Enhanced function to enlarge image with detection details
-function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthScore, status, base64Image) {
+function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthScore, status) {
 	// Create modal container
 	var modal = document.createElement('div');
 	modal.className = 'image-modal-container';
@@ -1614,25 +1674,19 @@ function enlargeImageWithDetails(src, title, healthy, unhealthy, total, healthSc
 	imageSection.className = 'modal-image-section';
 	
 	var img = document.createElement('img');
+	img.src = src;
 	img.alt = 'Enlarged Image';
 	img.className = 'modal-image';
 	
-	// Use base64 image if available, otherwise fall back to file path
-	if (base64Image && base64Image.trim() !== '') {
-		img.src = 'data:image/jpeg;base64,' + base64Image;
-	} else if (!src.startsWith('/') && !src.startsWith('http') && !src.startsWith('data:')) {
-		// If src is just an image name, extract session ID from the page
+	// If src is just an image name, extract session ID from the page
+	if (!src.startsWith('/') && !src.startsWith('http')) {
 		const sessionElement = document.getElementById('session-id');
 		const sessionId = sessionElement ? sessionElement.dataset.sessionId : null;
 		if (sessionId) {
 			img.src = findImagePath(src, sessionId);
 			img.dataset.imageName = src;
 			img.dataset.sessionId = sessionId;
-		} else {
-			img.src = src;
 		}
-	} else {
-		img.src = src;
 	}
 	
 	img.onerror = function() {

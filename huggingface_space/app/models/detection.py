@@ -1,8 +1,6 @@
 """Database models for tea leaf detection results."""
 
-import base64
 from datetime import datetime
-from pathlib import Path
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -49,19 +47,6 @@ class DetectionResult(Base):
     # Relationships
     session = relationship("DetectionSession", back_populates="results")
     boxes = relationship("DetectionBox", back_populates="result", cascade="all, delete-orphan")
-
-    @property
-    def annotated_image(self):
-        """Return the annotated image as a base64 string when the file exists."""
-        if not self.annotated_image_path:
-            return None
-
-        image_path = Path(self.annotated_image_path)
-        if not image_path.exists():
-            return None
-
-        with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode("utf-8")
 
 
 class DetectionBox(Base):

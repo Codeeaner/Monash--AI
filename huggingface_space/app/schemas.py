@@ -35,7 +35,6 @@ class DetectionResultSchema(BaseModel):
     status: str
     error_message: Optional[str] = None
     created_at: datetime
-    annotated_image: Optional[str] = None
     boxes: List[DetectionBoxSchema] = []
     
     class Config:

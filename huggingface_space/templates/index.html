@@ -763,6 +763,29 @@ function getResultRecommendation(healthPercentage) {
     };
 }
 
+function handleResultImageFallback(image) {
+    try {
+        const paths = JSON.parse(image.dataset.fallbackPaths || '[]');
+        const currentIndex = Number(image.dataset.fallbackIndex || '0');
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < paths.length) {
+            image.dataset.fallbackIndex = String(nextIndex);
+            image.src = paths[nextIndex];
+            return;
+        }
+    } catch (error) {
+        console.warn('Image fallback failed:', error);
+    }
+
+    image.onerror = null;
+    image.style.display = 'none';
+    const placeholder = image.parentElement.querySelector('.result-image-placeholder');
+    if (placeholder) {
+        placeholder.classList.remove('d-none');
+    }
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     loadStatistics();
@@ -1096,13 +1119,33 @@ function displayResults(session) {
 
         <div class="result-image-grid">
             ${completedResults.map(result => {
-                const imageSrc = result.annotated_image 
-                    ? `data:image/jpeg;base64,${result.annotated_image}`
-                    : '';
+                const baseName = result.image_name.split('.').slice(0, -1).join('.');
+                const extension = result.image_name.split('.').pop();
+                const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'bmp'];
+                const possiblePaths = [];
+                imageTypes.forEach(ext => {
+                    possiblePaths.push(`/results/${baseName}_annotated.${ext}`);
+                    possiblePaths.push(`/results/${baseName}_${session.id}_annotated.${ext}`);
+                    possiblePaths.push(`/results/${baseName}_annotated_${session.id}.${ext}`);
+                });
+                possiblePaths.push(`/results/${result.image_name}`);
+                possiblePaths.push(`/results/${baseName}_${session.id}.${extension}`);
+                possiblePaths.push(`/uploads/session_${session.id}/${baseName}_${session.id}.${extension}`);
+                possiblePaths.push(`/uploads/session_${session.id}/${result.image_name}`);
+                imageTypes.forEach(ext => {
+                    possiblePaths.push(`/results/${baseName}.${ext}_annotated`);
+                    possiblePaths.push(`/results/${baseName}_${session.id}.${ext}_annotated`);
+                });
 
                 return `
                     <article class="result-image-card">
-                        ${imageSrc ? `<img src="${imageSrc}" alt="Annotated ${escapeHtml(result.image_name)}">` : '<div class="result-image-placeholder">No annotated image available</div>'}
+                        <img
+                            src="${possiblePaths[0]}"
+                            alt="Annotated ${escapeHtml(result.image_name)}"
+                            data-fallback-index="0"
+                            data-fallback-paths='${JSON.stringify(possiblePaths).replace(/'/g, "&apos;")}'
+                            onerror="handleResultImageFallback(this)"
+                        >
                         <div class="d-flex justify-content-between align-items-start gap-2 mt-3">
                             <div class="me-2">
                                 <div class="fw-bold">${escapeHtml(result.image_name)}</div>

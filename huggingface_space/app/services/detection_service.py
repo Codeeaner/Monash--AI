@@ -1,8 +1,8 @@
 import os
 import json
+import mimetypes
 import time
 import logging
-import base64
 from pathlib import Path
 from typing import Dict, Any
 
@@ -15,86 +15,8 @@ import uuid
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_URL = "https://acwz-tealeafdetection.hf.space"
-
-
-def extract_image_url(data: Any) -> str:
-    """Extract annotated image URL from Gradio response recursively."""
-    if isinstance(data, str):
-        if "gradio_api/file" in data:
-            return data
-        return None
-
-    if isinstance(data, list):
-        for item in data:
-            result = extract_image_url(item)
-            if result:
-                return result
-
-    if isinstance(data, dict):
-        for v in data.values():
-            result = extract_image_url(v)
-            if result:
-                return result
-
-    return None
-
-
-def run_detection(image_path: str, confidence: float):
-    with open(image_path, "rb") as file_handle:
-        upload_response = requests.post(
-            f"{BASE_URL}/gradio_api/upload",
-            files={"files": file_handle},
-            timeout=120,
-        )
-    upload_response.raise_for_status()
-
-    file_path = upload_response.json()[0]
-
-    prediction_response = requests.post(
-        f"{BASE_URL}/gradio_api/call/v2/predict",
-        json={
-            "image": {
-                "path": file_path,
-                "meta": {"_type": "gradio.FileData"},
-            },
-            "confidence": confidence,
-        },
-        timeout=120,
-    )
-    prediction_response.raise_for_status()
-
-    event_id = prediction_response.json()["event_id"]
-
-    stream_response = requests.get(
-        f"{BASE_URL}/gradio_api/call/predict/{event_id}",
-        stream=True,
-        timeout=120,
-    )
-    stream_response.raise_for_status()
-
-    final_payload = None
-    event_type = None
-
-    for line in stream_response.iter_lines(decode_unicode=True):
-        if not line:
-            continue
-
-        if line.startswith("event:"):
-            event_type = line.split(":", 1)[1].strip()
-
-        if line.startswith("data:"):
-            data = line.split(":", 1)[1].strip()
-            try:
-                final_payload = json.loads(data)
-            except json.JSONDecodeError:
-                final_payload = data
-
-            if event_type == "complete":
-                break
-
-    # IMPORTANT: Gradio returns [image, json]
-    return final_payload
+DEFAULT_HUGGINGFACE_SPACE_API_URL = "https://acwz-tealeafdetection.hf.space/run/predict"
+DEFAULT_HUGGINGFACE_SPACE_BASE_URL = "https://acwz-tealeafdetection.hf.space"
 
 
 class TeaLeafDetectionService:
@@ -108,6 +30,7 @@ class TeaLeafDetectionService:
             model_path: Unused. Kept for backward compatibility.
             confidence_threshold: Minimum confidence for detections
         """
+        self.remote_space_url = self._resolve_remote_space_url()
         self.model_path = None
         self.confidence_threshold = confidence_threshold
 
@@ -140,15 +63,26 @@ class TeaLeafDetectionService:
             if image is None:
                 raise ValueError(f"Cannot read image: {image_path}")
 
-            logger.info("Running remote detection via Hugging Face Space API: acwz-tealeafdetection")
-            remote_result = self._detect_image_via_huggingface_space(
+            if not self.remote_space_url:
+                return {
+                    "error": "HUGGINGFACE_SPACE_API_URL is not configured",
+                    "healthy_count": 0,
+                    "unhealthy_count": 0,
+                    "total_count": 0,
+                    "health_percentage": 0.0,
+                    "boxes": [],
+                    "processing_time": time.time() - start_time,
+                    "annotated_image_path": None,
+                }
+
+            logger.info("Running remote detection via Hugging Face Space API: %s", self.remote_space_url)
+            return self._detect_image_via_huggingface_space(
                 image_path=image_path,
                 image=image,
                 save_annotated=save_annotated,
                 output_dir=output_dir,
                 start_time=start_time,
             )
-            return remote_result
 
         except Exception as e:
             logger.error(f"Error processing image {image_path}: {e}")
@@ -160,14 +94,28 @@ class TeaLeafDetectionService:
                 "health_percentage": 0.0,
                 "boxes": [],
                 "processing_time": time.time() - start_time,
-                "annotated_image": None,
+                "annotated_image_path": None,
             }
 
     def _detect_image_via_huggingface_space(self, image_path: str, image: np.ndarray,
                                             save_annotated: bool, output_dir: str,
                                             start_time: float) -> Dict[str, Any]:
-        """Send the image through the Gradio API flow from test.py and normalize the result."""
-        payload = run_detection(image_path, self.confidence_threshold)
+        """Send the image directly to the Hugging Face Space /run/predict endpoint."""
+        predict_url = f"{self.remote_space_url}/run/predict"
+        with open(image_path, "rb") as image_file:
+            content_type = mimetypes.guess_type(image_path)[0] or "image/jpeg"
+            files = {
+                "data": (Path(image_path).name, image_file, content_type),
+            }
+            response = requests.post(
+                predict_url,
+                data={"confidence": str(self.confidence_threshold)},
+                files=files,
+                timeout=120,
+            )
+        response.raise_for_status()
+
+        payload = response.json()
         detections = self._extract_remote_detections(payload)
         boxes_data = self._normalize_remote_boxes(detections)
 
@@ -185,34 +133,9 @@ class TeaLeafDetectionService:
         total_count = healthy_count + unhealthy_count
         health_percentage = (healthy_count / total_count * 100) if total_count > 0 else 0.0
 
-        annotated_image_data = None
         annotated_image_path = None
         if save_annotated:
-            # Extract the annotated image URL from the remote response
-            annotated_image_url = extract_image_url(payload)
-            if annotated_image_url:
-                try:
-                    # Fetch the annotated image
-                    img_response = requests.get(annotated_image_url, timeout=30)
-                    img_response.raise_for_status()
-                    
-                    # Save to disk
-                    os.makedirs(output_dir, exist_ok=True)
-                    original_name = Path(image_path).stem
-                    unique_id = str(uuid.uuid4())[:8]
-                    output_filename = f"{original_name}_{unique_id}_annotated.jpg"
-                    annotated_image_path = os.path.join(output_dir, output_filename)
-                    
-                    with open(annotated_image_path, "wb") as f:
-                        f.write(img_response.content)
-                    
-                    # Encode as base64 for API response
-                    annotated_image_data = base64.b64encode(img_response.content).decode('utf-8')
-                    logger.info(f"Successfully fetched and saved annotated image from Space: {annotated_image_path}")
-                except Exception as e:
-                    logger.warning(f"Failed to fetch annotated image from Space: {e}")
-            else:
-                logger.warning("No annotated image URL found in Space response")
+            annotated_image_path = self._create_annotated_image(image, boxes_data, image_path, output_dir)
 
         logger.info(
             "Remote detection summary - Healthy: %s, Unhealthy: %s, Total: %s",
@@ -228,10 +151,23 @@ class TeaLeafDetectionService:
             "health_percentage": health_percentage,
             "boxes": boxes_data,
             "annotated_image_path": annotated_image_path,
-            "annotated_image": annotated_image_data,
             "processing_time": time.time() - start_time,
             "source": "huggingface_space_api",
         }
+
+    def _resolve_remote_space_url(self) -> str:
+        """Return the Space base URL, even if the environment variable includes /run/predict."""
+        configured_url = os.getenv("HUGGINGFACE_SPACE_URL", "").strip() or os.getenv(
+            "HUGGINGFACE_SPACE_API_URL", ""
+        ).strip()
+        if not configured_url:
+            configured_url = DEFAULT_HUGGINGFACE_SPACE_BASE_URL
+
+        configured_url = configured_url.rstrip("/")
+        for suffix in ("/run/predict", "/call/predict"):
+            if configured_url.endswith(suffix):
+                configured_url = configured_url[: -len(suffix)]
+        return configured_url
 
     def _extract_remote_detections(self, payload: Any) -> Any:
         """Extract the detections payload from a Gradio response."""
@@ -329,7 +265,6 @@ class TeaLeafDetectionService:
 
         return boxes_data
 
-
     def _create_annotated_image(self, image: np.ndarray, boxes_data: list,
                                original_image_path: str, output_dir: str) -> str:
         """Create and save annotated image with detection boxes."""
@@ -375,5 +310,5 @@ class TeaLeafDetectionService:
             "confidence_threshold": self.confidence_threshold,
             "class_names": self.class_names,
             "model_type": "Hugging Face Space API",
-            "remote_space_base_url": BASE_URL,
+            "remote_api_url": self.remote_space_url,
         }
